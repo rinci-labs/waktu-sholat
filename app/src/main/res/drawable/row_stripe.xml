@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Alternating row tint. A very low-contrast wash so seven numeric columns stay trackable. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="@color/surface_alt" />
-    <corners android:radius="6dp" />
+<!-- Alternating row tint in the month table, so a line of seven numbers stays trackable. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/background" />
+    <corners android:radius="8dp" />
 </shape>

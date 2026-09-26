@@ -1,44 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Palette. Each colour has a `_night` twin in this file, and `values-night/colors.xml` re-points the
-  plain name at the twin, so layouts reference one name and follow the device theme with no branching
-  anywhere in code.
+  Palette. Each colour has a `_night` twin here, and `values-night/colors.xml` re-points the plain
+  name at the twin, so layouts reference one name and follow the device theme with no code.
 
-  The page/卡片 separation is deliberately more than a hairline: white cards on a barely-different
-  page read as one continuous slab, which is exactly the failure mode this palette avoids by keeping
-  a clear step between `background` and `surface`.
+  Warm neutrals with one deep green accent. The accent is reserved for "now": the next-prayer card,
+  the active row and active controls, so the eye always has exactly one place to land.
 -->
 <resources>
-    <!-- Brand: a calm green, reserved for the current/next prayer and active controls. -->
-    <color name="brand">#1B7F5A</color>
-    <color name="brand_night">#5BD1A3</color>
-    <!-- Faint brand wash behind the active prayer. -->
-    <color name="brand_soft">#DCEBE4</color>
-    <color name="brand_soft_night">#16281F</color>
+    <color name="brand">#0E6B4E</color>
+    <color name="brand_night">#7DD8AE</color>
+    <!-- Text and icons drawn on top of `brand`. -->
+    <color name="on_brand">#FFFFFF</color>
+    <color name="on_brand_night">#05281B</color>
+    <color name="on_brand_muted">#C9E4D8</color>
+    <color name="on_brand_muted_night">#1F4B38</color>
+    <!-- Faint wash behind the active prayer row. -->
+    <color name="brand_soft">#E2EFE8</color>
+    <color name="brand_soft_night">#18342A</color>
 
-    <color name="background">#EDF0EE</color>
-    <color name="background_night">#0C0E0D</color>
+    <color name="background">#F5F4F0</color>
+    <color name="background_night">#0D0F0E</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_night">#191D1C</color>
-    <color name="surface_alt">#E1E6E3</color>
-    <color name="surface_alt_night">#242A28</color>
-    <color name="outline">#D5DBD7</color>
-    <color name="outline_night">#333A37</color>
+    <color name="surface_night">#171A19</color>
+    <color name="surface_alt">#EEECE6</color>
+    <color name="surface_alt_night">#212523</color>
+    <color name="outline">#E3E0D8</color>
+    <color name="outline_night">#2B302D</color>
 
-    <color name="text_primary">#171A18</color>
-    <color name="text_primary_night">#F1F3F2</color>
-    <color name="text_secondary">#59615D</color>
-    <color name="text_secondary_night">#A7AFAB</color>
-    <color name="text_tertiary">#79817C</color>
-    <color name="text_tertiary_night">#8B938F</color>
-
-    <color name="ripple">#14000000</color>
-    <color name="ripple_night">#1FFFFFFF</color>
+    <color name="text_primary">#191C1A</color>
+    <color name="text_primary_night">#EDEFEB</color>
+    <color name="text_secondary">#5B605C</color>
+    <color name="text_secondary_night">#A6ABA7</color>
+    <color name="text_tertiary">#8A8F8A</color>
+    <color name="text_tertiary_night">#737974</color>
 
     <!--
-      Widget. Translucent so the launcher's own wallpaper treatment shows through, which is what the
-      Android 12+ widget styling expects.
+      Widgets have their own names so API 31+ can swap them for the wallpaper-derived system palette
+      (values-v31) while the app keeps its brand colour.
     -->
-    <color name="widget_background">#F7FFFFFF</color>
-    <color name="widget_background_night">#F2141917</color>
+    <color name="widget_bg">#FFFFFF</color>
+    <color name="widget_bg_night">#1A1D1C</color>
+    <color name="widget_text">#191C1A</color>
+    <color name="widget_text_night">#EDEFEB</color>
+    <color name="widget_text_muted">#6A6F6B</color>
+    <color name="widget_text_muted_night">#9FA5A1</color>
+    <color name="widget_accent">#0E6B4E</color>
+    <color name="widget_accent_night">#7DD8AE</color>
+    <color name="widget_accent_soft">#E2EFE8</color>
+    <color name="widget_accent_soft_night">#18342A</color>
+    <color name="widget_on_accent">#FFFFFF</color>
+    <color name="widget_on_accent_night">#05281B</color>
+    <color name="widget_on_accent_muted">#C9E4D8</color>
+    <color name="widget_on_accent_muted_night">#1F4B38</color>
+
+    <!-- Glance widget: always light-on-wallpaper, with a shadow for legibility. -->
+    <color name="glance_text">#FFFFFFFF</color>
+    <color name="glance_text_muted">#E6FFFFFF</color>
+    <color name="glance_shadow">#8C000000</color>
 </resources>

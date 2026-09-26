@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 29+: keep gesture navigation fully transparent instead of the system's contrast scrim. -->
+<resources>
+    <style name="Theme.WaktuSholat" parent="Base.Theme.WaktuSholat">
+        <item name="android:windowLightNavigationBar">@bool/light_system_bars</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+    </style>
+</resources>

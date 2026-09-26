@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- `windowLightNavigationBar` is API 27+; everything else is inherited from the base theme. -->
 <resources>
-    <!--
-      `android:windowLightNavigationBar` is API 27+, so it lives in this overlay rather than in the
-      base theme, where it would be an error on API 24-26. All other attributes are inherited from
-      the base theme.
-    -->
-    <style name="Theme.WaktuSholat" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowLightNavigationBar">true</item>
+    <style name="Theme.WaktuSholat" parent="Base.Theme.WaktuSholat">
+        <item name="android:windowLightNavigationBar">@bool/light_system_bars</item>
     </style>
 </resources>

@@ -1,67 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-      Light theme. `Theme.Material.Light.NoActionBar` is the framework baseline available from
-      API 24; the dark palette lives in `values-night/themes.xml` with the matching `Theme.Material`
-      parent, so the device's dark-mode setting flips the whole app with no code involved.
+      Theme layering:
+        Platform.WaktuSholat   framework parent; light here, dark in values-night
+        Base.Theme.WaktuSholat every app attribute, declared once
+        Theme.WaktuSholat      what the manifest uses; values-v27/v29 add API-gated attributes
 
-      Layouts read `?android:attr/...` wherever a framework attribute exists, which keeps them
-      theme-agnostic; the app's own colour names are used only where the framework has no equivalent.
+      Keeping the API overlays as children of Base (rather than redeclaring the whole theme) is what
+      stops a version folder from silently dropping the background, accent and bar colours.
     -->
-    <style name="Theme.WaktuSholat" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Platform.WaktuSholat" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <bool name="light_system_bars">true</bool>
+
+    <style name="Base.Theme.WaktuSholat" parent="Platform.WaktuSholat">
         <item name="android:windowBackground">@color/background</item>
+        <item name="android:colorBackground">@color/background</item>
         <item name="android:colorAccent">@color/brand</item>
         <item name="android:colorPrimary">@color/brand</item>
+        <item name="android:colorControlActivated">@color/brand</item>
+        <item name="android:colorControlHighlight">@color/outline</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:textColorHint">@color/text_tertiary</item>
+        <item name="android:textColorHighlight">@color/brand_soft</item>
+        <item name="android:alertDialogTheme">@style/Dialog.WaktuSholat</item>
 
-        <!-- Edge-to-edge: the content is inset by the layouts, so the bars stay transparent. -->
+        <!-- Edge-to-edge: layouts inset themselves, so the bars stay transparent. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">@bool/light_system_bars</item>
+    </style>
 
-        <item name="android:windowAnimationStyle">@android:style/Animation.Activity</item>
+    <style name="Theme.WaktuSholat" parent="Base.Theme.WaktuSholat" />
+
+    <style name="Platform.Dialog" parent="android:Theme.Material.Light.Dialog.Alert" />
+
+    <style name="Dialog.WaktuSholat" parent="Platform.Dialog">
+        <item name="android:colorAccent">@color/brand</item>
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowBackground">@drawable/dialog_background</item>
     </style>
 
     <!--
-      Type styles. Sizes come from `dimens.xml` so the scale has one definition. `fontFamily` uses
-      the platform families rather than a bundled font, which keeps the APK free of font assets.
+      Type scale. Platform families only, so the APK carries no font assets; `tnum` gives tabular
+      figures so times line up in columns and the countdown never jitters as digits change.
     -->
-    <style name="Text.Display" parent="">
+    <style name="Text" parent="">
         <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.Display">
         <item name="android:textSize">@dimen/text_display</item>
         <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:includeFontPadding">false</item>
+        <item name="android:letterSpacing">-0.02</item>
         <item name="android:fontFeatureSettings">tnum</item>
     </style>
 
-    <style name="Text.Headline" parent="">
-        <item name="android:textColor">@color/text_primary</item>
+    <style name="Text.Headline">
         <item name="android:textSize">@dimen/text_headline</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">-0.01</item>
     </style>
 
-    <style name="Text.Title" parent="">
-        <item name="android:textColor">@color/text_primary</item>
+    <style name="Text.Title">
         <item name="android:textSize">@dimen/text_title</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-    <style name="Text.Body" parent="">
+    <style name="Text.Body">
         <item name="android:textColor">@color/text_secondary</item>
-        <item name="android:textSize">@dimen/text_body</item>
     </style>
 
-    <style name="Text.Caption" parent="">
+    <style name="Text.Caption">
         <item name="android:textColor">@color/text_tertiary</item>
         <item name="android:textSize">@dimen/text_caption</item>
     </style>
 
-    <!-- Uppercase section header above a card, as used by the platform's own list headings. -->
-    <style name="Text.Section" parent="">
+    <!-- Small uppercase label above a group. -->
+    <style name="Text.Label">
         <item name="android:textColor">@color/text_tertiary</item>
         <item name="android:textSize">@dimen/text_label</item>
         <item name="android:fontFamily">sans-serif-medium</item>
@@ -69,32 +92,92 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <!-- Tabular-figure time, so the digits line up column-wise and do not shift as they tick. -->
-    <style name="Text.Time" parent="">
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif</item>
+    <style name="Text.Time">
+        <item name="android:textSize">@dimen/text_time</item>
         <item name="android:fontFeatureSettings">tnum</item>
     </style>
 
-    <style name="Text.Widget.Name" parent="">
-        <item name="android:textColor">@color/text_secondary</item>
+    <!-- Widget text: widget_* colours so API 31+ can follow the wallpaper palette. -->
+    <style name="Widget.Text" parent="">
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Widget.Text.Muted">
+        <item name="android:textColor">@color/widget_text_muted</item>
+    </style>
+
+    <style name="Widget.Text.Label">
+        <item name="android:textColor">@color/widget_text_muted</item>
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/widget_label</item>
     </style>
 
-    <style name="Text.Widget.Time" parent="">
-        <item name="android:textColor">@color/text_primary</item>
-        <item name="android:fontFamily">sans-serif</item>
+    <style name="Widget.Text.Time">
         <item name="android:fontFeatureSettings">tnum</item>
     </style>
 
-    <!-- A borderless icon button with the platform's touch ripple and minimum 48dp target. -->
+    <style name="Widget.Text.Hero">
+        <item name="android:textColor">@color/widget_accent</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="Glance.Text" parent="">
+        <item name="android:textColor">@color/glance_text</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:shadowColor">@color/glance_shadow</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">6</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+    </style>
+
+    <!-- Borderless icon button with the platform ripple and a 48dp target. -->
     <style name="IconButton" parent="">
         <item name="android:layout_width">@dimen/touch_target</item>
         <item name="android:layout_height">@dimen/touch_target</item>
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
-        <item name="android:gravity">center</item>
         <item name="android:scaleType">center</item>
-        <item name="android:padding">@dimen/space_12</item>
+    </style>
+    <!-- Month table cells. -->
+    <style name="MonthCell" parent="Text.Time">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="MonthCell.Lead">
+        <item name="android:layout_weight">0</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- Settings groups. -->
+    <style name="SettingsHeader" parent="Text.Label">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/space_4</item>
+        <item name="android:layout_marginTop">@dimen/space_24</item>
+        <item name="android:layout_marginBottom">@dimen/space_8</item>
+    </style>
+
+    <style name="SettingsGroup" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/card</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/space_4</item>
+        <item name="android:paddingBottom">@dimen/space_4</item>
     </style>
 </resources>
