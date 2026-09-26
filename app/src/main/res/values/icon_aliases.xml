@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Below Android 8 there are no adaptive icons, so every icon theme falls back to the default raster
+  icon; on API 26+ the files in mipmap-anydpi-v26 take precedence.
+-->
+<resources>
+    <item name="ic_launcher_subuh" type="mipmap">@mipmap/ic_launcher</item>
+    <item name="ic_launcher_pagi" type="mipmap">@mipmap/ic_launcher</item>
+    <item name="ic_launcher_siang" type="mipmap">@mipmap/ic_launcher</item>
+    <item name="ic_launcher_sore" type="mipmap">@mipmap/ic_launcher</item>
+    <item name="ic_launcher_senja" type="mipmap">@mipmap/ic_launcher</item>
+    <item name="ic_launcher_malam" type="mipmap">@mipmap/ic_launcher</item>
+</resources>

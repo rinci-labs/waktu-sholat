@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Crescent = outer disc minus an offset disc, using fillType=evenOdd so no strokes or clipping are
-  needed. Geometry is shared with tools/gen_icons.py; the outer radius (30 of 108) stays inside the
-  adaptive-icon safe zone of 33.
+  Launcher foreground: a crescent cradling a star, in white. The crescent is one closed outline of
+  two arcs (outer disc r25 minus an offset disc r21, meeting at the horns), so it fills correctly
+  under either fill rule. Everything sits inside the adaptive-icon safe zone (r33 around 54,54).
+  Shared by every icon theme and used as the monochrome (themed icon) layer on Android 13+.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -11,6 +12,11 @@
     android:viewportHeight="108">
     <path
         android:fillColor="#FFFFFFFF"
-        android:fillType="evenOdd"
-        android:pathData="M24,54 a30,30 0 1,0 60,0 a30,30 0 1,0 -60,0 Z M38.5,47 a25.5,25.5 0 1,0 51,0 a25.5,25.5 0 1,0 -51,0 Z" />
+        android:pathData="M47.5,28.13 A25,25 0 1,0 73.72,60.9 A21,21 0 1,1 47.5,28.13 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M70,29.5 L71.5,34.5 L76.5,36 L71.5,37.5 L70,42.5 L68.5,37.5 L63.5,36 L68.5,34.5 Z" />
+    <path
+        android:fillColor="#CCFFFFFF"
+        android:pathData="M79,47 a1.8,1.8 0 1,0 3.6,0 a1.8,1.8 0 1,0 -3.6,0 Z" />
 </vector>
