@@ -33,7 +33,10 @@ object DeviceLocation {
     private const val TIMEOUT_MILLIS = 15_000L
     private const val MAX_RESULTS = 6
 
-    class Place(val name: String, val region: String)
+    /** How far a zone's standard offset may sit from solar time and still be believed. */
+    private const val PLAUSIBLE_OFFSET_MILLIS = 2.5 * 3_600_000
+
+    class Place(val name: String, val region: String, val countryCode: String?)
 
     fun hasPermission(context: Context): Boolean =
         granted(context, Manifest.permission.ACCESS_FINE_LOCATION) ||
@@ -172,7 +175,14 @@ object DeviceLocation {
      * majority of countries (one zone) and a close guess for the few spanning several.
      */
     fun zoneFor(countryCode: String?, latitude: Double, longitude: Double): String {
-        if (City.isServiceable(latitude, longitude)) {
+        val device = TimeZone.getDefault()
+        val solar = longitude / 15.0 * 3_600_000
+        if (countryCode == null) {
+            // Offline: the phone's zone is right wherever it is plausible for this longitude (it
+            // also covers Singapore and Malaysia, which the 250 km Indonesian radius would reach).
+            if (kotlin.math.abs(device.rawOffset - solar) <= PLAUSIBLE_OFFSET_MILLIS) return device.id
+        }
+        if ((countryCode == null || countryCode == "ID") && City.isServiceable(latitude, longitude)) {
             return when (City.nearest(latitude, longitude).timeZoneHours) {
                 8 -> "Asia/Makassar"
                 9 -> "Asia/Jayapura"
@@ -185,8 +195,9 @@ object DeviceLocation {
                 .filter { '/' in it && !it.startsWith("Etc/") }
                 .distinct()
         }.orEmpty()
-        if (zones.isEmpty()) return TimeZone.getDefault().id
-        val solar = longitude / 15.0 * 3_600_000
+        if (zones.isEmpty()) return device.id
+        // The phone's own zone wins when it belongs to this country (e.g. America/Denver in the US).
+        if (device.id in zones) return device.id
         return zones.minByOrNull { kotlin.math.abs(TimeZone.getTimeZone(it).rawOffset - solar) } ?: zones.first()
     }
 
@@ -201,6 +212,6 @@ object DeviceLocation {
         val parts = mutableListOf<String>()
         levels.getOrNull(1)?.let(parts::add)
         if (address.countryCode != null && address.countryCode != "ID") address.countryName?.let(parts::add)
-        return Place(name, parts.joinToString(", "))
+        return Place(name, parts.joinToString(", "), address.countryCode)
     }
 }

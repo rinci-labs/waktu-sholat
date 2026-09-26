@@ -34,6 +34,7 @@ class WaktuSholatApp : Application() {
     fun notifyScheduleChanged() {
         AlarmScheduler.reschedule(this)
         WidgetUpdater.updateAll(this)
+        dev.rafa.waktusholat.ui.IconAuto.sync(this)
     }
 
     /**
@@ -41,12 +42,14 @@ class WaktuSholatApp : Application() {
      * place name from the geocoder when one is available, which repaints the label a moment later.
      */
     fun applyFix(location: android.location.Location) {
-        preferences.setCoordinates(location.latitude, location.longitude)
+        // The zone of the place itself (Indonesia: exact, offline); the phone's zone otherwise.
+        preferences.setCoordinates(location.latitude, location.longitude, DeviceLocation.zoneFor(null, location.latitude, location.longitude))
         notifyScheduleChanged()
         DeviceLocation.describe(this, location.latitude, location.longitude) { place ->
             // Only name the fix if it is still the current one.
             if (place != null && preferences.followsDevice && preferences.distanceFromFix(location.latitude, location.longitude) < 1f) {
-                preferences.setPlace(place.name, place.region)
+                val zone = DeviceLocation.zoneFor(place.countryCode, location.latitude, location.longitude)
+                preferences.setPlace(place.name, place.region, zone)
                 notifyScheduleChanged()
             }
         }

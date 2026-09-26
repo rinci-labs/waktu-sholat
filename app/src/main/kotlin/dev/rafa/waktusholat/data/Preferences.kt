@@ -131,14 +131,18 @@ class Preferences(context: Context) {
     /** True when the coordinates come from the device (and may follow it), not from a search. */
     val followsDevice: Boolean get() = useGps && !prefs.getBoolean(KEY_PICKED, false)
 
-    fun setPlace(name: String, region: String) = write {
+    fun setPlace(name: String, region: String, zoneId: String) = write {
         putString(KEY_PLACE_NAME, name)
         putString(KEY_PLACE_REGION, region)
+        putString(KEY_ZONE, zoneId)
     }
 
     /** The phone moved to another zone while using the device location: follow it. */
     fun updateDeviceZone(zoneId: String) {
-        if (followsDevice && prefs.getString(KEY_ZONE, null) != zoneId) write { putString(KEY_ZONE, zoneId) }
+        // Only when the stored zone came from the phone rather than from the place itself.
+        if (followsDevice && prefs.getString(KEY_PLACE_NAME, null) == null && prefs.getString(KEY_ZONE, null) != zoneId) {
+            write { putString(KEY_ZONE, zoneId) }
+        }
     }
 
     /** When the stored device fix was taken, or 0. */
