@@ -48,6 +48,6 @@ GitHub Actions on [Blacksmith](https://blacksmith.sh) runners:
 Required secrets for releases: `SIGNING_KEYSTORE_BASE64`, `SIGNING_STORE_PASSWORD`,
 `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`.
 
-Runner: jobs use `blacksmith-4vcpu-ubuntu-2404` unless the repository variable `CI_RUNNER` is set
-(e.g. `ubuntu-latest`). Blacksmith has to be installed for the repository's owner at
-app.blacksmith.sh; without it, set `CI_RUNNER` so jobs do not wait for a runner that never comes.
+Runner: jobs use `blacksmith-4vcpu-ubuntu-2404` (the Blacksmith app is installed on the
+`rinci-labs` organization). Setting the repository variable `CI_RUNNER` (e.g. `ubuntu-latest`)
+switches to GitHub-hosted runners, for forks or accounts without Blacksmith.
