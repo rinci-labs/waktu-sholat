@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Progress track drawn on the accent card: a faint rail and a solid fill, both fully rounded. -->
+<!-- Progress through the current prayer window, drawn on the sky: faint rail, solid white fill. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <solid android:color="@color/on_brand_muted" />
+            <solid android:color="@color/sky_track" />
             <corners android:radius="2dp" />
         </shape>
     </item>
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="rectangle">
-                <solid android:color="@color/on_brand" />
+                <solid android:color="@color/on_sky" />
                 <corners android:radius="2dp" />
             </shape>
         </clip>

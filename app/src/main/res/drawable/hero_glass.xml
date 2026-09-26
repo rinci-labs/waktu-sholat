@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Next-prayer card on the sky: a faint frosted panel, so the sky shows through. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/sky_glass" />
+    <corners android:radius="@dimen/radius_card" />
+    <stroke android:width="1dp" android:color="@color/sky_glass_stroke" />
+</shape>

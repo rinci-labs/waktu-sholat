@@ -2,8 +2,6 @@
 <!-- Dark theme: aliases only, so the two palettes cannot drift apart. -->
 <resources>
     <color name="brand">@color/brand_night</color>
-    <color name="on_brand">@color/on_brand_night</color>
-    <color name="on_brand_muted">@color/on_brand_muted_night</color>
     <color name="brand_soft">@color/brand_soft_night</color>
 
     <color name="background">@color/background_night</color>

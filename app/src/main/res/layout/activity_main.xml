@@ -1,272 +1,339 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Today. Reading order: where and when (header), what is next (accent card), the whole day (list),
-  then the two secondary screens as tiles. Only the accent card and the active row use the brand
-  colour, so a glance lands on the next prayer first.
+  Today. A sky that follows the part of the day sits full-bleed behind the header and the
+  next-prayer card, then fades into the page so the day's list rests on the plain surface.
+
+  The root handles the system-bar insets in code: the sky has to run up behind the status bar,
+  and `status_scrim` (painted with the sky's top colour) keeps scrolled content out from under the
+  status icons.
 -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true"
-    android:overScrollMode="never"
-    android:scrollbars="none">
+    android:background="@color/background">
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingStart="@dimen/screen_margin"
-        android:paddingEnd="@dimen/screen_margin"
-        android:paddingTop="@dimen/space_16"
-        android:paddingBottom="@dimen/space_32">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
-        <!-- Header: date, city (tap to change) and Hijri date; settings on the right. -->
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:gravity="top"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
+
+            <dev.rafa.waktusholat.ui.SkyView
+                android:id="@+id/sky"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/screen_margin"
+                android:paddingEnd="@dimen/screen_margin"
+                android:paddingTop="@dimen/space_16">
 
-                <TextView
-                    android:id="@+id/date"
-                    style="@style/Text.Body"
+                <!-- Header: date, city (tap to change) and Hijri date; settings on the right. -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_4"
-                    android:maxLines="1" />
+                    android:baselineAligned="false"
+                    android:gravity="top"
+                    android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/city_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="-6dp"
-                    android:layout_marginTop="@dimen/space_4"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:contentDescription="@string/action_change_city"
-                    android:gravity="center_vertical"
-                    android:minHeight="40dp"
-                    android:orientation="horizontal"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="4dp">
-
-                    <TextView
-                        android:id="@+id/city"
-                        style="@style/Text.Headline"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:maxLines="1" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_4"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_expand" />
+                        <TextView
+                            android:id="@+id/date"
+                            style="@style/Text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_4"
+                            android:maxLines="1"
+                            android:textColor="@color/on_sky_muted" />
+
+                        <LinearLayout
+                            android:id="@+id/city_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="-6dp"
+                            android:layout_marginTop="@dimen/space_4"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:contentDescription="@string/action_change_city"
+                            android:gravity="center_vertical"
+                            android:minHeight="40dp"
+                            android:orientation="horizontal"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="4dp">
+
+                            <TextView
+                                android:id="@+id/city"
+                                style="@style/Text.Headline"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/on_sky" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/space_4"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_expand"
+                                android:tint="@color/on_sky" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/hijri"
+                            style="@style/Text.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_2"
+                            android:maxLines="1"
+                            android:textColor="@color/on_sky_muted" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/settings"
+                        style="@style/IconButton"
+                        android:layout_marginEnd="-12dp"
+                        android:contentDescription="@string/action_settings"
+                        android:src="@drawable/ic_settings"
+                        android:tint="@color/on_sky" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/hijri"
-                    style="@style/Text.Caption"
+                <!-- Next prayer, on frosted glass over the sky. -->
+                <LinearLayout
+                    android:id="@+id/hero"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_2"
-                    android:maxLines="1" />
+                    android:layout_marginTop="@dimen/sky_scene"
+                    android:background="@drawable/hero_glass"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/space_24"
+                    android:paddingEnd="@dimen/space_24"
+                    android:paddingTop="@dimen/space_20"
+                    android:paddingBottom="@dimen/space_20">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Text.Label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/next_prayer_label"
+                            android:textColor="@color/on_sky_muted" />
+
+                        <TextView
+                            android:id="@+id/period"
+                            style="@style/Text.Label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_8"
+                            android:textColor="@color/on_sky_muted" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_12"
+                        android:baselineAligned="true"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/next_time"
+                            style="@style/Text.Display"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/on_sky" />
+
+                        <TextView
+                            android:id="@+id/next_name"
+                            style="@style/Text.Title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_12"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textColor="@color/on_sky"
+                            android:textSize="22sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/countdown"
+                        style="@style/Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_8"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxLines="1"
+                        android:textColor="@color/on_sky"
+                        android:textSize="17sp" />
+
+                    <ProgressBar
+                        android:id="@+id/progress"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="@dimen/space_16"
+                        android:max="1000"
+                        android:progressDrawable="@drawable/hero_progress" />
+
+                    <TextView
+                        android:id="@+id/current"
+                        style="@style/Text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_12"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/on_sky_muted"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!--
+                  The rest of the screen is a sheet with rounded top corners laid over the sky, so the
+                  sky ends in a clean edge instead of a muddy fade. Negative margins make it full-bleed.
+                -->
+                <LinearLayout
+                    android:id="@+id/sheet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/screen_margin_negative"
+                    android:layout_marginEnd="@dimen/screen_margin_negative"
+                    android:layout_marginTop="@dimen/space_24"
+                    android:background="@drawable/sheet"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/screen_margin"
+                    android:paddingEnd="@dimen/screen_margin"
+                    android:paddingTop="@dimen/space_24"
+                    android:paddingBottom="@dimen/space_32">
+
+                    <TextView
+                        style="@style/Text.Label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_4"
+                        android:layout_marginBottom="@dimen/space_8"
+                        android:text="@string/section_today" />
+
+                    <!-- Rows are inflated once per day and restyled each minute. -->
+                    <LinearLayout
+                        android:id="@+id/rows"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/card"
+                        android:orientation="vertical"
+                        android:padding="6dp" />
+
+                    <!-- Secondary screens, each tile previewing its answer. -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_12"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/open_qibla"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/card_pressable"
+                            android:orientation="vertical"
+                            android:padding="@dimen/space_16">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_compass" />
+
+                            <TextView
+                                style="@style/Text.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_16"
+                                android:maxLines="1"
+                                android:text="@string/qibla_title" />
+
+                            <TextView
+                                android:id="@+id/qibla_summary"
+                                style="@style/Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_4"
+                                android:maxLines="1" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/open_month"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/card_pressable"
+                            android:orientation="vertical"
+                            android:padding="@dimen/space_16">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_calendar" />
+
+                            <TextView
+                                style="@style/Text.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_16"
+                                android:maxLines="1"
+                                android:text="@string/section_month" />
+
+                            <TextView
+                                android:id="@+id/month_summary"
+                                style="@style/Text.Caption"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/space_4"
+                                android:maxLines="1" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/zone_note"
+                        style="@style/Text.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_20"
+                        android:gravity="center" />
+                </LinearLayout>
             </LinearLayout>
+        </FrameLayout>
+    </ScrollView>
 
-            <ImageButton
-                android:id="@+id/settings"
-                style="@style/IconButton"
-                android:layout_marginEnd="-12dp"
-                android:contentDescription="@string/action_settings"
-                android:src="@drawable/ic_settings" />
-        </LinearLayout>
-
-        <!-- Next prayer. -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_20"
-            android:background="@drawable/hero_card"
-            android:orientation="vertical"
-            android:paddingStart="@dimen/space_24"
-            android:paddingEnd="@dimen/space_24"
-            android:paddingTop="@dimen/space_20"
-            android:paddingBottom="@dimen/space_20">
-
-            <TextView
-                android:id="@+id/next_label"
-                style="@style/Text.Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/next_prayer_label"
-                android:textColor="@color/on_brand_muted" />
-
-            <TextView
-                android:id="@+id/next_name"
-                style="@style/Text.Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_12"
-                android:textColor="@color/on_brand"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/next_time"
-                style="@style/Text.Display"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_4"
-                android:textColor="@color/on_brand" />
-
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:layout_marginTop="@dimen/space_20"
-                android:max="1000"
-                android:progressDrawable="@drawable/hero_progress" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_12"
-                android:baselineAligned="true"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/current"
-                    style="@style/Text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/on_brand_muted"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/countdown"
-                    style="@style/Text.Time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_12"
-                    android:fontFamily="sans-serif-medium"
-                    android:maxLines="1"
-                    android:textColor="@color/on_brand"
-                    android:textSize="15sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            style="@style/Text.Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_4"
-            android:layout_marginTop="@dimen/space_24"
-            android:layout_marginBottom="@dimen/space_8"
-            android:text="@string/section_today" />
-
-        <!-- Rows are inflated once per day and restyled each minute. -->
-        <LinearLayout
-            android:id="@+id/rows"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/card"
-            android:orientation="vertical"
-            android:padding="6dp" />
-
-        <!-- Secondary screens, each tile previewing its answer so it is useful before it is opened. -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_12"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/open_qibla"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/card_pressable"
-                android:orientation="vertical"
-                android:padding="@dimen/space_16">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_compass" />
-
-                <TextView
-                    style="@style/Text.Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_16"
-                    android:maxLines="1"
-                    android:text="@string/qibla_title" />
-
-                <TextView
-                    android:id="@+id/qibla_summary"
-                    style="@style/Text.Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_4"
-                    android:maxLines="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/open_month"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:background="@drawable/card_pressable"
-                android:orientation="vertical"
-                android:padding="@dimen/space_16">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_calendar" />
-
-                <TextView
-                    style="@style/Text.Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_16"
-                    android:maxLines="1"
-                    android:text="@string/section_month" />
-
-                <TextView
-                    android:id="@+id/month_summary"
-                    style="@style/Text.Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_4"
-                    android:maxLines="1" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/zone_note"
-            style="@style/Text.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_20"
-            android:gravity="center" />
-    </LinearLayout>
-</ScrollView>
+    <View
+        android:id="@+id/status_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top" />
+</FrameLayout>

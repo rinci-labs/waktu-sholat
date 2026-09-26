@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
     <string name="app_name">Waktu Sholat</string>
 
     <!-- Prayers -->
@@ -17,7 +17,19 @@
     <string name="next_prayer_label">Sholat berikutnya</string>
     <string name="section_today">Hari ini</string>
     <string name="current_since">%1$s sejak %2$s</string>
-    <string name="countdown_clock">%1$s lagi</string>
+    <string name="countdown_in">%1$s lagi</string>
+    <string name="rel_hours_minutes">%1$d jam %2$d menit</string>
+    <string name="rel_hours_minutes_short">%1$d jam %2$d mnt</string>
+    <string name="rel_hours">%1$d jam</string>
+    <string name="rel_minutes">%1$d menit</string>
+    <string name="rel_minutes_short">%1$d mnt</string>
+    <string name="rel_now">kurang dari 1 menit</string>
+    <string name="period_subuh">Subuh</string>
+    <string name="period_pagi">Pagi</string>
+    <string name="period_siang">Siang</string>
+    <string name="period_sore">Sore</string>
+    <string name="period_senja">Senja</string>
+    <string name="period_malam">Malam</string>
     <string name="hijri_suffix">%1$s H</string>
     <string name="zone_note">%1$s · zona %2$s · dihitung di perangkat</string>
     <string name="qibla_tile_summary">%1$s dari Utara</string>
@@ -99,13 +111,14 @@
     <string name="widget_countdown_desc">Hitung mundur langsung menuju sholat berikutnya</string>
     <string name="widget_glance_label">Minimalis</string>
     <string name="widget_glance_desc">Teks langsung di atas wallpaper, tanpa latar</string>
-    <string name="widget_countdown_format">%s lagi</string>
+    <string name="widget_next_relative">%1$s %2$s lagi</string>
     <string name="widget_at_time">pukul %1$s</string>
     <string name="widget_city_suffix">" · %1$s"</string>
 
     <!-- Sample content for widget-picker previews only. -->
     <string name="sample_time" translatable="false">14:55</string>
-    <string name="sample_countdown" translatable="false">1:20:00 lagi</string>
+    <string name="sample_remaining" translatable="false">1 jam 20 mnt lagi</string>
+    <string name="sample_relative" translatable="false">Maghrib 1 jam 20 mnt lagi</string>
     <string name="sample_clock" translatable="false">1:20:00</string>
     <string name="sample_at_time" translatable="false">pukul 14:55</string>
     <string name="sample_city" translatable="false">Jakarta</string>

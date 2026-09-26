@@ -55,16 +55,22 @@ object Dates {
     fun monthYear(year: Int, month: Int): String = "${MONTHS[month - 1]} $year"
 }
 
-/** The live countdown shown on the next-prayer card. */
-object Countdown {
+/**
+ * Relative time until a prayer, in words: easier to read at a glance than a ticking clock. Minutes
+ * count the current one as elapsed, so the figure never promises more time than there is.
+ */
+object Relative {
 
-    /** `8:40:33`, or `40:33` under an hour: tabular, for the live 1 Hz countdown. */
-    fun clock(totalSeconds: Int): String {
-        val hours = totalSeconds / 3600
-        val minutes = totalSeconds / 60 % 60
-        val seconds = totalSeconds % 60
-        val mm = if (minutes < 10) "0$minutes" else "$minutes"
-        val ss = if (seconds < 10) "0$seconds" else "$seconds"
-        return if (hours > 0) "$hours:$mm:$ss" else "$minutes:$ss"
+    /** `7 jam 37 menit`, `2 jam`, `37 menit`, or `kurang dari 1 menit`. */
+    fun long(context: Context, minutes: Int): String = format(context, minutes, R.string.rel_hours_minutes, R.string.rel_minutes)
+
+    /** `7 jam 37 mnt`: the same, abbreviated for widgets. */
+    fun short(context: Context, minutes: Int): String = format(context, minutes, R.string.rel_hours_minutes_short, R.string.rel_minutes_short)
+
+    private fun format(context: Context, minutes: Int, both: Int, onlyMinutes: Int): String = when {
+        minutes < 1 -> context.getString(R.string.rel_now)
+        minutes < 60 -> context.getString(onlyMinutes, minutes)
+        minutes % 60 == 0 -> context.getString(R.string.rel_hours, minutes / 60)
+        else -> context.getString(both, minutes / 60, minutes % 60)
     }
 }

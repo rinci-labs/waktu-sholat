@@ -16,7 +16,10 @@
 
     <dimen name="touch_target">48dp</dimen>
     <dimen name="screen_margin">20dp</dimen>
+    <dimen name="screen_margin_negative">-20dp</dimen>
     <dimen name="row_height">52dp</dimen>
+    <!-- Room above the next-prayer card for the illustrated skyline (tallest minaret is 124dp). -->
+    <dimen name="sky_scene">136dp</dimen>
 
     <dimen name="text_display">56sp</dimen>
     <dimen name="text_headline">24sp</dimen>
@@ -31,6 +34,7 @@
     <dimen name="widget_pad_small">10dp</dimen>
     <dimen name="widget_label">10sp</dimen>
     <dimen name="widget_body">12sp</dimen>
+    <dimen name="widget_header">11sp</dimen>
     <dimen name="widget_name">14sp</dimen>
     <dimen name="widget_cell_name">10sp</dimen>
     <dimen name="widget_cell_time">14sp</dimen>

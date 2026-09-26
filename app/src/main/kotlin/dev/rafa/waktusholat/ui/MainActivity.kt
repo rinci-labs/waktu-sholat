@@ -22,9 +22,12 @@ import dev.rafa.waktusholat.data.ScheduleRepository
 /**
  * Today's schedule and the live countdown.
  *
- * Work is tiered by how often it changes: the rows are inflated once per day, restyled once per
- * minute, and the 1 Hz tick touches nothing but the countdown text. The tick runs from a [Handler]
- * only while the screen is visible, so it costs nothing after [onStop].
+ * Everything on screen changes at most once a minute (the countdown is relative, "7 jam 37 menit
+ * lagi"), so a [Handler] ticks on minute boundaries only while the screen is visible. Rows are
+ * inflated once per day and merely restyled on each tick.
+ *
+ * The sky behind the header follows the part of the day ([Period]) and runs up behind the status
+ * bar, so this screen applies the system-bar insets itself.
  */
 class MainActivity : Activity() {
 
@@ -45,12 +48,15 @@ class MainActivity : Activity() {
     private val medium = Typeface.create("sans-serif-medium", Typeface.NORMAL)
     private val regular = Typeface.create("sans-serif", Typeface.NORMAL)
 
+    private lateinit var sky: SkyView
+    private lateinit var scrim: View
+
     private val tick = object : Runnable {
         override fun run() {
             val now = System.currentTimeMillis()
             render(repository.snapshot(now))
-            // Align to the top of the next second so the digits never appear to stall.
-            handler.postDelayed(this, 1000L - now % 1000L)
+            // Just past the next minute boundary, which is when the text next changes.
+            handler.postDelayed(this, MINUTE - now % MINUTE + 50L)
         }
     }
 
@@ -63,6 +69,9 @@ class MainActivity : Activity() {
         preferences = app.preferences
 
         rows = findViewById(R.id.rows)
+        sky = findViewById(R.id.sky)
+        scrim = findViewById(R.id.status_scrim)
+        applyInsets()
         countdown = findViewById(R.id.countdown)
         progress = findViewById(R.id.progress)
 
@@ -98,8 +107,43 @@ class MainActivity : Activity() {
             renderedMinute = snapshot.minuteOfDay
             renderMinute(snapshot)
         }
-        val seconds = ((snapshot.nextAtMillis - snapshot.nowMillis + 999) / 1000).toInt().coerceAtLeast(0)
-        countdown.text = getString(R.string.countdown_clock, Countdown.clock(seconds))
+    }
+
+    /**
+     * Pads the content below the status bar and above the navigation bar, sizes the status-bar scrim,
+     * and lets the sky start at the very top. The sky then extends to just below the next-prayer card.
+     */
+    private fun applyInsets() {
+        val content = findViewById<View>(R.id.content)
+        val hero = findViewById<View>(R.id.hero)
+        val sheet = findViewById<View>(R.id.sheet)
+        val baseTop = content.paddingTop
+        val baseBottom = sheet.paddingBottom
+        @Suppress("DEPRECATION")
+        findViewById<View>(R.id.root).setOnApplyWindowInsetsListener { _, insets ->
+            content.setPadding(content.paddingLeft, baseTop + insets.systemWindowInsetTop, content.paddingRight, content.paddingBottom)
+            sheet.setPadding(sheet.paddingLeft, sheet.paddingTop, sheet.paddingRight, baseBottom + insets.systemWindowInsetBottom)
+            scrim.layoutParams = scrim.layoutParams.apply { height = insets.systemWindowInsetTop }
+            insets
+        }
+        // The scrim only matters once content scrolls under the status bar; at rest the sky itself
+        // shows there, so fade the scrim in over the first status-bar height of scrolling.
+        scrim.alpha = 0f
+        findViewById<View>(R.id.scroll).setOnScrollChangeListener { _, _, y, _, _ ->
+            scrim.alpha = if (scrim.height == 0) 0f else (y.toFloat() / scrim.height).coerceIn(0f, 1f)
+        }
+        // The skyline stands on the card's top edge; the ground runs on behind the card and ends
+        // under the sheet's rounded corners.
+        hero.addOnLayoutChangeListener { _, _, top, _, _, _, _, _, _ ->
+            sky.horizon = top + resources.displayMetrics.density
+        }
+        sheet.addOnLayoutChangeListener { _, _, top, _, _, _, _, _, _ ->
+            val height = top + (SHEET_OVERLAP_DP * resources.displayMetrics.density).toInt()
+            if (sky.layoutParams.height != height) sky.layoutParams = sky.layoutParams.apply { this.height = height }
+        }
+        // White status-bar icons over the sky, whatever the theme.
+        @Suppress("DEPRECATION")
+        window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
     }
 
     /** Everything that is fixed for a day: header, tiles, and the row skeleton. */
@@ -137,6 +181,11 @@ class MainActivity : Activity() {
 
     /** Minute-level state: the next-prayer card and which row is active or past. */
     private fun renderMinute(snapshot: ScheduleRepository.Snapshot) {
+        val period = Period.of(snapshot)
+        sky.show(period, Celestial.of(snapshot))
+        scrim.setBackgroundColor(period.top)
+        findViewById<TextView>(R.id.period).setText(period.label)
+        countdown.text = getString(R.string.countdown_in, Relative.long(this, snapshot.minutesRemaining))
         findViewById<TextView>(R.id.next_name).text = PrayerLabels.of(this, snapshot.next)
         findViewById<TextView>(R.id.next_time).text = PrayerTimes.format(snapshot.nextMinute)
         findViewById<TextView>(R.id.current).text = getString(
@@ -148,7 +197,7 @@ class MainActivity : Activity() {
 
         val brand = getColor(R.color.brand)
         val primary = getColor(R.color.text_primary)
-        val muted = getColor(R.color.text_tertiary)
+        val muted = getColor(R.color.text_secondary)
         // Before Fajr the active window is last night's Isha, which is not on today's list.
         val active = if (snapshot.hasPassed(Prayer.FAJR)) snapshot.current else null
         for (row in rowViews) {
@@ -166,6 +215,13 @@ class MainActivity : Activity() {
             row.dot.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
             if (isActive) row.root.setBackgroundResource(R.drawable.row_active) else row.root.background = null
         }
+    }
+
+    private companion object {
+        const val MINUTE = 60_000L
+
+        /** How far the sky runs under the sheet, enough to fill behind its rounded corners. */
+        const val SHEET_OVERLAP_DP = 40
     }
 
     private class RowViews(val prayer: Prayer, val root: View) {

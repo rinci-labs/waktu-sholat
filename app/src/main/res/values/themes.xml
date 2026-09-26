@@ -85,7 +85,7 @@
 
     <!-- Small uppercase label above a group. -->
     <style name="Text.Label">
-        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:textColor">@color/text_secondary</item>
         <item name="android:textSize">@dimen/text_label</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">0.08</item>

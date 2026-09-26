@@ -9,11 +9,6 @@
 <resources>
     <color name="brand">#0E6B4E</color>
     <color name="brand_night">#7DD8AE</color>
-    <!-- Text and icons drawn on top of `brand`. -->
-    <color name="on_brand">#FFFFFF</color>
-    <color name="on_brand_night">#05281B</color>
-    <color name="on_brand_muted">#C9E4D8</color>
-    <color name="on_brand_muted_night">#1F4B38</color>
     <!-- Faint wash behind the active prayer row. -->
     <color name="brand_soft">#E2EFE8</color>
     <color name="brand_soft_night">#18342A</color>
@@ -31,8 +26,8 @@
     <color name="text_primary_night">#EDEFEB</color>
     <color name="text_secondary">#5B605C</color>
     <color name="text_secondary_night">#A6ABA7</color>
-    <color name="text_tertiary">#8A8F8A</color>
-    <color name="text_tertiary_night">#737974</color>
+    <color name="text_tertiary">#6F746F</color>
+    <color name="text_tertiary_night">#8D938E</color>
 
     <!--
       Widgets have their own names so API 31+ can swap them for the wallpaper-derived system palette
@@ -52,6 +47,13 @@
     <color name="widget_on_accent_night">#05281B</color>
     <color name="widget_on_accent_muted">#C9E4D8</color>
     <color name="widget_on_accent_muted_night">#1F4B38</color>
+
+    <!-- On the time-of-day sky (fixed: every sky is deep enough for white text). -->
+    <color name="on_sky">#FFFFFFFF</color>
+    <color name="on_sky_muted">#E0FFFFFF</color>
+    <color name="sky_glass">#26FFFFFF</color>
+    <color name="sky_glass_stroke">#33FFFFFF</color>
+    <color name="sky_track">#40FFFFFF</color>
 
     <!-- Glance widget: always light-on-wallpaper, with a shadow for legibility. -->
     <color name="glance_text">#FFFFFFFF</color>
