@@ -48,6 +48,12 @@
     <color name="widget_on_accent_muted">#C9E4D8</color>
     <color name="widget_on_accent_muted_night">#1F4B38</color>
 
+    <!-- Warnings (e.g. magnetic interference on the Qibla screen). -->
+    <color name="warning_bg">#FFF4E0</color>
+    <color name="warning_bg_night">#3A2A10</color>
+    <color name="warning_text">#8A4B00</color>
+    <color name="warning_text_night">#FFCB7A</color>
+
     <!-- On the time-of-day sky (fixed: every sky is deep enough for white text). -->
     <color name="on_sky">#FFFFFFFF</color>
     <color name="on_sky_muted">#E0FFFFFF</color>

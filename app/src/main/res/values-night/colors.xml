@@ -20,4 +20,7 @@
     <color name="widget_accent_soft">@color/widget_accent_soft_night</color>
     <color name="widget_on_accent">@color/widget_on_accent_night</color>
     <color name="widget_on_accent_muted">@color/widget_on_accent_muted_night</color>
+
+    <color name="warning_bg">@color/warning_bg_night</color>
+    <color name="warning_text">@color/warning_text_night</color>
 </resources>

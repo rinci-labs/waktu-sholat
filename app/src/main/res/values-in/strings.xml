@@ -60,6 +60,14 @@
     <string name="qibla_accuracy_low">Akurasi sensor rendah — gerakkan perangkat membentuk angka 8</string>
     <string name="qibla_accuracy_unreliable">Sensor belum terkalibrasi — gerakkan perangkat membentuk angka 8</string>
 
+    <string name="qibla_calibrate_title">Kalibrasi kompas</string>
+    <string name="qibla_calibrate_body">Pegang HP lalu gerakkan membentuk angka 8 beberapa kali sambil dimiringkan. Kompas muncul setelah akurat.</string>
+    <string name="qibla_calibrate_skip">Lewati</string>
+    <string name="qibla_recalibrate">Kalibrasi ulang</string>
+    <string name="qibla_interference">Ada gangguan magnet di dekat HP. Jauhkan dari logam, magnet, speaker, atau laptop.</string>
+    <string name="qibla_hold_flat">Pegang HP mendatar, layar menghadap ke atas.</string>
+    <string name="qibla_declination">Utara sebenarnya · deklinasi magnetik %1$s dikoreksi</string>
+
     <!-- Location -->
     <string name="city_title">Pilih lokasi</string>
     <string name="city_search_hint">Cari kota atau provinsi</string>
@@ -98,6 +106,8 @@
     <string name="settings_exact_alarm_summary">Tanpa izin ini notifikasi bisa terlambat beberapa menit</string>
     <string name="settings_show_imsak">Tampilkan imsak</string>
     <string name="settings_icon">Ikon aplikasi</string>
+    <string name="icon_auto">Otomatis</string>
+    <string name="icon_auto_long">Otomatis · ikut waktu</string>
     <string name="icon_default">Hijau</string>
     <string name="settings_about_text">Waktu Sholat %1$s\nDihitung di perangkat · tanpa iklan</string>
 

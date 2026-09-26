@@ -60,6 +60,14 @@
     <string name="qibla_accuracy_low">Sensor accuracy low — move the phone in a figure 8</string>
     <string name="qibla_accuracy_unreliable">Sensor not calibrated — move the phone in a figure 8</string>
 
+    <string name="qibla_calibrate_title">Calibrate the compass</string>
+    <string name="qibla_calibrate_body">Hold the phone and move it in a figure 8 a few times, tilting it as you go. The compass appears once it is accurate.</string>
+    <string name="qibla_calibrate_skip">Skip</string>
+    <string name="qibla_recalibrate">Calibrate again</string>
+    <string name="qibla_interference">Magnetic interference nearby. Move away from metal, magnets, speakers or a laptop.</string>
+    <string name="qibla_hold_flat">Hold the phone flat, screen facing up.</string>
+    <string name="qibla_declination">True North · magnetic declination %1$s corrected</string>
+
     <!-- Location -->
     <string name="city_title">Choose location</string>
     <string name="city_search_hint">Search city or province</string>
@@ -98,6 +106,8 @@
     <string name="settings_exact_alarm_summary">Without it, notifications can be a few minutes late</string>
     <string name="settings_show_imsak">Show Imsak</string>
     <string name="settings_icon">App icon</string>
+    <string name="icon_auto">Automatic</string>
+    <string name="icon_auto_long">Automatic · follows the time of day</string>
     <string name="icon_default">Green</string>
     <string name="settings_about_text">Waktu Sholat %1$s\nCalculated on device · no ads</string>
 
