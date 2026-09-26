@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Test, lint and build
+    # Blacksmith runner by default. Set the repository variable CI_RUNNER (e.g. ubuntu-latest) to
+    # fall back to GitHub-hosted runners where Blacksmith is not installed.
+    runs-on: ${{ vars.CI_RUNNER || 'blacksmith-4vcpu-ubuntu-2404' }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      # setup-java's Gradle cache is served from Blacksmith's colocated cache on Blacksmith runners.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+          log-accepted-android-sdk-licenses: false
+
+      - name: Test, lint and assemble
+        run: ./gradlew --no-daemon --stacktrace :core:test :app:lintDebug :app:assembleRelease
+
+      - name: APK size
+        run: |
+          ls -l app/build/outputs/apk/release/*.apk
+          echo "### Release APK: $(stat -c%s app/build/outputs/apk/release/app-release.apk) bytes" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release-unsigned-or-debug-signed
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 7
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: reports
+          path: |
+            app/build/reports/
+            core/build/reports/
+          retention-days: 7
