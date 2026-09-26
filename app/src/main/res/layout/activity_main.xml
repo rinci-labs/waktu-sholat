@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Today's schedule.
-
-  Layout follows the platform's own list-screen conventions: a header row, one prominent "next" block,
-  then a single grouped card holding the day's times, then secondary actions. Only the next prayer and
-  the active row carry the accent colour, so the eye has one place to land.
-
-  The whole content is inset from the system bars and drawn on a scrolling surface, per the
-  edge-to-edge guidance for Android 15+.
+  Today. Reading order: where and when (header), what is next (accent card), the whole day (list),
+  then the two secondary screens as tiles. Only the accent card and the active row use the brand
+  colour, so a glance lands on the next prayer first.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:clipToPadding="false"
     android:fillViewport="true"
     android:fitsSystemWindows="true"
+    android:overScrollMode="never"
     android:scrollbars="none">
 
     <LinearLayout
@@ -27,12 +22,12 @@
         android:paddingTop="@dimen/space_16"
         android:paddingBottom="@dimen/space_32">
 
-        <!-- Header: location and date on the left, settings affordance on the right. -->
+        <!-- Header: date, city (tap to change) and Hijri date; settings on the right. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:gravity="center_vertical"
+            android:gravity="top"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -42,183 +37,236 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/city"
-                    style="@style/Text.Headline"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1" />
-
-                <TextView
-                    android:id="@+id/hijri"
+                    android:id="@+id/date"
                     style="@style/Text.Body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_2"
-                    android:textSize="13sp" />
-            </LinearLayout>
+                    android:layout_marginTop="@dimen/space_4"
+                    android:maxLines="1" />
 
-            <ImageButton
-                android:id="@+id/refresh"
-                style="@style/IconButton"
-                android:layout_marginStart="@dimen/space_8"
-                android:contentDescription="@string/action_refresh"
-                android:src="@drawable/ic_refresh" />
+                <LinearLayout
+                    android:id="@+id/city_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-6dp"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@string/action_change_city"
+                    android:gravity="center_vertical"
+                    android:minHeight="40dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="4dp">
+
+                    <TextView
+                        android:id="@+id/city"
+                        style="@style/Text.Headline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_4"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_expand" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/hijri"
+                    style="@style/Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_2"
+                    android:maxLines="1" />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/settings"
                 style="@style/IconButton"
+                android:layout_marginEnd="-12dp"
                 android:contentDescription="@string/action_settings"
                 android:src="@drawable/ic_settings" />
         </LinearLayout>
 
-        <!-- Next prayer: the one block that uses the accent colour and the display size. -->
+        <!-- Next prayer. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_24"
-            android:background="@drawable/card"
+            android:layout_marginTop="@dimen/space_20"
+            android:background="@drawable/hero_card"
             android:orientation="vertical"
-            android:padding="@dimen/space_20">
+            android:paddingStart="@dimen/space_24"
+            android:paddingEnd="@dimen/space_24"
+            android:paddingTop="@dimen/space_20"
+            android:paddingBottom="@dimen/space_20">
 
             <TextView
                 android:id="@+id/next_label"
-                style="@style/Text.Section"
+                style="@style/Text.Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/next_prayer_label" />
+                android:text="@string/next_prayer_label"
+                android:textColor="@color/on_brand_muted" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/next_name"
+                style="@style/Text.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:textColor="@color/on_brand"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/next_time"
+                style="@style/Text.Display"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_4"
-                android:baselineAligned="true"
-                android:orientation="horizontal">
+                android:textColor="@color/on_brand" />
 
-                <TextView
-                    android:id="@+id/next_name"
-                    style="@style/Text.Headline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/next_time"
-                    style="@style/Text.Display"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:textColor="@color/brand" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/countdown"
-                style="@style/Text.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_4" />
-
-            <!-- Thin progress line showing how far into the current interval we are. -->
             <ProgressBar
                 android:id="@+id/progress"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_marginTop="@dimen/space_16"
+                android:layout_height="4dp"
+                android:layout_marginTop="@dimen/space_20"
                 android:max="1000"
-                android:progressBackgroundTint="@color/surface_alt"
-                android:progressTint="@color/brand" />
+                android:progressDrawable="@drawable/hero_progress" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_12"
+                android:baselineAligned="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/current"
+                    style="@style/Text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/on_brand_muted"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/countdown"
+                    style="@style/Text.Time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_12"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:textColor="@color/on_brand"
+                    android:textSize="15sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
-            style="@style/Text.Section"
+            style="@style/Text.Label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_4"
             android:layout_marginTop="@dimen/space_24"
             android:layout_marginBottom="@dimen/space_8"
             android:text="@string/section_today" />
 
-        <!-- One card holds every time, so the list reads as a single group. -->
+        <!-- Rows are inflated once per day and restyled each minute. -->
         <LinearLayout
             android:id="@+id/rows"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/card"
             android:orientation="vertical"
-            android:paddingTop="@dimen/space_4"
-            android:paddingBottom="@dimen/space_4" />
+            android:padding="6dp" />
 
-        <TextView
-            style="@style/Text.Section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_24"
-            android:layout_marginBottom="@dimen/space_8"
-            android:text="@string/section_qibla" />
-
-        <!-- Qibla entry point: shows the two numbers so the card is useful before it is opened. -->
+        <!-- Secondary screens, each tile previewing its answer so it is useful before it is opened. -->
         <LinearLayout
-            android:id="@+id/open_qibla"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/card"
+            android:layout_marginTop="@dimen/space_12"
             android:baselineAligned="false"
-            android:gravity="center_vertical"
-            android:minHeight="@dimen/touch_target"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/space_16"
-            android:paddingEnd="@dimen/space_16"
-            android:paddingTop="@dimen/space_12"
-            android:paddingBottom="@dimen/space_12">
+            android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/open_qibla"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:background="@drawable/card_pressable"
+                android:orientation="vertical"
+                android:padding="@dimen/space_16">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_compass" />
 
                 <TextView
-                    style="@style/Text.Body"
+                    style="@style/Text.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/action_qibla"
-                    android:textColor="@color/text_primary" />
+                    android:layout_marginTop="@dimen/space_16"
+                    android:maxLines="1"
+                    android:text="@string/qibla_title" />
 
                 <TextView
                     android:id="@+id/qibla_summary"
                     style="@style/Text.Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/space_2" />
+                    android:layout_marginTop="@dimen/space_4"
+                    android:maxLines="1" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/qibla_bearing"
-                style="@style/Text.Headline"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/open_month"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_8"
-                android:textColor="@color/brand" />
-        </LinearLayout>
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/card_pressable"
+                android:orientation="vertical"
+                android:padding="@dimen/space_16">
 
-        <TextView
-            android:id="@+id/open_month"
-            style="@style/Text.Body"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/touch_target"
-            android:layout_marginTop="@dimen/space_8"
-            android:background="@drawable/card"
-            android:gravity="center_vertical"
-            android:paddingStart="@dimen/space_16"
-            android:paddingEnd="@dimen/space_16"
-            android:text="@string/action_open_month"
-            android:textColor="@color/text_primary" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_calendar" />
+
+                <TextView
+                    style="@style/Text.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_16"
+                    android:maxLines="1"
+                    android:text="@string/section_month" />
+
+                <TextView
+                    android:id="@+id/month_summary"
+                    style="@style/Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:maxLines="1" />
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/zone_note"
             style="@style/Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_16" />
+            android:layout_marginTop="@dimen/space_20"
+            android:gravity="center" />
     </LinearLayout>
 </ScrollView>

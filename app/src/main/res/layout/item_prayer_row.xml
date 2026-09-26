@@ -1,47 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  List row: primary text with an optional subtitle on the left, trailing value right-aligned.
-
-  The time is a direct child of the horizontal row, so it is always flush against the right edge. The
-  note must not be a weighted sibling of the time: a `GONE` weighted view takes no space, which left
-  the time sitting immediately after the name and gave every row a different column position.
+  One entry of the day: status dot, name with an optional note, time flush right. The time is a
+  direct child of the row so every time sits in the same column whether or not a note is shown.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:gravity="center_vertical"
-    android:minHeight="@dimen/touch_target"
+    android:minHeight="@dimen/row_height"
     android:orientation="horizontal"
-    android:paddingStart="@dimen/space_16"
+    android:paddingStart="@dimen/space_12"
     android:paddingEnd="@dimen/space_16"
     android:paddingTop="@dimen/space_8"
     android:paddingBottom="@dimen/space_8">
 
+    <ImageView
+        android:id="@+id/row_dot"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/dot"
+        android:visibility="invisible" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_12"
         android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/row_name"
-            style="@style/Text.Body"
+            style="@style/Text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textColor="@color/text_primary" />
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/row_note"
             style="@style/Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_2"
+            android:layout_marginTop="@dimen/space_4"
             android:ellipsize="end"
-            android:includeFontPadding="false"
             android:maxLines="1"
             android:visibility="gone" />
     </LinearLayout>
@@ -53,7 +56,5 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_12"
         android:gravity="end"
-        android:includeFontPadding="false"
-        android:minWidth="56dp"
         android:maxLines="1" />
 </LinearLayout>

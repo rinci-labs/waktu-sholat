@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  A settings row: title, optional summary beneath, and an optional current value on the right with a
-  chevron. This is the standard platform list-item shape, so a settings screen reads as a list of
-  rows rather than a wall of radio buttons.
--->
+<!-- Settings row: title, optional summary, and a trailing value/chevron or a switch added from code. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:baselineAligned="false"
     android:gravity="center_vertical"
-    android:minHeight="@dimen/touch_target"
+    android:minHeight="56dp"
     android:orientation="horizontal"
     android:paddingStart="@dimen/space_16"
     android:paddingEnd="@dimen/space_16"
@@ -25,20 +21,17 @@
 
         <TextView
             android:id="@+id/setting_title"
-            style="@style/Text.Body"
+            style="@style/Text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:textColor="@color/text_primary" />
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/setting_summary"
             style="@style/Text.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_2"
-            android:includeFontPadding="false"
+            android:layout_marginTop="@dimen/space_4"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -48,8 +41,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/space_12"
-        android:includeFontPadding="false"
+        android:ellipsize="end"
+        android:gravity="end"
         android:maxLines="1"
-        android:textColor="@color/text_secondary"
+        android:maxWidth="160dp"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/setting_chevron"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_4"
+        android:layout_marginEnd="-6dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_chevron_right"
         android:visibility="gone" />
 </LinearLayout>

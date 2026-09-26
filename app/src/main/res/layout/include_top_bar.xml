@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shared top bar for secondary screens: back, title, and an optional trailing slot. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/top_bar"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_4"
+    android:paddingEnd="@dimen/space_4">
+
+    <ImageButton
+        android:id="@+id/back"
+        style="@style/IconButton"
+        android:contentDescription="@string/action_back"
+        android:src="@drawable/ic_chevron_left" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/Text.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_4"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1" />
+</LinearLayout>

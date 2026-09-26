@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -14,64 +13,43 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.WaktuSholatApp
-import dev.rafa.waktusholat.core.LocalClock
 import dev.rafa.waktusholat.core.Prayer
 import dev.rafa.waktusholat.core.PrayerTimes
 import dev.rafa.waktusholat.core.Qibla
+import dev.rafa.waktusholat.data.Preferences
 import dev.rafa.waktusholat.data.ScheduleRepository
-import dev.rafa.waktusholat.widget.PrayerWidgetProvider
 
 /**
  * Today's schedule and the live countdown.
  *
- * The countdown ticks once a second from a [Handler] rather than a wall-clock broadcast: it stays
- * smooth while the screen is visible and costs nothing after [onStop]. Rows are rebuilt only when
- * the minute changes, and the per-second tick touches nothing but the countdown text.
- *
- * Colours are read from the active theme with [themeColor] rather than from `R.color`, so a device
- * theme change needs no code path here and the list stays legible in both palettes.
+ * Work is tiered by how often it changes: the rows are inflated once per day, restyled once per
+ * minute, and the 1 Hz tick touches nothing but the countdown text. The tick runs from a [Handler]
+ * only while the screen is visible, so it costs nothing after [onStop].
  */
 class MainActivity : Activity() {
 
     private lateinit var repository: ScheduleRepository
+    private lateinit var preferences: Preferences
     private lateinit var rows: LinearLayout
-    private lateinit var cityLabel: TextView
-    private lateinit var hijriLabel: TextView
-    private lateinit var nextName: TextView
-    private lateinit var nextTime: TextView
     private lateinit var countdown: TextView
     private lateinit var progress: ProgressBar
-    private lateinit var zoneNote: TextView
 
     private val handler = Handler(Looper.getMainLooper())
+    private val rowViews = ArrayList<RowViews>(Prayer.DAILY.size)
 
-    /** Today's schedule, cached so the 1 Hz tick never recalculates. */
-    private var times: PrayerTimes = PrayerTimes.EMPTY
+    /** Identity of what the rows currently show; a change means re-inflating them. */
+    private var renderedDay: ScheduleRepository.Day? = null
+    private var renderedImsak = false
+    private var renderedMinute = -1
 
-    /** Fajr of the following day, needed once Isha has begun. */
-    private var tomorrowFajr: Int = 0
-
-    private var renderedDay: Int = Int.MIN_VALUE
-    private var renderedMinute: Int = Int.MIN_VALUE
+    private val medium = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+    private val regular = Typeface.create("sans-serif", Typeface.NORMAL)
 
     private val tick = object : Runnable {
         override fun run() {
             val now = System.currentTimeMillis()
-            val zone = repository.city.timeZoneHours
-            val day = LocalClock.dateAt(now, zone).epochDay
-            val minute = LocalClock.minuteOfDay(now, zone)
-
-            if (day != renderedDay) {
-                renderedDay = day
-                renderedMinute = minute
-                renderDay(now)
-            } else if (minute != renderedMinute) {
-                renderedMinute = minute
-                buildRows(minute)
-            }
-            bindCountdown(now, minute)
-
-            // Align the next tick to the top of the second so the digits never appear to stall.
+            render(repository.snapshot(now))
+            // Align to the top of the next second so the digits never appear to stall.
             handler.postDelayed(this, 1000L - now % 1000L)
         }
     }
@@ -80,38 +58,24 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        repository = (application as WaktuSholatApp).repository
+        val app = application as WaktuSholatApp
+        repository = app.repository
+        preferences = app.preferences
 
         rows = findViewById(R.id.rows)
-        cityLabel = findViewById(R.id.city)
-        hijriLabel = findViewById(R.id.hijri)
-        nextName = findViewById(R.id.next_name)
-        nextTime = findViewById(R.id.next_time)
         countdown = findViewById(R.id.countdown)
         progress = findViewById(R.id.progress)
-        zoneNote = findViewById(R.id.zone_note)
 
-        findViewById<View>(R.id.settings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
-        }
-        findViewById<View>(R.id.open_month).setOnClickListener {
-            startActivity(Intent(this, MonthActivity::class.java))
-        }
-        findViewById<View>(R.id.open_qibla).setOnClickListener {
-            startActivity(Intent(this, QiblaActivity::class.java))
-        }
-        findViewById<View>(R.id.refresh).setOnClickListener {
-            renderedDay = Int.MIN_VALUE
-            renderedMinute = Int.MIN_VALUE
-            tick.run()
-            PrayerWidgetProvider.requestRefresh(this)
-        }
+        findViewById<View>(R.id.settings).setOnClickListener { open(SettingsActivity::class.java) }
+        findViewById<View>(R.id.city_button).setOnClickListener { open(CityPickerActivity::class.java) }
+        findViewById<View>(R.id.open_month).setOnClickListener { open(MonthActivity::class.java) }
+        findViewById<View>(R.id.open_qibla).setOnClickListener { open(QiblaActivity::class.java) }
     }
 
     override fun onStart() {
         super.onStart()
-        renderedDay = Int.MIN_VALUE
-        renderedMinute = Int.MIN_VALUE
+        // Settings may have changed while stopped; force a full re-render.
+        renderedDay = null
         handler.post(tick)
     }
 
@@ -120,109 +84,94 @@ class MainActivity : Activity() {
         handler.removeCallbacks(tick)
     }
 
-    /** Rebuild everything for the current day. Runs on day change and on first start. */
-    private fun renderDay(now: Long) {
-        val city = repository.city
-        cityLabel.text = city.name
-        hijriLabel.text = repository.day(now).hijri?.toString().orEmpty()
-        zoneNote.text = getString(R.string.zone_note, city.label, city.zoneLabel)
+    private fun open(target: Class<out Activity>) = startActivity(Intent(this, target))
 
+    private fun render(snapshot: ScheduleRepository.Snapshot) {
+        val showImsak = preferences.showImsak
+        if (snapshot.day !== renderedDay || showImsak != renderedImsak) {
+            renderedDay = snapshot.day
+            renderedImsak = showImsak
+            renderedMinute = -1
+            renderDay(snapshot.day, showImsak)
+        }
+        if (snapshot.minuteOfDay != renderedMinute) {
+            renderedMinute = snapshot.minuteOfDay
+            renderMinute(snapshot)
+        }
+        val seconds = ((snapshot.nextAtMillis - snapshot.nowMillis + 999) / 1000).toInt().coerceAtLeast(0)
+        countdown.text = getString(R.string.countdown_clock, Countdown.clock(seconds))
+    }
+
+    /** Everything that is fixed for a day: header, tiles, and the row skeleton. */
+    private fun renderDay(day: ScheduleRepository.Day, showImsak: Boolean) {
+        val city = day.city
+        findViewById<TextView>(R.id.city).text = city.name
+        findViewById<TextView>(R.id.date).text = Dates.long(day.date)
+        findViewById<TextView>(R.id.hijri).text = day.hijri?.let { getString(R.string.hijri_suffix, it.toString()) }.orEmpty()
+        findViewById<TextView>(R.id.zone_note).text = getString(R.string.zone_note, city.label, city.zoneLabel)
+        findViewById<TextView>(R.id.month_summary).text = Dates.monthYear(day.date.year, day.date.month)
         val qibla = Qibla.of(city.latitude, city.longitude)
-        findViewById<TextView>(R.id.qibla_bearing).text = qibla.bearingText
-        findViewById<TextView>(R.id.qibla_summary).text =
-            getString(R.string.qibla_summary, qibla.bearingText, qibla.distanceText)
+        findViewById<TextView>(R.id.qibla_summary).text = getString(R.string.qibla_tile_summary, qibla.bearingText)
 
-        val date = repository.today(now)
-        times = repository.timesFor(city, date)
-        tomorrowFajr = repository.timesFor(city, date.plusDays(1))[Prayer.FAJR]
-        buildRows(LocalClock.minuteOfDay(now, city.timeZoneHours))
-    }
-
-    /**
-     * Rebuilds the daily list. The row in effect is marked with the accent colour and a soft tinted
-     * background, which is the same treatment the widget uses, so the two surfaces read alike.
-     */
-    private fun buildRows(minuteOfDay: Int) {
         rows.removeAllViews()
-        val showImsak = (application as WaktuSholatApp).preferences.showImsak
-        val current = times.currentAt(minuteOfDay)
+        rowViews.clear()
         val inflater = LayoutInflater.from(this)
-        val accent = themeColor(android.R.attr.colorAccent)
-        val primary = themeColor(android.R.attr.textColorPrimary)
-        val secondary = themeColor(android.R.attr.textColorSecondary)
-        val medium = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        val regular = Typeface.create("sans-serif", Typeface.NORMAL)
-
-        for (prayer in PrayerLabels.visible(Prayer.DAILY, showImsak)) {
-            val row = inflater.inflate(R.layout.item_prayer_row, rows, false)
-            val name = row.findViewById<TextView>(R.id.row_name)
-            val time = row.findViewById<TextView>(R.id.row_time)
-            val note = row.findViewById<TextView>(R.id.row_note)
-
-            val active = prayer == current
-            name.text = PrayerLabels.of(this, prayer)
-            time.text = PrayerTimes.format(times[prayer])
-            if (active) {
-                name.setTextColor(accent)
-                time.setTextColor(accent)
-                name.typeface = medium
-                time.typeface = medium
-                row.setBackgroundResource(R.drawable.row_active)
-            } else {
-                name.setTextColor(if (prayer == Prayer.IMSAK) secondary else primary)
-                time.setTextColor(if (prayer == Prayer.IMSAK) secondary else primary)
-                name.typeface = regular
-                time.typeface = regular
+        for (prayer in PrayerLabels.visible(showImsak)) {
+            val view = inflater.inflate(R.layout.item_prayer_row, rows, false)
+            val row = RowViews(prayer, view)
+            row.name.text = PrayerLabels.of(this, prayer)
+            row.time.text = PrayerTimes.format(day.times[prayer])
+            val note = when (prayer) {
+                Prayer.IMSAK -> getString(R.string.note_imsak)
+                Prayer.SUNRISE -> getString(R.string.note_sunrise)
+                else -> null
             }
-
-            val hint = hintFor(prayer)
-            note.text = hint
-            note.visibility = if (hint.isEmpty()) View.GONE else View.VISIBLE
-
-            rows.addView(row)
+            if (note != null) {
+                row.note.text = note
+                row.note.visibility = View.VISIBLE
+            }
+            rowViews += row
+            rows.addView(view)
         }
     }
 
-    /** The countdown and progress bar; the only work the per-second tick does. */
-    private fun bindCountdown(now: Long, minuteOfDay: Int) {
-        val next = times.nextFrom(minuteOfDay)
-        val target = next ?: Prayer.FAJR
-        val targetMinute = if (next != null) times[next] else tomorrowFajr
-        val remaining = if (next != null) targetMinute - minuteOfDay else 1440 - minuteOfDay + targetMinute
-        val current = times.currentAt(minuteOfDay)
-        val from = if (current != null) times[current] else times[Prayer.ISHA] - 1440
+    /** Minute-level state: the next-prayer card and which row is active or past. */
+    private fun renderMinute(snapshot: ScheduleRepository.Snapshot) {
+        findViewById<TextView>(R.id.next_name).text = PrayerLabels.of(this, snapshot.next)
+        findViewById<TextView>(R.id.next_time).text = PrayerTimes.format(snapshot.nextMinute)
+        findViewById<TextView>(R.id.current).text = getString(
+            R.string.current_since,
+            PrayerLabels.of(this, snapshot.current),
+            PrayerTimes.format(snapshot.times[snapshot.current]),
+        )
+        progress.progress = (snapshot.progress * 1000).toInt()
 
-        nextName.text = PrayerLabels.of(this, target)
-        nextTime.text = PrayerTimes.format(targetMinute)
-
-        val seconds = ((now / 1000L) % 60L).toInt()
-        val hours = remaining / 60
-        val minutes = remaining % 60
-        countdown.text = if (hours > 0) {
-            getString(R.string.countdown_hours, hours, minutes, seconds)
-        } else {
-            getString(R.string.countdown_minutes, minutes, seconds)
-        }
-
-        val span = targetMinute - from
-        progress.progress = if (span <= 0) {
-            1000
-        } else {
-            (((span - remaining).toFloat() / span) * 1000f).toInt().coerceIn(0, 1000)
+        val brand = getColor(R.color.brand)
+        val primary = getColor(R.color.text_primary)
+        val muted = getColor(R.color.text_tertiary)
+        // Before Fajr the active window is last night's Isha, which is not on today's list.
+        val active = if (snapshot.hasPassed(Prayer.FAJR)) snapshot.current else null
+        for (row in rowViews) {
+            val isActive = row.prayer == active
+            val passed = !isActive && snapshot.hasPassed(row.prayer)
+            val color = when {
+                isActive -> brand
+                passed -> muted
+                else -> primary
+            }
+            row.name.setTextColor(color)
+            row.time.setTextColor(color)
+            row.name.typeface = if (isActive) medium else regular
+            row.time.typeface = if (isActive) medium else regular
+            row.dot.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
+            if (isActive) row.root.setBackgroundResource(R.drawable.row_active) else row.root.background = null
         }
     }
 
-    /** Sunrise and Imsak are not prayers, so they carry a clarifying note. */
-    private fun hintFor(prayer: Prayer): String = when (prayer) {
-        Prayer.IMSAK -> getString(R.string.note_imsak)
-        Prayer.SUNRISE -> getString(R.string.note_sunrise)
-        else -> ""
-    }
-
-    /** Resolves an attribute of the active theme, so both palettes come from one code path. */
-    private fun themeColor(attribute: Int): Int {
-        val value = TypedValue()
-        theme.resolveAttribute(attribute, value, true)
-        return if (value.resourceId != 0) getColor(value.resourceId) else value.data
+    private class RowViews(val prayer: Prayer, val root: View) {
+        val name: TextView = root.findViewById(R.id.row_name)
+        val time: TextView = root.findViewById(R.id.row_time)
+        val note: TextView = root.findViewById(R.id.row_note)
+        val dot: View = root.findViewById(R.id.row_dot)
     }
 }

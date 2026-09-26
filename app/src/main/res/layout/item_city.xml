@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Two-line list row: city on top, province and zone beneath. -->
+<!-- Two-line row: city on top, province and zone beneath; a check marks the current choice. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:minHeight="@dimen/touch_target"
-    android:orientation="vertical"
     android:gravity="center_vertical"
+    android:minHeight="60dp"
+    android:orientation="horizontal"
     android:paddingStart="@dimen/screen_margin"
-    android:paddingEnd="@dimen/screen_margin"
-    android:paddingTop="@dimen/space_8"
-    android:paddingBottom="@dimen/space_8">
+    android:paddingEnd="@dimen/screen_margin">
 
-    <TextView
-        android:id="@+id/city_name"
-        style="@style/Text.Body"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:includeFontPadding="false"
-        android:maxLines="1"
-        android:textColor="@color/text_primary" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/city_detail"
-        style="@style/Text.Caption"
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/city_name"
+            style="@style/Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/city_detail"
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_4"
+            android:ellipsize="end"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/city_selected"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_2"
-        android:ellipsize="end"
-        android:includeFontPadding="false"
-        android:maxLines="1" />
+        android:layout_marginStart="@dimen/space_12"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_check"
+        android:visibility="gone" />
 </LinearLayout>

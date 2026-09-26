@@ -1,32 +1,32 @@
 package dev.rafa.waktusholat.ui
 
 import android.app.Activity
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.CivilDate
 import dev.rafa.waktusholat.core.Prayer
 import dev.rafa.waktusholat.core.PrayerTimes
+import dev.rafa.waktusholat.core.UmmAlQura
 import dev.rafa.waktusholat.data.ScheduleRepository
 
 /**
- * One month of schedules as a scrollable table, with the columns every Indonesian prayer timetable
- * uses. The month is rendered eagerly: thirty-one rows of seven columns is far below the point where
- * a recycling list would pay for itself.
- *
- * Today's row is tinted and emphasised, and rows are striped so the eye can track a line across seven
- * numeric columns.
+ * One month of schedules as a table with the columns every Indonesian timetable uses. Rendered
+ * eagerly: thirty-one rows of eight cells is far below the point where a recycling list pays off.
+ * Today is highlighted, Fridays are marked, and rows are striped so a line stays trackable.
  */
 class MonthActivity : Activity() {
 
     private lateinit var repository: ScheduleRepository
     private lateinit var table: LinearLayout
-    private lateinit var title: TextView
 
     private var year = 0
     private var month = 0
@@ -34,122 +34,130 @@ class MonthActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_month)
-        setTitle(R.string.section_month)
-
         repository = (application as WaktuSholatApp).repository
         table = findViewById(R.id.table)
-        title = findViewById(R.id.month_title)
+        setupTopBar(repository.city.label)
 
         val today = repository.today()
-        year = today.year
-        month = today.month
+        year = savedInstanceState?.getInt(STATE_YEAR) ?: today.year
+        month = savedInstanceState?.getInt(STATE_MONTH) ?: today.month
 
+        findViewById<FrameLayout>(R.id.header_slot).let { it.addView(headerRow(it)) }
         findViewById<View>(R.id.prev).setOnClickListener { shift(-1) }
         findViewById<View>(R.id.next).setOnClickListener { shift(1) }
+        render(scrollToToday = true)
+    }
 
-        render()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(STATE_YEAR, year)
+        outState.putInt(STATE_MONTH, month)
     }
 
     private fun shift(delta: Int) {
-        month += delta
-        if (month < 1) {
-            month = 12
-            year--
-        } else if (month > 12) {
-            month = 1
-            year++
-        }
-        render()
+        val index = year * 12 + (month - 1) + delta
+        year = index / 12
+        month = index % 12 + 1
+        render(scrollToToday = false)
     }
 
-    private fun render() {
+    private fun render(scrollToToday: Boolean) {
         val today = repository.today()
-        title.text = getString(R.string.month_title, "${MONTH_NAMES[month - 1]} $year")
+        findViewById<TextView>(R.id.month_title).text = Dates.monthYear(year, month)
+        findViewById<TextView>(R.id.month_hijri).text = hijriRange()
 
         table.removeAllViews()
         val inflater = LayoutInflater.from(this)
-        table.addView(headerRow(inflater))
+        val todayIndex = if (today.year == year && today.month == month) today.day - 1 else -1
+        repository.month(year, month).forEachIndexed { index, times ->
+            table.addView(bodyRow(inflater, times, index, index == todayIndex))
+        }
 
-        val schedules = repository.month(year, month)
-        val todayCell = if (today.year == year && today.month == month) today.day else -1
-
-        schedules.forEachIndexed { index, times ->
-            val day = index + 1
-            table.addView(bodyRow(inflater, times, day, day == todayCell, index))
+        val scroll = findViewById<ScrollView>(R.id.scroll)
+        if (scrollToToday && todayIndex > 3) {
+            // Keep a few days of context above today.
+            scroll.post { table.getChildAt(todayIndex - 3)?.let { scroll.scrollTo(0, it.top) } }
+        } else {
+            scroll.scrollTo(0, 0)
         }
     }
 
-    /** Column header. Uses the same cell weights as the body so the columns line up exactly. */
-    private fun headerRow(inflater: LayoutInflater): View {
-        val row = inflater.inflate(R.layout.item_month_row, table, false) as ViewGroup
-        for (cell in 0 until row.childCount) {
-            (row.getChildAt(cell) as TextView).setTextColor(getColor(R.color.text_tertiary))
+    /** `Rabiul Awal – Rabiul Akhir 1448`, spanning the Hijri months this Gregorian month covers. */
+    private fun hijriRange(): String {
+        val first = UmmAlQura.fromGregorian(year, month, 1) ?: return ""
+        val last = UmmAlQura.fromGregorian(year, month, CivilDate.daysInMonth(year, month)) ?: return ""
+        return when {
+            first.month == last.month -> "${first.monthName} ${first.year}"
+            first.year == last.year -> "${first.monthName} – ${last.monthName} ${last.year}"
+            else -> "${first.monthName} ${first.year} – ${last.monthName} ${last.year}"
         }
-        // The two leading cells are too narrow for a label; the prayer names start at index 2.
+    }
+
+    /** Column header, pinned above the scrolling table. Uses the body's own row layout. */
+    private fun headerRow(parent: FrameLayout): View {
+        val row = LayoutInflater.from(this).inflate(R.layout.item_month_row, parent, false) as ViewGroup
+        row.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            (28 * resources.displayMetrics.density).toInt(),
+        )
+        val color = getColor(R.color.text_tertiary)
+        for (i in 0 until row.childCount) {
+            (row.getChildAt(i) as TextView).apply {
+                setTextColor(color)
+                textSize = 11f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            }
+        }
+        (row.getChildAt(1) as TextView).setText(R.string.month_col_date)
         PRAYER_COLUMNS.forEachIndexed { index, prayer ->
             (row.getChildAt(index + 2) as TextView).text = getString(PrayerLabels.id(prayer))
         }
         return row
     }
 
-    private fun bodyRow(
-        inflater: LayoutInflater,
-        times: PrayerTimes,
-        day: Int,
-        isToday: Boolean,
-        index: Int,
-    ): View {
+    private fun bodyRow(inflater: LayoutInflater, times: PrayerTimes, index: Int, isToday: Boolean): View {
         val row = inflater.inflate(R.layout.item_month_row, table, false) as ViewGroup
         val weekday = times.date.dayOfWeek
         val ink = getColor(if (isToday) R.color.brand else R.color.text_primary)
+        // Friday is the congregation day, so it is the one weekday worth marking.
         val weekInk = getColor(
-            // Friday is the congregation day and Sunday is the weekend, so both are worth marking.
             when {
-                isToday -> R.color.brand
-                weekday == 7 -> R.color.brand
-                weekday == 5 -> R.color.text_secondary
+                isToday || weekday == FRIDAY -> R.color.brand
                 else -> R.color.text_tertiary
             },
         )
+        val face = if (isToday) Typeface.create("sans-serif-medium", Typeface.NORMAL) else null
 
         (row.getChildAt(0) as TextView).apply {
-            text = WEEKDAY_INITIALS[weekday - 1]
+            text = Dates.WEEKDAYS[weekday - 1].substring(0, 1)
             setTextColor(weekInk)
         }
         (row.getChildAt(1) as TextView).apply {
-            text = day.toString()
+            text = (index + 1).toString()
             setTextColor(ink)
+            face?.let { typeface = it }
         }
         PRAYER_COLUMNS.forEachIndexed { column, prayer ->
             (row.getChildAt(column + 2) as TextView).apply {
                 text = PrayerTimes.format(times[prayer])
                 setTextColor(ink)
-                if (isToday) typeface = android.graphics.Typeface.DEFAULT_BOLD
+                face?.let { typeface = it }
             }
         }
-        if (isToday) {
-            row.setBackgroundResource(R.drawable.row_active)
-        } else if (index % 2 == 1) {
-            row.setBackgroundResource(R.drawable.row_stripe)
+        when {
+            isToday -> row.setBackgroundResource(R.drawable.row_active)
+            index % 2 == 1 -> row.setBackgroundResource(R.drawable.row_stripe)
         }
         return row
     }
 
     private companion object {
-        /** The date column is separate, so the table shows six prayer columns. */
+        const val STATE_YEAR = "year"
+        const val STATE_MONTH = "month"
+        const val FRIDAY = 5
+
         val PRAYER_COLUMNS: List<Prayer> = listOf(
             Prayer.FAJR, Prayer.SUNRISE, Prayer.DHUHR, Prayer.ASR, Prayer.MAGHRIB, Prayer.ISHA,
         )
-
-        val MONTH_NAMES = arrayOf(
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-        )
-
-        /**
-         * Indonesian weekday initials, Monday first, matching `CivilDate.dayOfWeek` (1 = Monday):
-         * Senin, Selasa, Rabu, Kamis, Jumat, Sabtu, Minggu.
-         */
-        val WEEKDAY_INITIALS = arrayOf("S", "S", "R", "K", "J", "S", "M")
     }
 }

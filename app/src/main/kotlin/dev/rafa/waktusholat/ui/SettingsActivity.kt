@@ -1,53 +1,52 @@
 package dev.rafa.waktusholat.ui
 
+import android.Manifest
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.CheckBox
 import android.widget.LinearLayout
+import android.widget.Switch
 import android.widget.TextView
 import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.CalculationMethod
-import dev.rafa.waktusholat.core.City
 import dev.rafa.waktusholat.core.Madhab
 import dev.rafa.waktusholat.data.Preferences
-import dev.rafa.waktusholat.notify.AlarmScheduler
 import dev.rafa.waktusholat.notify.Notifications
-import dev.rafa.waktusholat.widget.PrayerWidgetProvider
 
 /**
- * All settings, as a list of rows grouped into cards.
- *
- * Choices that have many options (calculation method, reminder lead time) open a single-choice
- * dialog instead of rendering every option inline, which is the platform's own pattern and keeps the
- * screen a readable list. Toggles stay as rows with a checkbox so their state is visible without a tap.
- *
- * Every mutation writes through to [Preferences] and then re-applies the alarms and repaints the
- * widget, so the three surfaces cannot drift apart.
+ * All settings as grouped rows. Choices with several options open a single-choice dialog; toggles
+ * are rows with a switch. Every mutation writes through [Preferences] and then re-arms the alarms
+ * and repaints the widgets, so the three surfaces cannot drift apart.
  */
 class SettingsActivity : Activity() {
 
-    private lateinit var preferences: Preferences
+    private lateinit var app: WaktuSholatApp
+    private val preferences: Preferences get() = app.preferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        setTitle(R.string.settings_title)
-        preferences = (application as WaktuSholatApp).preferences
-        render()
+        setupTopBar(getString(R.string.settings_title))
+        app = application as WaktuSholatApp
+
+        val version = runCatching { packageManager.getPackageInfo(packageName, 0).versionName }.getOrNull()
+        findViewById<TextView>(R.id.about).text = getString(R.string.settings_about_text, version.orEmpty())
     }
 
     override fun onResume() {
         super.onResume()
         // A location or permission change made elsewhere has to be reflected on return.
-        if (::preferences.isInitialized) render()
+        render()
     }
 
-    /** Rebuilds every group from the current preferences. */
     private fun render() {
         val location = findViewById<LinearLayout>(R.id.group_location)
         val calculation = findViewById<LinearLayout>(R.id.group_calculation)
@@ -57,46 +56,24 @@ class SettingsActivity : Activity() {
         general.removeAllViews()
 
         val city = preferences.resolveCity()
-        val outOfRange = preferences.deviceLocationOutOfRange
-
-        // --- Location -------------------------------------------------------------------------
         addValueRow(
             location,
-            title = getString(R.string.settings_location),
-            summary = if (outOfRange) {
-                getString(R.string.location_outside_indonesia, city.label)
-            } else {
-                "${city.label} · ${city.zoneLabel}"
+            title = getString(R.string.settings_city),
+            summary = when {
+                preferences.deviceLocationOutOfRange -> getString(R.string.location_outside_indonesia, city.label)
+                preferences.useGps -> getString(R.string.city_gps_active, city.label)
+                else -> "${city.label} · ${city.zoneLabel}"
             },
-            value = null,
-        ) {
-            startActivity(Intent(this, CityPickerActivity::class.java))
-        }
-        addToggleRow(
-            location,
-            title = getString(R.string.settings_use_gps),
-            checked = preferences.useGps && !outOfRange,
-            showDivider = true,
-        ) { enabled ->
-            preferences.useGps = enabled
-            if (enabled) requestDeviceLocation() else preferences.setCity(preferences.resolveCity())
-            onSettingsChanged()
-        }
+        ) { startActivity(Intent(this, CityPickerActivity::class.java)) }
 
-        // --- Calculation ----------------------------------------------------------------------
         addValueRow(
             calculation,
             title = getString(R.string.settings_method),
             summary = preferences.method.region,
             value = preferences.method.label,
         ) {
-            chooseFrom(
-                getString(R.string.settings_method),
-                CalculationMethod.entries.map { it.label to it.id },
-                preferences.methodId,
-            ) { chosen ->
-                preferences.methodId = chosen
-                onSettingsChanged()
+            choose(R.string.settings_method, CalculationMethod.entries.map { it.label to it.id }, preferences.methodId) {
+                preferences.methodId = it
             }
         }
         addValueRow(
@@ -104,253 +81,165 @@ class SettingsActivity : Activity() {
             title = getString(R.string.settings_madhab),
             summary = getString(R.string.settings_madhab_summary),
             value = preferences.madhab.label,
-            showDivider = true,
+            divider = true,
         ) {
-            chooseFrom(
-                getString(R.string.settings_madhab),
-                Madhab.entries.map { it.label to it.ordinal },
-                preferences.madhabId,
-            ) { chosen ->
-                preferences.madhabId = chosen
-                onSettingsChanged()
+            choose(R.string.settings_madhab, Madhab.entries.map { it.label to it.ordinal }, preferences.madhabId) {
+                preferences.madhabId = it
             }
         }
 
-        // --- General --------------------------------------------------------------------------
+        val notifying = preferences.notificationsEnabled
         addToggleRow(
             general,
             title = getString(R.string.settings_notifications),
             summary = getString(R.string.settings_notifications_summary),
-            checked = preferences.notificationsEnabled,
+            checked = notifying,
         ) { enabled ->
             preferences.notificationsEnabled = enabled
-            if (enabled && !Notifications.canPostNotifications(this)) {
-                requestPermissions(
-                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                    REQUEST_NOTIFICATIONS,
-                )
+            if (enabled && !Notifications.canPostNotifications(this) && Build.VERSION.SDK_INT >= 33) {
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATIONS)
             }
-            onSettingsChanged()
+            app.notifyScheduleChanged()
         }
-        // Only meaningful once notifications are on, so it appears with them.
-        if (preferences.notificationsEnabled) {
+        if (notifying) {
             addValueRow(
                 general,
                 title = getString(R.string.settings_reminder_lead),
                 summary = null,
-                value = leadLabel(preferences.reminderLeadMinutes),
-                showDivider = true,
+                value = getString(leadLabel(preferences.reminderLeadMinutes)),
+                divider = true,
             ) {
-                chooseFrom(
-                    getString(R.string.settings_reminder_lead),
-                    leadOptions(),
+                choose(
+                    R.string.settings_reminder_lead,
+                    LEADS.map { getString(leadLabel(it)) to it },
                     preferences.reminderLeadMinutes,
-                ) { chosen ->
-                    preferences.reminderLeadMinutes = chosen
-                    onSettingsChanged()
-                }
+                ) { preferences.reminderLeadMinutes = it }
+            }
+            if (!canScheduleExactAlarms()) {
+                addValueRow(
+                    general,
+                    title = getString(R.string.settings_exact_alarm),
+                    summary = getString(R.string.settings_exact_alarm_summary),
+                    divider = true,
+                ) { openExactAlarmSettings() }
             }
         }
         addToggleRow(
             general,
             title = getString(R.string.settings_show_imsak),
             checked = preferences.showImsak,
-            showDivider = true,
+            divider = true,
         ) { enabled ->
             preferences.showImsak = enabled
-            onSettingsChanged()
+            app.notifyScheduleChanged()
         }
     }
 
-    /**
-     * A row that opens something: title, optional summary, the current value on the right.
-     */
     private fun addValueRow(
         parent: LinearLayout,
         title: String,
         summary: String?,
-        value: String?,
-        showDivider: Boolean = false,
+        value: String? = null,
+        divider: Boolean = false,
         onClick: () -> Unit,
     ) {
-        if (showDivider) addDivider(parent)
-        val row = inflateRow(parent)
-        row.findViewById<TextView>(R.id.setting_title).text = title
-        row.findViewById<TextView>(R.id.setting_summary).apply {
-            text = summary.orEmpty()
-            visibility = if (summary.isNullOrBlank()) View.GONE else View.VISIBLE
-        }
+        val row = inflateRow(parent, title, summary, divider)
         row.findViewById<TextView>(R.id.setting_value).apply {
             text = value.orEmpty()
             visibility = if (value.isNullOrBlank()) View.GONE else View.VISIBLE
         }
+        row.findViewById<View>(R.id.setting_chevron).visibility = View.VISIBLE
         row.setOnClickListener { onClick() }
-        parent.addView(row)
     }
 
-    /**
-     * A row whose whole surface toggles a boolean, with a checkbox as the state indicator. Tapping
-     * the row rather than only the box matches how the platform's own switch rows behave.
-     */
+    /** The whole row toggles, matching the platform's own switch rows. */
     private fun addToggleRow(
         parent: LinearLayout,
         title: String,
         summary: String? = null,
         checked: Boolean,
-        showDivider: Boolean = false,
+        divider: Boolean = false,
         onChanged: (Boolean) -> Unit,
     ) {
-        if (showDivider) addDivider(parent)
-        val row = inflateRow(parent)
+        val row = inflateRow(parent, title, summary, divider)
+        val toggle = Switch(this).apply {
+            isChecked = checked
+            isClickable = false
+            isFocusable = false
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        row.addView(toggle)
+        row.contentDescription = title
+        row.setOnClickListener {
+            toggle.isChecked = !toggle.isChecked
+            onChanged(toggle.isChecked)
+            render()
+        }
+    }
+
+    private fun inflateRow(parent: LinearLayout, title: String, summary: String?, divider: Boolean): LinearLayout {
+        if (divider) {
+            val density = resources.displayMetrics.density
+            parent.addView(
+                View(this).apply { setBackgroundColor(getColor(R.color.outline)) },
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1).apply {
+                    marginStart = (16 * density).toInt()
+                    marginEnd = (16 * density).toInt()
+                },
+            )
+        }
+        val row = LayoutInflater.from(this).inflate(R.layout.item_setting_row, parent, false) as LinearLayout
         row.findViewById<TextView>(R.id.setting_title).text = title
         row.findViewById<TextView>(R.id.setting_summary).apply {
             text = summary.orEmpty()
             visibility = if (summary.isNullOrBlank()) View.GONE else View.VISIBLE
         }
-        val box = CheckBox(this).apply {
-            isChecked = checked
-            isClickable = false
-            isFocusable = false
-            contentDescription = title
-        }
-        (row as LinearLayout).addView(box)
-        row.setOnClickListener {
-            val next = !box.isChecked
-            box.isChecked = next
-            onChanged(next)
-            render()
-        }
         parent.addView(row)
+        return row
     }
 
-    private fun inflateRow(parent: LinearLayout) =
-        LayoutInflater.from(this).inflate(R.layout.item_setting_row, parent, false) as LinearLayout
-
-    /** Hairline between rows inside one card, inset to match the row padding. */
-    private fun addDivider(parent: LinearLayout) {
-        val density = resources.displayMetrics.density
-        parent.addView(
-            View(this).apply { setBackgroundColor(getColor(R.color.outline)) },
-            LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                (0.7f * density).toInt() + 1,
-            ).apply {
-                marginStart = (16 * density).toInt()
-            },
-        )
-    }
-
-    /**
-     * Single-choice dialog for a setting with several options. The label/value pair is used both to
-     * pre-select the current entry and to map the chosen index back.
-     */
-    private fun chooseFrom(
-        title: String,
-        options: List<Pair<String, Int>>,
-        selectedValue: Int,
-        onChosen: (Int) -> Unit,
-    ) {
-        val labels = options.map { it.first }.toTypedArray()
-        val checked = options.indexOfFirst { it.second == selectedValue }.coerceAtLeast(0)
+    /** Single-choice dialog; the label/value pairs pre-select the current entry and map back. */
+    private fun choose(title: Int, options: List<Pair<String, Int>>, selected: Int, onChosen: (Int) -> Unit) {
         AlertDialog.Builder(this)
             .setTitle(title)
-            .setSingleChoiceItems(labels, checked) { dialog, which ->
+            .setSingleChoiceItems(
+                options.map { it.first }.toTypedArray(),
+                options.indexOfFirst { it.second == selected }.coerceAtLeast(0),
+            ) { dialog, which ->
                 dialog.dismiss()
                 onChosen(options[which].second)
+                app.notifyScheduleChanged()
+                render()
             }
             .setNegativeButton(R.string.action_cancel, null)
             .show()
     }
 
-    /** Coarse location is plenty: the nearest built-in city is chosen from the fix. */
-    @Suppress("DEPRECATION")
-    private fun requestDeviceLocation() {
-        if (checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION)
-            != android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(
-                arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
-                REQUEST_LOCATION,
-            )
-            return
+    private fun canScheduleExactAlarms(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+            getSystemService(AlarmManager::class.java)?.canScheduleExactAlarms() != false
+
+    private fun openExactAlarmSettings() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return
+        runCatching {
+            startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName")))
         }
-        applyLastKnownLocation()
     }
 
-    @Suppress("DEPRECATION")
-    private fun applyLastKnownLocation() {
-        val manager = getSystemService(LOCATION_SERVICE) as? android.location.LocationManager ?: return
-        // Checked here as well as at the entry point: the permission can be revoked while the app is
-        // backgrounded, and getLastKnownLocation throws rather than returning null in that case.
-        val granted = checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-            android.content.pm.PackageManager.PERMISSION_GRANTED
-        val location = if (granted) {
-            manager.getProviders(true)
-                .mapNotNull { runCatching { manager.getLastKnownLocation(it) }.getOrNull() }
-                .maxByOrNull { it.time }
-        } else {
-            null
-        }
-        if (location == null) {
-            preferences.useGps = false
-            render()
-            return
-        }
-        // A fix the app cannot serve is refused rather than adopted: the nearest built-in city would
-        // be thousands of kilometres away and its wall-clock zone meaningless.
-        if (!City.isServiceable(location.latitude, location.longitude)) {
-            preferences.useGps = false
-            render()
-            return
-        }
-        preferences.setCoordinates(location.latitude, location.longitude)
-        render()
-        onSettingsChanged()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_NOTIFICATIONS) {
-            render()
-            return
-        }
-        if (requestCode != REQUEST_LOCATION) return
-        if (grantResults.firstOrNull() == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            applyLastKnownLocation()
-        } else {
-            preferences.useGps = false
-            render()
-        }
+        if (requestCode == REQUEST_NOTIFICATIONS) render()
     }
 
-    /** A change in location, method or madhab invalidates every scheduled alarm. */
-    private fun onSettingsChanged() {
-        AlarmScheduler.reschedule(this)
-        PrayerWidgetProvider.requestRefresh(this)
+    private fun leadLabel(minutes: Int): Int = when (minutes) {
+        5 -> R.string.lead_5
+        10 -> R.string.lead_10
+        15 -> R.string.lead_15
+        else -> R.string.lead_none
     }
-
-    private fun leadLabel(minutes: Int): String = getString(
-        when (minutes) {
-            5 -> R.string.lead_5
-            10 -> R.string.lead_10
-            15 -> R.string.lead_15
-            else -> R.string.lead_none
-        },
-    )
-
-    private fun leadOptions(): List<Pair<String, Int>> = listOf(
-        getString(R.string.lead_none) to 0,
-        getString(R.string.lead_5) to 5,
-        getString(R.string.lead_10) to 10,
-        getString(R.string.lead_15) to 15,
-    )
 
     private companion object {
-        const val REQUEST_LOCATION = 41
         const val REQUEST_NOTIFICATIONS = 42
+        val LEADS = listOf(0, 5, 10, 15)
     }
 }

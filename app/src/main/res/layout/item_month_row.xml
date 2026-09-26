@@ -1,75 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  One month table row: a day-of-week cell, a date cell, then six prayer columns, weighted evenly.
-  Two separate leading cells rather than one glued string, so the dates line up as a column.
+  One timetable row: weekday initial, date, then six prayer columns with equal weight. The header
+  row inflates this same file, so the columns line up exactly.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="34dp"
+    android:layout_height="36dp"
     android:baselineAligned="false"
     android:orientation="horizontal">
 
-    <!-- Day of week: S R K J S M A, which is what makes a month table scannable. -->
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="22dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="11sp" />
-
-    <!-- Date. -->
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="26dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        style="@style/Text.Time"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp" />
+    <TextView style="@style/MonthCell.Lead" android:layout_width="22dp" />
+    <TextView style="@style/MonthCell.Lead" android:layout_width="24dp" android:textSize="13sp" />
+    <TextView style="@style/MonthCell" />
+    <TextView style="@style/MonthCell" />
+    <TextView style="@style/MonthCell" />
+    <TextView style="@style/MonthCell" />
+    <TextView style="@style/MonthCell" />
+    <TextView style="@style/MonthCell" />
 </LinearLayout>

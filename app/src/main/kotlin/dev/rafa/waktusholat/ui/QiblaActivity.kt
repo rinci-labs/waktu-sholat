@@ -42,10 +42,13 @@ class QiblaActivity : Activity(), SensorEventListener {
     private var smoothedHeading: Float? = null
     private var currentAccuracy = SensorManager.SENSOR_STATUS_UNRELIABLE
 
+    private val rotationMatrix = FloatArray(9)
+    private val orientation = FloatArray(3)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_qibla)
-        setTitle(R.string.qibla_title)
+        setupTopBar(getString(R.string.qibla_title))
 
         repository = (application as WaktuSholatApp).repository
 
@@ -56,15 +59,8 @@ class QiblaActivity : Activity(), SensorEventListener {
         locationLabel = findViewById(R.id.location)
         accuracyLabel = findViewById(R.id.accuracy)
 
-        val city = repository.city
-        val direction = Qibla.of(city.latitude, city.longitude)
-        compass.qiblaDegrees = direction.bearingDegrees.toFloat()
-        bearingLabel.text = direction.bearingText
-        distanceLabel.text = direction.distanceText
-        locationLabel.text = city.label
-
-        findViewById<View>(R.id.open_settings).setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+        findViewById<View>(R.id.change_location).setOnClickListener {
+            startActivity(Intent(this, CityPickerActivity::class.java))
         }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as? SensorManager
@@ -74,11 +70,21 @@ class QiblaActivity : Activity(), SensorEventListener {
             hint.setText(R.string.qibla_no_sensor)
             compass.visibility = View.GONE
             accuracyLabel.visibility = View.GONE
+        } else {
+            accuracyLabel.text = accuracyText(currentAccuracy)
         }
     }
 
     override fun onStart() {
         super.onStart()
+        // Bound here rather than in onCreate so a location changed from this screen shows on return.
+        val city = repository.city
+        val direction = Qibla.of(city.latitude, city.longitude)
+        compass.qiblaDegrees = direction.bearingDegrees.toFloat()
+        bearingLabel.text = direction.bearingText
+        distanceLabel.text = direction.distanceText
+        locationLabel.text = city.label
+
         val manager = sensorManager ?: return
         val sensor = rotationSensor ?: return
         manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
@@ -92,9 +98,8 @@ class QiblaActivity : Activity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type != Sensor.TYPE_ROTATION_VECTOR) return
 
-        val rotationMatrix = FloatArray(9)
+        // Reused buffers: this runs tens of times a second, so it must not allocate.
         SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-        val orientation = FloatArray(3)
         SensorManager.getOrientation(rotationMatrix, orientation)
 
         // getOrientation reports azimuth counter-clockwise in radians, so negate into a clockwise
@@ -107,10 +112,13 @@ class QiblaActivity : Activity(), SensorEventListener {
         val next = if (previous == null) heading else previous + shortestDelta(previous, heading) * SMOOTHING
         smoothedHeading = (next + 360f) % 360f
 
-        compass.hasReading = true
-        compass.headingDegrees = smoothedHeading ?: heading
-        hint.visibility = View.GONE
-        accuracyLabel.text = accuracyText(currentAccuracy)
+        val shown = smoothedHeading ?: heading
+        // Skip sub-pixel changes: a redraw costs more than the needle would visibly move.
+        if (!compass.hasReading || kotlin.math.abs(shortestDelta(compass.headingDegrees, shown)) >= MIN_REDRAW_DEGREES) {
+            compass.hasReading = true
+            compass.headingDegrees = shown
+        }
+        if (hint.visibility != View.GONE) hint.visibility = View.GONE
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -136,5 +144,8 @@ class QiblaActivity : Activity(), SensorEventListener {
     private companion object {
         /** Weight given to each new sample; 0.15 settles the dial without visible lag. */
         const val SMOOTHING = 0.15f
+
+        /** Smallest heading change worth a redraw. */
+        const val MIN_REDRAW_DEGREES = 0.4f
     }
 }
