@@ -112,10 +112,10 @@ class PrayerCalculatorTest {
         // wall clock as any other such point on the same parallel.
         val day = CivilDate(2026, 6, 21)
         val western = PrayerCalculator.calculate(
-            day, -6.0, 105.0, 7, CalculationMethod.KEMENAG.config, Tuning.KEMENAG,
+            day, -6.0, 105.0, 420, CalculationMethod.KEMENAG.config, Tuning.KEMENAG,
         )
         val shifted = PrayerCalculator.calculate(
-            day, -6.0, 120.0, 8, CalculationMethod.KEMENAG.config, Tuning.KEMENAG,
+            day, -6.0, 120.0, 480, CalculationMethod.KEMENAG.config, Tuning.KEMENAG,
         )
         for (prayer in Prayer.entries) {
             assertTrue(
@@ -138,7 +138,7 @@ class PrayerCalculatorTest {
                     date = CivilDate(2026, 12, 21),
                     latitude = latitude,
                     longitude = longitude,
-                    timeZoneHours = 1,
+                    utcOffsetMinutes = 60,
                     config = method.config.copy(highLatitude = rule),
                 )
                 for (prayer in Prayer.entries) {

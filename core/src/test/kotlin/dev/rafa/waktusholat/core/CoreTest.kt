@@ -76,21 +76,21 @@ class LocalClockTest {
     @Test
     fun minuteOfDayConvertsToCityWallClock() {
         // 04:26 UTC is 11:26 in WIB (UTC+7), 12:26 in WITA (UTC+8), 13:26 in WIT (UTC+9).
-        assertEquals(11 * 60 + 26, LocalClock.minuteOfDay(instant, 7))
-        assertEquals(12 * 60 + 26, LocalClock.minuteOfDay(instant, 8))
-        assertEquals(13 * 60 + 26, LocalClock.minuteOfDay(instant, 9))
+        assertEquals(11 * 60 + 26, LocalClock.minuteOfDay(instant, 420))
+        assertEquals(12 * 60 + 26, LocalClock.minuteOfDay(instant, 480))
+        assertEquals(13 * 60 + 26, LocalClock.minuteOfDay(instant, 540))
     }
 
     @Test
     fun dateAtUsesTheCityZone() {
         // 18:00 UTC on the 25th is already the 26th in every Indonesian zone.
         val evening = 1_790_359_200_000L
-        assertEquals(CivilDate(2026, 9, 26), LocalClock.dateAt(evening, 7))
-        assertEquals(CivilDate(2026, 9, 26), LocalClock.dateAt(evening, 9))
+        assertEquals(CivilDate(2026, 9, 26), LocalClock.dateAt(evening, 420))
+        assertEquals(CivilDate(2026, 9, 26), LocalClock.dateAt(evening, 540))
         // 16:00 UTC on the 25th is still the 25th at UTC+7 but the 26th at UTC+9.
         val afternoon = 1_790_352_000_000L
-        assertEquals(CivilDate(2026, 9, 25), LocalClock.dateAt(afternoon, 7))
-        assertEquals(CivilDate(2026, 9, 26), LocalClock.dateAt(afternoon, 9))
+        assertEquals(CivilDate(2026, 9, 25), LocalClock.dateAt(afternoon, 420))
+        assertEquals(CivilDate(2026, 9, 26), LocalClock.dateAt(afternoon, 540))
     }
 
     @Test
@@ -98,8 +98,8 @@ class LocalClockTest {
         // Sweep a day and a half in five-minute steps; the pair must stay consistent.
         var millis = instant - 6 * 3_600_000L
         repeat(430) {
-            val minute = LocalClock.minuteOfDay(millis, 8)
-            val date = LocalClock.dateAt(millis, 8)
+            val minute = LocalClock.minuteOfDay(millis, 480)
+            val date = LocalClock.dateAt(millis, 480)
             assertTrue("minute must be in range", minute in 0..1439)
             // Adding the minute back to local midnight must return the same instant.
             val reconstructed = (date.epochDay * 1440L + minute - 8 * 60L) * 60_000L
@@ -112,9 +112,9 @@ class LocalClockTest {
     fun millisUntilNextDayCountsDownToLocalMidnight() {
         // 16:00 UTC is 23:00 WIB, so one hour remains.
         val millis = 1_790_352_000_000L
-        assertEquals(3_600_000L, LocalClock.millisUntilNextDay(millis, 7))
+        assertEquals(3_600_000L, LocalClock.millisUntilNextDay(millis, 420))
         // At 17:00 UTC it is exactly midnight in WIB, so a full day remains.
-        assertEquals(86_400_000L, LocalClock.millisUntilNextDay(millis + 3_600_000L, 7))
+        assertEquals(86_400_000L, LocalClock.millisUntilNextDay(millis + 3_600_000L, 420))
     }
 }
 
@@ -384,6 +384,30 @@ class CalculationMethodTest {
         assertEquals(2.0, Madhab.HANAFI.asrFactor, 0.0)
         assertEquals(Madhab.DEFAULT, Madhab.fromId(99))
         assertEquals(Madhab.HANAFI, Madhab.fromId(1))
+    }
+
+    @Test
+    fun ianaZoneHonoursHalfHourOffsetsAndDaylightSaving() {
+        val delhi = City("New Delhi", "", 28.6139, 77.2090, 0, "Asia/Kolkata")
+        assertEquals(330, delhi.offsetMinutesOn(CivilDate(2026, 1, 15)))
+        assertEquals("UTC+5:30", City.utcLabel(330))
+
+        val london = City("London", "", 51.5074, -0.1278, 0, "Europe/London")
+        assertEquals(0, london.offsetMinutesOn(CivilDate(2026, 1, 15)))
+        assertEquals(60, london.offsetMinutesOn(CivilDate(2026, 7, 15)))
+
+        // Solar noon in London sits near 12:00 GMT in winter and 13:00 BST in summer.
+        val winter = prayerTimesFor(london, CivilDate(2026, 1, 15), CalculationMethod.MWL)[Prayer.DHUHR]
+        val summer = prayerTimesFor(london, CivilDate(2026, 7, 15), CalculationMethod.MWL)[Prayer.DHUHR]
+        assertTrue("winter Dhuhr ${PrayerTimes.format(winter)}", winter in 12 * 60..12 * 60 + 20)
+        assertTrue("summer Dhuhr ${PrayerTimes.format(summer)}", summer in 13 * 60..13 * 60 + 20)
+    }
+
+    @Test
+    fun indonesianZonesKeepTheirLocalAbbreviation() {
+        assertEquals("WIB", City("Bandung", "", -6.9, 107.6, 0, "Asia/Jakarta").zoneLabel)
+        assertEquals("WITA", City("Makassar", "", -5.1, 119.4, 0, "Asia/Makassar").zoneLabel)
+        assertEquals("WIT", City("Jayapura", "", -2.5, 140.7, 0, "Asia/Jayapura").zoneLabel)
     }
 
     @Test

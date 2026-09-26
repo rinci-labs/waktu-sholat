@@ -136,7 +136,8 @@ object PrayerCalculator {
         date: CivilDate,
         latitude: Double,
         longitude: Double,
-        timeZoneHours: Int,
+        /** Local UTC offset in minutes on [date]. */
+        utcOffsetMinutes: Int,
         config: CalculationConfig,
         tuning: Tuning = Tuning.NONE,
     ): PrayerTimes {
@@ -172,7 +173,7 @@ object PrayerCalculator {
             ishaIntervalMinutes = config.ishaIntervalMinutes,
         )
 
-        val localShift = timeZoneHours - longitude / 15.0
+        val localShift = utcOffsetMinutes / 60.0 - longitude / 15.0
         for (i in times.indices) times[i] += localShift
         if (config.dhuhrIntervalMinutes != 0) times[DHUHR_INDEX] += config.dhuhrIntervalMinutes / 60.0
 
@@ -328,18 +329,21 @@ object PrayerCalculator {
     }
 }
 
-/** Today's schedule for [city] under [method] and [madhab], with the Kemenag corrections. */
+/**
+ * The schedule for [city] on [date] under [method] and [madhab]. The Kemenag rounding and ihtiyati
+ * margins apply only to the Kemenag method; every other authority publishes plain rounded times.
+ */
 fun prayerTimesFor(
     city: City,
     date: CivilDate,
     method: CalculationMethod = CalculationMethod.DEFAULT,
     madhab: Madhab = Madhab.DEFAULT,
-    tuning: Tuning = Tuning.KEMENAG,
+    tuning: Tuning = if (method == CalculationMethod.KEMENAG) Tuning.KEMENAG else Tuning.NONE,
 ): PrayerTimes = PrayerCalculator.calculate(
     date = date,
     latitude = city.latitude,
     longitude = city.longitude,
-    timeZoneHours = city.timeZoneHours,
+    utcOffsetMinutes = city.offsetMinutesOn(date),
     config = method.config.withMadhab(madhab),
     tuning = tuning,
 )
