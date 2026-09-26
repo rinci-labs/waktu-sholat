@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  One prayer in the horizontal band: name above time. `layout_weight` is required: RemoteViews.addView
-  takes the child's layout params from this file, and a 0dp width without a weight collapses it.
+  The active prayer's cell. A separate layout rather than setTextColor from code: RemoteViews would
+  freeze a resolved colour, while resource references here follow a later light/dark switch.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_weight="1"
+    android:background="@drawable/widget_cell_active"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingTop="6dp"
@@ -14,9 +15,11 @@
 
     <TextView
         android:id="@+id/cell_name"
-        style="@style/Widget.Text.Muted"
+        style="@style/Widget.Text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/widget_accent"
         android:textSize="@dimen/widget_cell_name" />
 
     <TextView
@@ -25,5 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/widget_accent"
         android:textSize="@dimen/widget_cell_time" />
 </LinearLayout>

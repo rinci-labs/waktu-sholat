@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hitung mundur: accent tile with a live countdown.
+  minWidth/minHeight are the pre-API-31 size (3x1 cells); targetCell* say the same on API 31+.
+  No updatePeriodMillis: WidgetUpdater arms one inexact alarm for the next prayer or midnight,
+  whichever comes first, so the widget never wakes the device on a timer.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_countdown_desc"
+    android:initialLayout="@layout/widget_countdown"
+    android:minWidth="180dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="530dp"
+    android:maxResizeHeight="530dp"
+    android:previewLayout="@layout/widget_countdown_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="3"
+    android:targetCellHeight="1"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

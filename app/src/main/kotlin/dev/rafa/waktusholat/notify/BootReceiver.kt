@@ -3,7 +3,7 @@ package dev.rafa.waktusholat.notify
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import dev.rafa.waktusholat.widget.PrayerWidgetProvider
+import dev.rafa.waktusholat.widget.WidgetUpdater
 
 /**
  * Re-arms the schedule after events that invalidate it: a reboot wipes every pending alarm, an
@@ -21,7 +21,7 @@ class BootReceiver : BroadcastReceiver() {
                 AlarmScheduler.reschedule(context)
                 // The widget's "next prayer" is stale after these events too, but its refresh is
                 // purely cosmetic: never let it take the alarm re-arm down with it.
-                runCatching { PrayerWidgetProvider.requestRefresh(context) }
+                runCatching { WidgetUpdater.updateAll(context) }
             }
         }
     }

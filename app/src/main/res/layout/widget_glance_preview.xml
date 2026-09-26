@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Widget-picker preview for widget_glance. The real widget has no background; the preview gets a
+  dark wash so its white text is legible on the picker's light surface.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/glance_preview_bg"
+    android:gravity="center_vertical|start"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/space_12"
+    android:paddingEnd="@dimen/space_12">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:baselineAligned="true"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/Glance.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/sample_time"
+            android:textSize="@dimen/widget_glance" />
+
+        <TextView
+            style="@style/Glance.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_12"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/prayer_asr"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/Glance.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sample_countdown"
+            android:textColor="@color/glance_text_muted"
+            android:textSize="14sp" />
+
+        <TextView
+            style="@style/Glance.Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sample_city_suffix"
+            android:textColor="@color/glance_text_muted"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

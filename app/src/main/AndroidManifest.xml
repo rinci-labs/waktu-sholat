@@ -12,8 +12,8 @@
          so the app works either way. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
-    <!-- The widget's clock only needs minute resolution, and no location permission is required
-         because the schedule is computed from the built-in city table. -->
+    <!-- Location is optional: the schedule comes from the built-in city table, and a device fix only
+         picks the nearest entry. -->
     <uses-feature
         android:name="android.hardware.location"
         android:required="false" />
@@ -61,18 +61,70 @@
             android:parentActivityName=".ui.SettingsActivity"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- Widgets. PrayerWidgetProvider keeps its name so widgets placed by 1.0 survive. -->
         <receiver
-            android:name=".widget.PrayerWidgetProvider"
+            android:name=".widget.NextWidgetProvider"
             android:exported="true"
-            android:label="@string/widget_label">
+            android:label="@string/widget_next_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="dev.rafa.waktusholat.action.REFRESH_WIDGET" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_prayer_info" />
+                android:resource="@xml/widget_next_info" />
         </receiver>
+
+        <receiver
+            android:name=".widget.PrayerWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_times_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_times_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.ScheduleWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_schedule_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_schedule_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.CountdownWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_countdown_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_countdown_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.GlanceWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_glance_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_glance_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.WidgetRefreshReceiver"
+            android:exported="false" />
 
         <receiver
             android:name=".notify.PrayerAlarmReceiver"

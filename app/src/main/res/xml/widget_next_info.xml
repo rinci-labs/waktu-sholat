@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sholat berikutnya: the next prayer, large, with a live countdown.
+  minWidth/minHeight are the pre-API-31 size (2x2 cells); targetCell* say the same on API 31+.
+  No updatePeriodMillis: WidgetUpdater arms one inexact alarm for the next prayer or midnight,
+  whichever comes first, so the widget never wakes the device on a timer.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_next_desc"
+    android:initialLayout="@layout/widget_next"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="530dp"
+    android:maxResizeHeight="530dp"
+    android:previewLayout="@layout/widget_next_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

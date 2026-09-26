@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  "Sholat berikutnya": the next prayer, large. The countdown is a Chronometer counting down, which
-  the launcher ticks by itself, so the widget stays live without any update from the app. On a short
-  cell the label and location lines are hidden.
--->
+<!-- Widget-picker preview for widget_next: a TextView stands in for the Chronometer, which would show 00:00. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
@@ -15,7 +10,6 @@
     android:padding="@dimen/widget_pad">
 
     <TextView
-        android:id="@+id/widget_label"
         style="@style/Widget.Text.Label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +17,6 @@
         android:text="@string/next_prayer_label" />
 
     <TextView
-        android:id="@+id/widget_next_name"
         style="@style/Widget.Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +25,6 @@
         android:textSize="@dimen/widget_name" />
 
     <TextView
-        android:id="@+id/widget_next_time"
         style="@style/Widget.Text.Hero"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,17 +32,16 @@
         android:text="@string/sample_time"
         android:textSize="@dimen/widget_hero" />
 
-    <Chronometer
-        android:id="@+id/widget_countdown"
+    <TextView
         style="@style/Widget.Text.Muted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:fontFeatureSettings="tnum"
+        android:text="@string/sample_countdown"
         android:textSize="@dimen/widget_body" />
 
     <TextView
-        android:id="@+id/widget_location"
         style="@style/Widget.Text.Muted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

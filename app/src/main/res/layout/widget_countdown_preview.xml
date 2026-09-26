@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget-picker preview for widget_countdown, with sample countdown text. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_accent"
+    android:clipToOutline="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/widget_pad"
+    android:paddingEnd="@dimen/widget_pad"
+    android:paddingTop="@dimen/widget_pad_small"
+    android:paddingBottom="@dimen/widget_pad_small">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/Widget.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/prayer_asr"
+            android:textColor="@color/widget_on_accent"
+            android:textSize="@dimen/widget_name" />
+
+        <TextView
+            style="@style/Widget.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFeatureSettings="tnum"
+            android:text="@string/sample_at_time"
+            android:textColor="@color/widget_on_accent_muted"
+            android:textSize="@dimen/widget_body" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/Widget.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_8"
+        android:fontFamily="sans-serif-light"
+        android:fontFeatureSettings="tnum"
+        android:text="@string/sample_clock"
+        android:textColor="@color/widget_on_accent"
+        android:textSize="@dimen/widget_countdown" />
+</LinearLayout>

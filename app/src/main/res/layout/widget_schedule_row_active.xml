@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The active prayer's row: accent wash and accent text, all from resources (see the cell note). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:background="@drawable/widget_cell_active"
+    android:gravity="center_vertical"
+    android:minHeight="24dp"
+    android:orientation="horizontal"
+    android:paddingStart="6dp"
+    android:paddingEnd="6dp">
+
+    <TextView
+        android:id="@+id/cell_name"
+        style="@style/Widget.Text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/widget_accent"
+        android:textSize="@dimen/widget_row_time" />
+
+    <TextView
+        android:id="@+id/cell_time"
+        style="@style/Widget.Text.Time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/widget_accent"
+        android:textSize="@dimen/widget_row_time" />
+</LinearLayout>

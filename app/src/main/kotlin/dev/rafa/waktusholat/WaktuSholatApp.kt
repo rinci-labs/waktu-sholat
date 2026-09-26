@@ -4,7 +4,7 @@ import android.app.Application
 import dev.rafa.waktusholat.data.Preferences
 import dev.rafa.waktusholat.data.ScheduleRepository
 import dev.rafa.waktusholat.notify.AlarmScheduler
-import dev.rafa.waktusholat.widget.PrayerWidgetProvider
+import dev.rafa.waktusholat.widget.WidgetUpdater
 
 /**
  * Holds the two collaborators the app needs. There is no DI framework: the object graph is two
@@ -29,7 +29,7 @@ class WaktuSholatApp : Application() {
      */
     fun notifyScheduleChanged() {
         AlarmScheduler.reschedule(this)
-        PrayerWidgetProvider.requestRefresh(this)
+        WidgetUpdater.updateAll(this)
     }
 
     companion object {

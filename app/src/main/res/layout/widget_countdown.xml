@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  "Hitung mundur": an accent tile with a live H:MM:SS countdown to the next prayer. The Chronometer
+  is ticked by the launcher, so the app does no work between prayers.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg_accent"
+    android:clipToOutline="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/widget_pad"
+    android:paddingEnd="@dimen/widget_pad"
+    android:paddingTop="@dimen/widget_pad_small"
+    android:paddingBottom="@dimen/widget_pad_small">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_next_name"
+            style="@style/Widget.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/prayer_asr"
+            android:textColor="@color/widget_on_accent"
+            android:textSize="@dimen/widget_name" />
+
+        <TextView
+            android:id="@+id/widget_next_time"
+            style="@style/Widget.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFeatureSettings="tnum"
+            android:text="@string/sample_time"
+            android:textColor="@color/widget_on_accent_muted"
+            android:textSize="@dimen/widget_body" />
+    </LinearLayout>
+
+    <Chronometer
+        android:id="@+id/widget_countdown"
+        style="@style/Widget.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_8"
+        android:fontFamily="sans-serif-light"
+        android:fontFeatureSettings="tnum"
+        android:textColor="@color/widget_on_accent"
+        android:textSize="@dimen/widget_countdown" />
+</LinearLayout>
