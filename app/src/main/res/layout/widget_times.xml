@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  "Jadwal hari ini": the day's times as one horizontal band. At one cell tall only the band fits;
-  from two cells the location/Hijri header appears above it. Cells are injected by the renderer.
+  "Jadwal hari ini": a one-line header (location, and how long until the next prayer) above the
+  day's times as a horizontal band. Spacing is tight enough that both fit in a single cell row on
+  real phones (~64dp); only below that does the renderer drop the header.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
@@ -13,18 +14,18 @@
     android:orientation="vertical"
     android:paddingStart="@dimen/widget_pad_small"
     android:paddingEnd="@dimen/widget_pad_small"
-    android:paddingTop="@dimen/widget_pad_small"
-    android:paddingBottom="@dimen/widget_pad_small">
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
 
     <LinearLayout
         android:id="@+id/widget_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/space_8"
+        android:layout_marginBottom="2dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="6dp"
-        android:paddingEnd="6dp"
-        android:visibility="gone">
+        android:paddingEnd="6dp">
 
         <TextView
             android:id="@+id/widget_location"
@@ -33,15 +34,19 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif-medium"
-            android:textSize="@dimen/widget_body" />
+            android:text="@string/sample_city"
+            android:textSize="@dimen/widget_header" />
 
         <TextView
-            android:id="@+id/widget_hijri"
-            style="@style/Widget.Text.Muted"
+            android:id="@+id/widget_relative"
+            style="@style/Widget.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_8"
-            android:textSize="@dimen/widget_body" />
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/sample_relative"
+            android:textColor="@color/widget_accent"
+            android:textSize="@dimen/widget_header" />
     </LinearLayout>
 
     <LinearLayout

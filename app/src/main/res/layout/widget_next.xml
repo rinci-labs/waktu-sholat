@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  "Sholat berikutnya": the next prayer, large. The countdown is a Chronometer counting down, which
-  the launcher ticks by itself, so the widget stays live without any update from the app. On a short
-  cell the label and location lines are hidden.
+  "Sholat berikutnya": the next prayer, large, and how long until it ("7 jam 33 mnt lagi"),
+  refreshed each minute. On a short cell the label and location lines are hidden.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
@@ -40,9 +39,11 @@
         android:text="@string/sample_time"
         android:textSize="@dimen/widget_hero" />
 
-    <Chronometer
-        android:id="@+id/widget_countdown"
-        style="@style/Widget.Text.Muted"
+    <TextView
+        android:id="@+id/widget_relative"
+        style="@style/Widget.Text"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/sample_remaining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

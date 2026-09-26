@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Widget-picker preview for widget_next: a TextView stands in for the Chronometer, which would show 00:00. -->
+<!-- Widget-picker preview for widget_next: static sample content. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,12 +33,13 @@
         android:textSize="@dimen/widget_hero" />
 
     <TextView
-        style="@style/Widget.Text.Muted"
+        style="@style/Widget.Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif-medium"
         android:fontFeatureSettings="tnum"
-        android:text="@string/sample_countdown"
+        android:text="@string/sample_remaining"
         android:textSize="@dimen/widget_body" />
 
     <TextView

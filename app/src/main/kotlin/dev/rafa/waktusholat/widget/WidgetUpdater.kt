@@ -14,11 +14,13 @@ import dev.rafa.waktusholat.data.ScheduleRepository
 /**
  * The single place that repaints widgets and keeps them current.
  *
- * Every widget type renders from one [dev.rafa.waktusholat.data.ScheduleRepository.Snapshot] taken
- * at one instant, so two widgets can never disagree about the minute. Between repaints the content
- * only goes stale at the next prayer or at local midnight, so one inexact, non-waking alarm armed
- * for the earlier of the two is all the scheduling needed. Live countdowns are Chronometers that
- * the launcher ticks itself, which is why nothing refreshes every minute.
+ * Every widget type renders from one [ScheduleRepository.Snapshot] taken at one instant, so two
+ * widgets can never disagree about the minute.
+ *
+ * The relative "7 jam 37 mnt lagi" text changes every minute, so one alarm is armed for the next
+ * minute boundary. It is `RTC`, not `RTC_WAKEUP`: while the screen is off it never wakes the
+ * device, and the system delivers it once on the next wake, so the widget is current the moment it
+ * can be seen. It is cancelled as soon as the last widget is removed.
  */
 object WidgetUpdater {
 
@@ -33,8 +35,10 @@ object WidgetUpdater {
         )
     }
 
-    /** Allowed lateness of the repaint alarm; lets the system batch it with other work. */
-    private const val WINDOW_MILLIS = 60_000L
+    /** Allowed lateness of the repaint; small enough that the minute never looks stale. */
+    private const val WINDOW_MILLIS = 5_000L
+
+    private const val MINUTE_MILLIS = 60_000L
 
     /** Repaints every placed widget of every type, then re-arms the alarm. */
     fun updateAll(context: Context) {
@@ -65,8 +69,8 @@ object WidgetUpdater {
 
     private fun schedule(context: Context, snapshot: ScheduleRepository.Snapshot) {
         val alarms = context.getSystemService(AlarmManager::class.java) ?: return
-        // One second past the boundary so the repaint lands on the new minute, never just before it.
-        val at = minOf(snapshot.nextAtMillis, snapshot.midnightAtMillis) + 1_000L
+        // Just past the next minute boundary, so the repaint lands on the new minute.
+        val at = (snapshot.nowMillis / MINUTE_MILLIS + 1) * MINUTE_MILLIS + 500L
         alarms.setWindow(AlarmManager.RTC, at, WINDOW_MILLIS, refreshIntent(context))
     }
 

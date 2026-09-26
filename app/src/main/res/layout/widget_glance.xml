@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   "Minimalis": no background, just text on the wallpaper with a soft shadow, in the style of the
-  stock At-a-Glance line. The second line is a live countdown.
+  stock At-a-Glance line. The second line says how long until the next prayer.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
@@ -44,9 +44,10 @@
         android:layout_marginTop="4dp"
         android:orientation="horizontal">
 
-        <Chronometer
-            android:id="@+id/widget_countdown"
+        <TextView
+            android:id="@+id/widget_relative"
             style="@style/Glance.Text"
+            android:text="@string/sample_remaining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/glance_text_muted"

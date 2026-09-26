@@ -15,6 +15,7 @@ import dev.rafa.waktusholat.core.PrayerTimes
 import dev.rafa.waktusholat.data.ScheduleRepository.Snapshot
 import dev.rafa.waktusholat.ui.MainActivity
 import dev.rafa.waktusholat.ui.PrayerLabels
+import dev.rafa.waktusholat.ui.Relative
 
 /**
  * Base for every home-screen widget. Subclasses only render; [WidgetUpdater] owns refresh timing.
@@ -49,6 +50,17 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
         setTextViewText(R.id.widget_next_time, PrayerTimes.format(snapshot.nextMinute))
     }
 
+    /** `Subuh 7 jam 33 mnt lagi`: refreshed every minute by [WidgetUpdater]. */
+    protected fun relative(context: Context, snapshot: Snapshot): String = context.getString(
+        R.string.widget_next_relative,
+        PrayerLabels.of(context, snapshot.next),
+        Relative.short(context, snapshot.minutesRemaining),
+    )
+
+    /** `7 jam 33 mnt lagi`, without the prayer name. */
+    protected fun remaining(context: Context, snapshot: Snapshot): String =
+        context.getString(R.string.countdown_in, Relative.short(context, snapshot.minutesRemaining))
+
     /**
      * Starts a counting-down Chronometer that reaches zero at the next prayer. Its base is on the
      * elapsed-realtime clock, so it keeps ticking correctly across wall-clock changes until the
@@ -82,7 +94,7 @@ abstract class BaseWidgetProvider : AppWidgetProvider() {
 class NextWidgetProvider : BaseWidgetProvider() {
     override fun build(context: Context, snapshot: Snapshot, size: WidgetSize) = views(context, R.layout.widget_next).apply {
         bindNext(context, snapshot)
-        bindCountdown(context, snapshot, R.string.widget_countdown_format)
+        setTextViewText(R.id.widget_relative, remaining(context, snapshot))
         setTextViewText(R.id.widget_location, snapshot.city.name)
         // Two cells tall fits every line; one cell only fits name, time and countdown.
         val roomy = size.heightDp >= 100
@@ -97,11 +109,12 @@ class NextWidgetProvider : BaseWidgetProvider() {
  */
 class PrayerWidgetProvider : BaseWidgetProvider() {
     override fun build(context: Context, snapshot: Snapshot, size: WidgetSize) = views(context, R.layout.widget_times).apply {
-        val header = size.heightDp >= 90
+        // The header fits a single row on real phones (~64dp and up); only a squeezed cell drops it.
+        val header = size.heightDp == 0 || size.heightDp >= 56
         visible(R.id.widget_header, header)
         if (header) {
             setTextViewText(R.id.widget_location, snapshot.city.name)
-            setTextViewText(R.id.widget_hijri, snapshot.day.hijri?.toString().orEmpty())
+            setTextViewText(R.id.widget_relative, relative(context, snapshot))
         }
         // Roughly 46dp per cell; a narrow widget shows a window that always contains the active prayer.
         val count = (size.widthDp / 46).coerceIn(3, listed.size)
@@ -124,6 +137,7 @@ class ScheduleWidgetProvider : BaseWidgetProvider() {
     override fun build(context: Context, snapshot: Snapshot, size: WidgetSize) = views(context, R.layout.widget_schedule).apply {
         bindNext(context, snapshot)
         setTextViewText(R.id.widget_location, snapshot.city.name)
+        setTextViewText(R.id.widget_relative, remaining(context, snapshot))
         setTextViewText(R.id.widget_hijri, snapshot.day.hijri?.toString().orEmpty())
         // The hero needs about 60dp on top of six 24dp rows; below that the list alone is kept.
         visible(R.id.widget_hero, size.heightDp >= 210)
@@ -156,7 +170,7 @@ class CountdownWidgetProvider : BaseWidgetProvider() {
 class GlanceWidgetProvider : BaseWidgetProvider() {
     override fun build(context: Context, snapshot: Snapshot, size: WidgetSize) = views(context, R.layout.widget_glance).apply {
         bindNext(context, snapshot)
-        bindCountdown(context, snapshot, R.string.widget_countdown_format)
+        setTextViewText(R.id.widget_relative, remaining(context, snapshot))
         setTextViewText(R.id.widget_location, context.getString(R.string.widget_city_suffix, snapshot.city.name))
     }
 }
