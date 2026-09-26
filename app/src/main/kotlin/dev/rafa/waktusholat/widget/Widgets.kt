@@ -13,6 +13,7 @@ import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.core.Prayer
 import dev.rafa.waktusholat.core.PrayerTimes
 import dev.rafa.waktusholat.data.ScheduleRepository.Snapshot
+import dev.rafa.waktusholat.ui.Dates
 import dev.rafa.waktusholat.ui.MainActivity
 import dev.rafa.waktusholat.ui.PrayerLabels
 import dev.rafa.waktusholat.ui.Relative
@@ -138,7 +139,7 @@ class ScheduleWidgetProvider : BaseWidgetProvider() {
         bindNext(context, snapshot)
         setTextViewText(R.id.widget_location, snapshot.city.name)
         setTextViewText(R.id.widget_relative, remaining(context, snapshot))
-        setTextViewText(R.id.widget_hijri, snapshot.day.hijri?.toString().orEmpty())
+        setTextViewText(R.id.widget_hijri, snapshot.day.hijri?.let { Dates.hijri(context, it) }.orEmpty())
         // The hero needs about 60dp on top of six 24dp rows; below that the list alone is kept.
         visible(R.id.widget_hero, size.heightDp >= 210)
         visible(R.id.widget_hijri, size.heightDp >= 240)

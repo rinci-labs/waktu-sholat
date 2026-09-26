@@ -1,6 +1,5 @@
 package dev.rafa.waktusholat.ui
 
-import android.app.Activity
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,7 +22,7 @@ import dev.rafa.waktusholat.data.ScheduleRepository
  * eagerly: thirty-one rows of eight cells is far below the point where a recycling list pays off.
  * Today is highlighted, Fridays are marked, and rows are striped so a line stays trackable.
  */
-class MonthActivity : Activity() {
+class MonthActivity : BaseActivity() {
 
     private lateinit var repository: ScheduleRepository
     private lateinit var table: LinearLayout
@@ -63,7 +62,7 @@ class MonthActivity : Activity() {
 
     private fun render(scrollToToday: Boolean) {
         val today = repository.today()
-        findViewById<TextView>(R.id.month_title).text = Dates.monthYear(year, month)
+        findViewById<TextView>(R.id.month_title).text = Dates.monthYear(this, year, month)
         findViewById<TextView>(R.id.month_hijri).text = hijriRange()
 
         table.removeAllViews()
@@ -87,9 +86,11 @@ class MonthActivity : Activity() {
         val first = UmmAlQura.fromGregorian(year, month, 1) ?: return ""
         val last = UmmAlQura.fromGregorian(year, month, CivilDate.daysInMonth(year, month)) ?: return ""
         return when {
-            first.month == last.month -> "${first.monthName} ${first.year}"
-            first.year == last.year -> "${first.monthName} – ${last.monthName} ${last.year}"
-            else -> "${first.monthName} ${first.year} – ${last.monthName} ${last.year}"
+            first.month == last.month -> "${Dates.hijriMonth(this, first.month)} ${first.year}"
+            first.year == last.year ->
+                "${Dates.hijriMonth(this, first.month)} – ${Dates.hijriMonth(this, last.month)} ${last.year}"
+            else ->
+                "${Dates.hijriMonth(this, first.month)} ${first.year} – ${Dates.hijriMonth(this, last.month)} ${last.year}"
         }
     }
 
@@ -129,7 +130,7 @@ class MonthActivity : Activity() {
         val face = if (isToday) Typeface.create("sans-serif-medium", Typeface.NORMAL) else null
 
         (row.getChildAt(0) as TextView).apply {
-            text = Dates.WEEKDAYS[weekday - 1].substring(0, 1)
+            text = Dates.weekdayInitial(this@MonthActivity, weekday)
             setTextColor(weekInk)
         }
         (row.getChildAt(1) as TextView).apply {

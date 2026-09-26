@@ -29,7 +29,7 @@ import dev.rafa.waktusholat.data.ScheduleRepository
  * The sky behind the header follows the part of the day ([Period]) and runs up behind the status
  * bar, so this screen applies the system-bar insets itself.
  */
-class MainActivity : Activity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var repository: ScheduleRepository
     private lateinit var preferences: Preferences
@@ -83,6 +83,7 @@ class MainActivity : Activity() {
 
     override fun onStart() {
         super.onStart()
+        (application as WaktuSholatApp).refreshFixPassively()
         // Settings may have changed while stopped; force a full re-render.
         renderedDay = null
         handler.post(tick)
@@ -150,10 +151,10 @@ class MainActivity : Activity() {
     private fun renderDay(day: ScheduleRepository.Day, showImsak: Boolean) {
         val city = day.city
         findViewById<TextView>(R.id.city).text = city.name
-        findViewById<TextView>(R.id.date).text = Dates.long(day.date)
-        findViewById<TextView>(R.id.hijri).text = day.hijri?.let { getString(R.string.hijri_suffix, it.toString()) }.orEmpty()
+        findViewById<TextView>(R.id.date).text = Dates.long(this, day.date)
+        findViewById<TextView>(R.id.hijri).text = day.hijri?.let { getString(R.string.hijri_suffix, Dates.hijri(this, it)) }.orEmpty()
         findViewById<TextView>(R.id.zone_note).text = getString(R.string.zone_note, city.label, city.zoneLabel)
-        findViewById<TextView>(R.id.month_summary).text = Dates.monthYear(day.date.year, day.date.month)
+        findViewById<TextView>(R.id.month_summary).text = Dates.monthYear(this, day.date.year, day.date.month)
         val qibla = Qibla.of(city.latitude, city.longitude)
         findViewById<TextView>(R.id.qibla_summary).text = getString(R.string.qibla_tile_summary, qibla.bearingText)
 

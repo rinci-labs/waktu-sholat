@@ -18,7 +18,7 @@ import dev.rafa.waktusholat.core.Prayer
 import dev.rafa.waktusholat.data.ScheduleRepository
 import kotlin.math.PI
 import kotlin.math.sin
-import kotlin.random.Random
+import java.util.Random
 
 /**
  * The part of the day, bounded by the prayer times themselves rather than by the clock, so the sky

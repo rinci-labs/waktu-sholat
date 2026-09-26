@@ -11,6 +11,7 @@ import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.Prayer
 import dev.rafa.waktusholat.core.PrayerTimes
+import dev.rafa.waktusholat.ui.Language
 import dev.rafa.waktusholat.ui.MainActivity
 import dev.rafa.waktusholat.ui.PrayerLabels
 
@@ -61,7 +62,7 @@ object Notifications {
      * [isReminder] only chooses the wording; it never changes the prayer itself.
      */
     fun post(context: Context, prayer: Prayer, minuteOfDay: Int, isReminder: Boolean, leadMinutes: Int) {
-        val app = context.applicationContext
+        val app = Language.wrap(context.applicationContext)
         if (!WaktuSholatApp.instance.preferences.notificationsEnabled) return
         if (!canPostNotifications(app)) return
 

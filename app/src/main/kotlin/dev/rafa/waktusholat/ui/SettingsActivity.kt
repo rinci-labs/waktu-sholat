@@ -26,7 +26,7 @@ import dev.rafa.waktusholat.notify.Notifications
  * are rows with a switch. Every mutation writes through [Preferences] and then re-arms the alarms
  * and repaints the widgets, so the three surfaces cannot drift apart.
  */
-class SettingsActivity : Activity() {
+class SettingsActivity : BaseActivity() {
 
     private lateinit var app: WaktuSholatApp
     private val preferences: Preferences get() = app.preferences
@@ -59,17 +59,17 @@ class SettingsActivity : Activity() {
         addValueRow(
             location,
             title = getString(R.string.settings_city),
-            summary = when {
-                preferences.deviceLocationOutOfRange -> getString(R.string.location_outside_indonesia, city.label)
-                preferences.useGps -> getString(R.string.city_gps_active, city.label)
-                else -> "${city.label} · ${city.zoneLabel}"
+            summary = if (preferences.useGps) {
+                getString(R.string.city_gps_active, city.label, city.zoneLabel)
+            } else {
+                "${city.label} · ${city.zoneLabel}"
             },
         ) { startActivity(Intent(this, CityPickerActivity::class.java)) }
 
         addValueRow(
             calculation,
             title = getString(R.string.settings_method),
-            summary = preferences.method.region,
+            summary = preferences.method.regionLabel(this),
             value = preferences.method.label,
         ) {
             choose(R.string.settings_method, CalculationMethod.entries.map { it.label to it.id }, preferences.methodId) {
@@ -133,6 +133,91 @@ class SettingsActivity : Activity() {
             preferences.showImsak = enabled
             app.notifyScheduleChanged()
         }
+        addValueRow(
+            general,
+            title = getString(R.string.settings_language),
+            summary = null,
+            value = getString(Language.current(this).label),
+            divider = true,
+        ) {
+            val languages = AppLanguage.entries
+            choose(
+                R.string.settings_language,
+                languages.map { getString(it.label) to it.ordinal },
+                Language.current(this).ordinal,
+            ) { chosen ->
+                Language.set(this, languages[chosen])
+                app.notifyScheduleChanged()
+            }
+        }
+        addValueRow(
+            general,
+            title = getString(R.string.settings_icon),
+            summary = null,
+            value = getString(IconTheme.current(this).label),
+            divider = true,
+        ) { chooseIcon() }
+    }
+
+    /** Icon theme picker: each row previews the theme's icon beside its name. */
+    private fun chooseIcon() {
+        val themes = IconTheme.entries
+        val current = themes.indexOf(IconTheme.current(this))
+        val size = (36 * resources.displayMetrics.density).toInt()
+        val gap = (16 * resources.displayMetrics.density).toInt()
+        val adapter = object : android.widget.ArrayAdapter<String>(
+            this,
+            android.R.layout.select_dialog_singlechoice,
+            themes.map { getString(it.label) },
+        ) {
+            override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
+                val view = super.getView(position, convertView, parent) as TextView
+                val icon = android.graphics.drawable.LayerDrawable(
+                    arrayOf(getDrawable(themes[position].preview), getDrawable(R.drawable.ic_launcher_foreground)),
+                )
+                icon.setBounds(0, 0, size, size)
+                view.setCompoundDrawablesRelativeWithIntrinsicBounds(ClipOval(icon, size), null, null, null)
+                view.compoundDrawablePadding = gap
+                return view
+            }
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.settings_icon)
+            .setSingleChoiceItems(adapter, current) { dialog, which ->
+                dialog.dismiss()
+                IconTheme.apply(this, themes[which])
+                render()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
+    }
+
+    /** Draws [content] clipped to a circle, like a launcher's icon mask. */
+    private class ClipOval(
+        private val content: android.graphics.drawable.Drawable,
+        private val size: Int,
+    ) : android.graphics.drawable.Drawable() {
+        private val path = android.graphics.Path()
+
+        override fun onBoundsChange(bounds: android.graphics.Rect) {
+            content.bounds = bounds
+            path.reset()
+            path.addOval(android.graphics.RectF(bounds), android.graphics.Path.Direction.CW)
+        }
+
+        override fun draw(canvas: android.graphics.Canvas) {
+            val save = canvas.save()
+            canvas.clipPath(path)
+            content.draw(canvas)
+            canvas.restoreToCount(save)
+        }
+
+        override fun getIntrinsicWidth() = size
+        override fun getIntrinsicHeight() = size
+        override fun setAlpha(alpha: Int) = content.setAlpha(alpha)
+        override fun setColorFilter(colorFilter: android.graphics.ColorFilter?) { content.colorFilter = colorFilter }
+        @Deprecated("Deprecated in Java")
+        override fun getOpacity() = android.graphics.PixelFormat.TRANSLUCENT
     }
 
     private fun addValueRow(

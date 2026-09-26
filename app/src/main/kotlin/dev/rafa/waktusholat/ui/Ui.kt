@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.widget.TextView
 import dev.rafa.waktusholat.R
+import dev.rafa.waktusholat.core.CalculationMethod
 import dev.rafa.waktusholat.core.CivilDate
+import dev.rafa.waktusholat.core.HijriDate
 import dev.rafa.waktusholat.core.Prayer
 
 /** Wires the shared top bar: title plus a back button that simply finishes the screen. */
@@ -34,26 +36,37 @@ object PrayerLabels {
 }
 
 /**
- * Indonesian calendar wording. Hard-coded rather than taken from `java.text` because the app ships
- * a single locale and the platform's Indonesian month names differ between API levels.
+ * Calendar wording from resources, so it follows the app language. Month and weekday names are
+ * string arrays rather than `java.text` output because the platform's Indonesian names differ
+ * between API levels.
  */
 object Dates {
 
-    val MONTHS = arrayOf(
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-    )
-
-    /** Monday first, matching `CivilDate.dayOfWeek` (1 = Monday). */
-    val WEEKDAYS = arrayOf("Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu")
-
-    /** `Sabtu, 26 September 2026`. */
-    fun long(date: CivilDate): String =
-        "${WEEKDAYS[date.dayOfWeek - 1]}, ${date.day} ${MONTHS[date.month - 1]} ${date.year}"
+    /** `Saturday, 26 September 2026` / `Sabtu, 26 September 2026`. */
+    fun long(context: Context, date: CivilDate): String {
+        val weekday = context.resources.getStringArray(R.array.weekdays)[date.dayOfWeek - 1]
+        val month = context.resources.getStringArray(R.array.months)[date.month - 1]
+        return context.getString(R.string.date_long, weekday, date.day, month, date.year)
+    }
 
     /** `September 2026`. */
-    fun monthYear(year: Int, month: Int): String = "${MONTHS[month - 1]} $year"
+    fun monthYear(context: Context, year: Int, month: Int): String =
+        "${context.resources.getStringArray(R.array.months)[month - 1]} $year"
+
+    /** One-letter weekday for the month table, Monday first (matches `CivilDate.dayOfWeek`). */
+    fun weekdayInitial(context: Context, isoDay: Int): String =
+        context.resources.getStringArray(R.array.weekday_initials)[isoDay - 1]
+
+    fun hijriMonth(context: Context, month: Int): String =
+        context.resources.getStringArray(R.array.hijri_months)[month - 1]
+
+    /** `15 Rabi al-Thani 1448` / `15 Rabiul Akhir 1448`. */
+    fun hijri(context: Context, date: HijriDate): String = "${date.day} ${hijriMonth(context, date.month)} ${date.year}"
 }
+
+/** Localized region for a calculation method, in [CalculationMethod.entries] order. */
+fun CalculationMethod.regionLabel(context: Context): String =
+    context.resources.getStringArray(R.array.method_regions)[ordinal]
 
 /**
  * Relative time until a prayer, in words: easier to read at a glance than a ticking clock. Minutes

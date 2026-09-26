@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Bundle
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.data.ScheduleRepository
+import dev.rafa.waktusholat.ui.Language
 
 /**
  * The single place that repaints widgets and keeps them current.
@@ -41,7 +42,8 @@ object WidgetUpdater {
     private const val MINUTE_MILLIS = 60_000L
 
     /** Repaints every placed widget of every type, then re-arms the alarm. */
-    fun updateAll(context: Context) {
+    fun updateAll(base: Context) {
+        val context = Language.wrap(base)
         val manager = AppWidgetManager.getInstance(context) ?: return
         val snapshot = WaktuSholatApp.instance.repository.snapshot()
         var placed = false
@@ -55,7 +57,8 @@ object WidgetUpdater {
     }
 
     /** Repaints specific widgets of one type, e.g. after a resize. */
-    fun update(context: Context, provider: BaseWidgetProvider, ids: IntArray, options: Bundle? = null) {
+    fun update(base: Context, provider: BaseWidgetProvider, ids: IntArray, options: Bundle? = null) {
+        val context = Language.wrap(base)
         val manager = AppWidgetManager.getInstance(context) ?: return
         val snapshot = WaktuSholatApp.instance.repository.snapshot()
         for (id in ids) {

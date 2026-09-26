@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -12,8 +13,8 @@
          so the app works either way. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
-    <!-- Location is optional: the schedule comes from the built-in city table, and a device fix only
-         picks the nearest entry. -->
+    <!-- Location is optional: a city can be picked from the built-in table. A device fix gives the
+         exact point anywhere in the world; the geocoder (network) only names it. -->
     <uses-feature
         android:name="android.hardware.location"
         android:required="false" />
@@ -26,18 +27,107 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.WaktuSholat">
 
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" />
+
+        <!-- Launcher entries, one per icon theme; IconTheme keeps exactly one enabled. -->
+        <activity-alias
+            android:name=".LauncherDefault"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher"
+            android:targetActivity=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".LauncherSubuh"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_subuh"
+            android:roundIcon="@mipmap/ic_launcher_subuh"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".LauncherPagi"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_pagi"
+            android:roundIcon="@mipmap/ic_launcher_pagi"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".LauncherSiang"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_siang"
+            android:roundIcon="@mipmap/ic_launcher_siang"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".LauncherSore"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_sore"
+            android:roundIcon="@mipmap/ic_launcher_sore"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".LauncherSenja"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_senja"
+            android:roundIcon="@mipmap/ic_launcher_senja"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".LauncherMalam"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_malam"
+            android:roundIcon="@mipmap/ic_launcher_malam"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
 
         <activity
             android:name=".ui.MonthActivity"

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bahasa Indonesia. The default (values/) is English. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="PluralsCandidate">
+    <string name="app_name">Waktu Sholat</string>
+
+    <!-- Prayers -->
+    <string name="prayer_imsak">Imsak</string>
+    <string name="prayer_fajr">Subuh</string>
+    <string name="prayer_sunrise">Terbit</string>
+    <string name="prayer_dhuhr">Dzuhur</string>
+    <string name="prayer_asr">Ashar</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isya</string>
+    <string name="note_imsak">Batas sahur</string>
+    <string name="note_sunrise">Akhir waktu Subuh</string>
+
+    <!-- Today -->
+    <string name="next_prayer_label">Sholat berikutnya</string>
+    <string name="section_today">Hari ini</string>
+    <string name="current_since">%1$s sejak %2$s</string>
+    <string name="countdown_in">%1$s lagi</string>
+    <string name="rel_hours_minutes">%1$d jam %2$d menit</string>
+    <string name="rel_hours_minutes_short">%1$d jam %2$d mnt</string>
+    <string name="rel_hours">%1$d jam</string>
+    <string name="rel_minutes">%1$d menit</string>
+    <string name="rel_minutes_short">%1$d mnt</string>
+    <string name="rel_now">kurang dari 1 menit</string>
+    <string name="period_subuh">Subuh</string>
+    <string name="period_pagi">Pagi</string>
+    <string name="period_siang">Siang</string>
+    <string name="period_sore">Sore</string>
+    <string name="period_senja">Senja</string>
+    <string name="period_malam">Malam</string>
+    <string name="date_long">%1$s, %2$d %3$s %4$d</string>
+    <string name="hijri_suffix">%1$s H</string>
+    <string name="zone_note">%1$s · zona %2$s · dihitung di perangkat</string>
+    <string name="qibla_tile_summary">%1$s dari Utara</string>
+
+    <!-- Actions -->
+    <string name="action_back">Kembali</string>
+    <string name="action_cancel">Batal</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="action_change_city">Ganti lokasi</string>
+
+    <!-- Month -->
+    <string name="section_month">Jadwal bulanan</string>
+    <string name="month_col_date">Tgl</string>
+    <string name="month_prev">Bulan sebelumnya</string>
+    <string name="month_next">Bulan berikutnya</string>
+
+    <!-- Qibla -->
+    <string name="qibla_title">Arah kiblat</string>
+    <string name="qibla_hint">Putar perangkat hingga penanda di atas lurus dengan jarum</string>
+    <string name="qibla_no_sensor">Perangkat tidak punya sensor arah. Gunakan angka derajat di bawah bersama kompas biasa.</string>
+    <string name="qibla_bearing">Arah</string>
+    <string name="qibla_distance">Jarak ke Kakbah</string>
+    <string name="qibla_note">Derajat dihitung dari Utara sebenarnya. Jauhkan perangkat dari logam dan magnet agar sensor tetap akurat.</string>
+    <string name="qibla_accuracy_high">Akurasi sensor: tinggi</string>
+    <string name="qibla_accuracy_medium">Akurasi sensor: sedang</string>
+    <string name="qibla_accuracy_low">Akurasi sensor rendah — gerakkan perangkat membentuk angka 8</string>
+    <string name="qibla_accuracy_unreliable">Sensor belum terkalibrasi — gerakkan perangkat membentuk angka 8</string>
+
+    <!-- Location -->
+    <string name="city_title">Pilih lokasi</string>
+    <string name="city_search_hint">Cari kota atau provinsi</string>
+    <string name="city_empty">Kota tidak ditemukan</string>
+    <string name="city_detail">%1$s · %2$s</string>
+    <string name="city_gps">Pakai lokasi perangkat</string>
+    <string name="city_gps_summary">Titik presisi dari GPS, di mana pun di dunia</string>
+    <string name="city_gps_active">Lokasi perangkat · %1$s · %2$s</string>
+    <string name="city_locating">Mencari lokasi…</string>
+    <string name="my_location">Lokasi saya</string>
+    <string name="location_unavailable">Lokasi tidak ditemukan. Pastikan GPS aktif lalu coba lagi.</string>
+    <string name="location_permission_needed">Izin lokasi dibutuhkan untuk fitur ini</string>
+
+    <string name="search_world">Cari “%1$s” di seluruh dunia</string>
+    <string name="search_world_loading">Mencari…</string>
+    <string name="search_world_empty">Tempat tidak ditemukan. Periksa ejaan atau koneksi internet.</string>
+    <string name="search_world_title">Hasil untuk “%1$s”</string>
+    <string name="settings_language">Bahasa</string>
+    <string name="language_system">Ikuti sistem</string>
+    <string name="language_english">English</string>
+    <string name="language_indonesian">Bahasa Indonesia</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_location">Lokasi</string>
+    <string name="settings_city">Kota</string>
+    <string name="settings_calculation">Perhitungan</string>
+    <string name="settings_method">Metode</string>
+    <string name="settings_madhab">Madzhab Ashar</string>
+    <string name="settings_madhab_summary">Menentukan awal waktu Ashar</string>
+    <string name="settings_general">Umum</string>
+    <string name="settings_notifications">Notifikasi adzan</string>
+    <string name="settings_notifications_summary">Beri tahu saat waktu sholat tiba</string>
+    <string name="settings_reminder_lead">Waktu pengingat</string>
+    <string name="settings_exact_alarm">Izinkan alarm tepat waktu</string>
+    <string name="settings_exact_alarm_summary">Tanpa izin ini notifikasi bisa terlambat beberapa menit</string>
+    <string name="settings_show_imsak">Tampilkan imsak</string>
+    <string name="settings_icon">Ikon aplikasi</string>
+    <string name="icon_default">Hijau</string>
+    <string name="settings_about_text">Waktu Sholat %1$s\nDihitung di perangkat · tanpa iklan</string>
+
+    <string name="lead_none">Tepat waktu</string>
+    <string name="lead_5">5 menit sebelumnya</string>
+    <string name="lead_10">10 menit sebelumnya</string>
+    <string name="lead_15">15 menit sebelumnya</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Waktu sholat</string>
+    <string name="notification_channel_description">Pemberitahuan saat waktu sholat tiba</string>
+    <string name="notification_title">Waktu %1$s</string>
+    <string name="notification_text">%1$s pukul %2$s</string>
+    <string name="notification_reminder_text">%1$s lagi menuju %2$s (%3$s)</string>
+
+    <!-- Widgets -->
+    <string name="widget_next_label">Sholat berikutnya</string>
+    <string name="widget_next_desc">Waktu sholat berikutnya dan berapa lama lagi</string>
+    <string name="widget_times_label">Jadwal hari ini</string>
+    <string name="widget_times_desc">Semua waktu sholat hari ini dalam satu baris</string>
+    <string name="widget_schedule_label">Jadwal lengkap</string>
+    <string name="widget_schedule_desc">Sholat berikutnya dan daftar jadwal hari ini</string>
+    <string name="widget_countdown_label">Hitung mundur</string>
+    <string name="widget_countdown_desc">Hitung mundur langsung menuju sholat berikutnya</string>
+    <string name="widget_glance_label">Minimalis</string>
+    <string name="widget_glance_desc">Teks langsung di atas wallpaper, tanpa latar</string>
+    <string name="widget_next_relative">%1$s %2$s lagi</string>
+    <string name="widget_at_time">pukul %1$s</string>
+    <string name="widget_city_suffix">" · %1$s"</string>
+
+    <!-- Sample content for widget-picker previews. -->
+    <string name="sample_remaining">1 jam 20 mnt lagi</string>
+    <string name="sample_relative">Maghrib 1 jam 20 mnt lagi</string>
+    <string name="sample_at_time">pukul 14:55</string>
+
+    <string-array name="months">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+
+    <!-- Monday first, matching CivilDate.dayOfWeek. -->
+    <string-array name="weekdays">
+        <item>Senin</item>
+        <item>Selasa</item>
+        <item>Rabu</item>
+        <item>Kamis</item>
+        <item>Jumat</item>
+        <item>Sabtu</item>
+        <item>Minggu</item>
+    </string-array>
+
+    <string-array name="weekday_initials">
+        <item>S</item>
+        <item>S</item>
+        <item>R</item>
+        <item>K</item>
+        <item>J</item>
+        <item>S</item>
+        <item>M</item>
+    </string-array>
+
+    <string-array name="hijri_months">
+        <item>Muharam</item>
+        <item>Safar</item>
+        <item>Rabiul Awal</item>
+        <item>Rabiul Akhir</item>
+        <item>Jumadil Awal</item>
+        <item>Jumadil Akhir</item>
+        <item>Rajab</item>
+        <item>Syaban</item>
+        <item>Ramadan</item>
+        <item>Syawal</item>
+        <item>Zulkaidah</item>
+        <item>Zulhijah</item>
+    </string-array>
+
+    <!-- Utara, Timur, Selatan, Barat. -->
+    <string-array name="cardinals">
+        <item>U</item>
+        <item>T</item>
+        <item>S</item>
+        <item>B</item>
+    </string-array>
+
+    <!-- In CalculationMethod.entries order. -->
+    <string-array name="method_regions">
+        <item>Indonesia</item>
+        <item>Singapura</item>
+        <item>Malaysia</item>
+        <item>Arab Saudi</item>
+        <item>Internasional</item>
+        <item>Amerika Utara</item>
+        <item>Afrika, Timur Tengah</item>
+        <item>Pakistan, India</item>
+        <item>Turki</item>
+        <item>Iran</item>
+        <item>Syiah</item>
+    </string-array>
+</resources>

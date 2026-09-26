@@ -25,7 +25,7 @@ import dev.rafa.waktusholat.data.ScheduleRepository
  * When the device has no rotation-vector sensor the screen still works: the numeric bearing and the
  * distance are shown without a live dial, which is the honest degradation rather than a stuck needle.
  */
-class QiblaActivity : Activity(), SensorEventListener {
+class QiblaActivity : BaseActivity(), SensorEventListener {
 
     private lateinit var repository: ScheduleRepository
     private lateinit var compass: QiblaCompassView

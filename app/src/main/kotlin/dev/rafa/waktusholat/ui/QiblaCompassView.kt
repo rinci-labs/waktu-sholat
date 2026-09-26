@@ -36,6 +36,9 @@ class QiblaCompassView @JvmOverloads constructor(
     private val primary = context.getColor(R.color.text_primary)
     private val muted = context.getColor(R.color.text_tertiary)
 
+    /** N, E, S, W in the app language (U, T, S, B in Indonesian). */
+    private val cardinals: Array<String> = context.resources.getStringArray(R.array.cardinals)
+
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
@@ -118,7 +121,8 @@ class QiblaCompassView @JvmOverloads constructor(
     private fun drawCardinals(canvas: Canvas, cx: Float, cy: Float, radius: Float) {
         labelPaint.textSize = radius * 0.12f
         val distance = radius * 0.68f
-        for ((label, degree) in CARDINALS) {
+        for ((index, degree) in CARDINAL_DEGREES.withIndex()) {
+            val label = cardinals[index]
             val rad = Math.toRadians(degree.toDouble())
             val x = cx + sin(rad).toFloat() * distance
             val y = cy - cos(rad).toFloat() * distance + labelPaint.textSize * 0.36f
@@ -160,8 +164,7 @@ class QiblaCompassView @JvmOverloads constructor(
     }
 
     private companion object {
-        /** Indonesian cardinal points: Utara, Timur, Selatan, Barat. */
-        val CARDINALS = listOf("U" to 0, "T" to 90, "S" to 180, "B" to 270)
+        val CARDINAL_DEGREES = intArrayOf(0, 90, 180, 270)
 
         const val ALIGNED_DEGREES = 3f
     }

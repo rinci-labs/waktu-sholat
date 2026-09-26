@@ -1,12 +1,18 @@
 # Waktu Sholat
 
-Offline Indonesian prayer times for Android. Everything is computed on the device from a built-in
-table of ~490 kota/kabupaten using the Kemenag method, so it needs no internet, no account and no
-location permission. The release APK is about 130 KB.
+Prayer times for Android, computed entirely on the device. Pick any of ~490 Indonesian
+kota/kabupaten offline, use the phone's precise GPS position anywhere in the world, or search any
+place on Earth. English and Bahasa Indonesia. The release APK is under 200 KB.
 
 ## Features
 
-- Today's schedule with a live countdown, Hijri date and interval progress
+- Today's schedule with a relative countdown ("in 7 h 33 min"), Hijri date and interval progress
+- Illustrated sky that follows the part of the day: sun or moon on its arc, stars, clouds, skyline
+- Worldwide: precise GPS fix with the phone's time zone (half-hour zones and DST included), or a
+  worldwide place search; the time zone of a searched place is chosen offline from ICU data
+- English and Bahasa Indonesia, switchable in Settings (and in the system's per-app language
+  screen on Android 13+)
+- Seven launcher icon themes, chosen in Settings
 - Monthly timetable, Qibla compass, adhan notifications with optional reminder lead time
 - Five home-screen widgets: **Sholat berikutnya**, **Jadwal hari ini**, **Jadwal lengkap**,
   **Hitung mundur** and **Minimalis**. Countdowns are ticked by the launcher, so the app does no
