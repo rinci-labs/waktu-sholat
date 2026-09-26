@@ -217,6 +217,10 @@
             android:exported="false" />
 
         <receiver
+            android:name=".ui.IconAutoReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name=".notify.PrayerAlarmReceiver"
             android:exported="false" />
 

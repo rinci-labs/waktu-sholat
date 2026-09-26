@@ -154,7 +154,7 @@ class SettingsActivity : BaseActivity() {
             general,
             title = getString(R.string.settings_icon),
             summary = null,
-            value = getString(IconTheme.current(this).label),
+            value = if (IconAuto.isEnabled(this)) getString(R.string.icon_auto) else getString(IconTheme.current(this).label),
             divider = true,
         ) { chooseIcon() }
     }
@@ -162,18 +162,23 @@ class SettingsActivity : BaseActivity() {
     /** Icon theme picker: each row previews the theme's icon beside its name. */
     private fun chooseIcon() {
         val themes = IconTheme.entries
-        val current = themes.indexOf(IconTheme.current(this))
+        // Row 0 is "Automatic"; rows 1.. are the fixed themes.
+        val current = if (IconAuto.isEnabled(this)) 0 else themes.indexOf(IconTheme.current(this)) + 1
+        val autoPreview = IconTheme.valueOf(Period.of(app.repository.snapshot()).name)
         val size = (36 * resources.displayMetrics.density).toInt()
         val gap = (16 * resources.displayMetrics.density).toInt()
         val adapter = object : android.widget.ArrayAdapter<String>(
             this,
             android.R.layout.select_dialog_singlechoice,
-            themes.map { getString(it.label) },
+            listOf(getString(R.string.icon_auto_long)) + themes.map { getString(it.label) },
         ) {
             override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
                 val view = super.getView(position, convertView, parent) as TextView
                 val icon = android.graphics.drawable.LayerDrawable(
-                    arrayOf(getDrawable(themes[position].preview), getDrawable(R.drawable.ic_launcher_foreground)),
+                    arrayOf(
+                        getDrawable(if (position == 0) autoPreview.preview else themes[position - 1].preview),
+                        getDrawable(R.drawable.ic_launcher_foreground),
+                    ),
                 )
                 icon.setBounds(0, 0, size, size)
                 view.setCompoundDrawablesRelativeWithIntrinsicBounds(ClipOval(icon, size), null, null, null)
@@ -185,7 +190,12 @@ class SettingsActivity : BaseActivity() {
             .setTitle(R.string.settings_icon)
             .setSingleChoiceItems(adapter, current) { dialog, which ->
                 dialog.dismiss()
-                IconTheme.apply(this, themes[which])
+                if (which == 0) {
+                    IconAuto.setEnabled(this, true)
+                } else {
+                    IconAuto.setEnabled(this, false)
+                    IconTheme.apply(this, themes[which - 1])
+                }
                 render()
             }
             .setNegativeButton(R.string.action_cancel, null)

@@ -75,9 +75,24 @@ open class BaseActivity : Activity() {
 
     override fun onStart() {
         super.onStart()
+        started++
         val token = Language.token(Language.wrap(applicationContext))
         val previous = languageToken
         languageToken = token
         if (previous != null && previous != token && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) recreate()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        started--
+        // Leaving the app is the safe moment for a pending automatic icon change.
+        if (started == 0 && !isChangingConfigurations) IconAuto.sync(applicationContext)
+    }
+
+    companion object {
+        private var started = 0
+
+        /** True while any screen of the app is visible. */
+        val inForeground: Boolean get() = started > 0
     }
 }

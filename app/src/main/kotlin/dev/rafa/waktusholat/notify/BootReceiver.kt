@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import dev.rafa.waktusholat.WaktuSholatApp
+import dev.rafa.waktusholat.ui.IconAuto
 import dev.rafa.waktusholat.widget.WidgetUpdater
 
 /**
@@ -26,6 +27,7 @@ class BootReceiver : BroadcastReceiver() {
                 // The widget's "next prayer" is stale after these events too, but its refresh is
                 // purely cosmetic: never let it take the alarm re-arm down with it.
                 runCatching { WidgetUpdater.updateAll(context) }
+                runCatching { IconAuto.sync(context) }
             }
         }
     }
