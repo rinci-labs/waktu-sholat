@@ -14,9 +14,9 @@ place on Earth. English and Bahasa Indonesia. The release APK is under 200 KB.
   screen on Android 13+)
 - Seven launcher icon themes, chosen in Settings
 - Monthly timetable, Qibla compass, adhan notifications with optional reminder lead time
-- Five home-screen widgets: **Sholat berikutnya**, **Jadwal hari ini**, **Jadwal lengkap**,
-  **Hitung mundur** and **Minimalis**. Countdowns are ticked by the launcher, so the app does no
-  work between prayers; widgets follow the wallpaper colours on Android 12+
+- Five home-screen widgets: **Next prayer**, **Today's times**, **Full schedule**, **Countdown**
+  and **Minimal**. Relative times refresh each minute with a non-waking alarm (nothing runs while
+  the screen is off); widgets follow the wallpaper colours on Android 12+
 - Light and dark theme, Android 7.0+ (API 24)
 
 ## Build
