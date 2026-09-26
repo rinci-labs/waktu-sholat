@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dark theme. Only aliases: every colour is declared once in `values/colors.xml` and re-pointed here,
+  so the two palettes cannot drift apart and no layout has to know which theme is active.
+-->
+<resources>
+    <color name="brand">@color/brand_night</color>
+    <color name="brand_soft">@color/brand_soft_night</color>
+
+    <color name="background">@color/background_night</color>
+    <color name="surface">@color/surface_night</color>
+    <color name="surface_alt">@color/surface_alt_night</color>
+    <color name="outline">@color/outline_night</color>
+
+    <color name="text_primary">@color/text_primary_night</color>
+    <color name="text_secondary">@color/text_secondary_night</color>
+    <color name="text_tertiary">@color/text_tertiary_night</color>
+
+    <color name="ripple">@color/ripple_night</color>
+
+    <color name="widget_background">@color/widget_background_night</color>
+</resources>

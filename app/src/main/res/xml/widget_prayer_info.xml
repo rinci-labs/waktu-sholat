@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Widget capability declaration.
+
+  `minWidth`/`minHeight` are 250x40dp, which the launcher maps to the 4x1 cell the widget is designed
+  around; `targetCellWidth`/`targetCellHeight` say the same thing on API 31+, where they take
+  precedence and let the launcher offer an exact 4x1 placement. The vertical range is left open
+  (`minResizeHeight` 40dp, `maxResizeHeight` 400dp) so the same widget can be stretched into the hero
+  form without the user having to add a second instance.
+
+  `updatePeriodMillis` is the slowest the platform allows (30 min) and is only a safety net: the
+  provider re-arms itself exactly at each prayer and at local midnight, so the content is never
+  actually waiting on this.
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="40dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="1"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="400dp"
+    android:maxResizeHeight="400dp"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:previewLayout="@layout/widget_preview"
+    android:description="@string/widget_label"
+    android:initialLayout="@layout/widget_times">
+</appwidget-provider>

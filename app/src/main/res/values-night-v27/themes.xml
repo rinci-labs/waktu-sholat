@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      `android:windowLightNavigationBar` is API 27+, so it lives in this overlay rather than in the
+      base theme, where it would be an error on API 24-26. All other attributes are inherited from
+      the base theme.
+    -->
+    <style name="Theme.WaktuSholat" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Palette. Each colour has a `_night` twin in this file, and `values-night/colors.xml` re-points the
+  plain name at the twin, so layouts reference one name and follow the device theme with no branching
+  anywhere in code.
+
+  The page/卡片 separation is deliberately more than a hairline: white cards on a barely-different
+  page read as one continuous slab, which is exactly the failure mode this palette avoids by keeping
+  a clear step between `background` and `surface`.
+-->
+<resources>
+    <!-- Brand: a calm green, reserved for the current/next prayer and active controls. -->
+    <color name="brand">#1B7F5A</color>
+    <color name="brand_night">#5BD1A3</color>
+    <!-- Faint brand wash behind the active prayer. -->
+    <color name="brand_soft">#DCEBE4</color>
+    <color name="brand_soft_night">#16281F</color>
+
+    <color name="background">#EDF0EE</color>
+    <color name="background_night">#0C0E0D</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_night">#191D1C</color>
+    <color name="surface_alt">#E1E6E3</color>
+    <color name="surface_alt_night">#242A28</color>
+    <color name="outline">#D5DBD7</color>
+    <color name="outline_night">#333A37</color>
+
+    <color name="text_primary">#171A18</color>
+    <color name="text_primary_night">#F1F3F2</color>
+    <color name="text_secondary">#59615D</color>
+    <color name="text_secondary_night">#A7AFAB</color>
+    <color name="text_tertiary">#79817C</color>
+    <color name="text_tertiary_night">#8B938F</color>
+
+    <color name="ripple">#14000000</color>
+    <color name="ripple_night">#1FFFFFFF</color>
+
+    <!--
+      Widget. Translucent so the launcher's own wallpaper treatment shows through, which is what the
+      Android 12+ widget styling expects.
+    -->
+    <color name="widget_background">#F7FFFFFF</color>
+    <color name="widget_background_night">#F2141917</color>
+</resources>

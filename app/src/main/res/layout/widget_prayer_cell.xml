@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A single prayer cell for the horizontal widget: name above time, both centred.
+
+  `layout_weight` is required, not optional: `RemoteViews.addView` takes the child's own layout
+  params from this file, and a `0dp` width without a weight collapses the cell to nothing, which
+  piles every name at the left edge of the parent.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/cell_name"
+        style="@style/Text.Widget.Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textSize="@dimen/widget_cell_name" />
+
+    <TextView
+        android:id="@+id/cell_time"
+        style="@style/Text.Widget.Time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textSize="@dimen/widget_cell_time" />
+</LinearLayout>

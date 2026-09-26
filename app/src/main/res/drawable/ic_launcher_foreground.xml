@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Crescent = outer disc minus an offset disc, using fillType=evenOdd so no strokes or clipping are
+  needed. Geometry is shared with tools/gen_icons.py; the outer radius (30 of 108) stays inside the
+  adaptive-icon safe zone of 33.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M24,54 a30,30 0 1,0 60,0 a30,30 0 1,0 -60,0 Z M38.5,47 a25.5,25.5 0 1,0 51,0 a25.5,25.5 0 1,0 -51,0 Z" />
+</vector>

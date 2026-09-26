@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Waktu Sholat</string>
+    <string name="widget_label">Jadwal Sholat</string>
+
+    <string name="home_subtitle_empty">Berangkat dari Jakarta</string>
+    <string name="next_prayer_label">Menuju</string>
+    <string name="countdown_now">Sekarang</string>
+    <string name="after_isha">Subuh berikutnya</string>
+
+    <string name="section_today">Jadwal hari ini</string>
+    <string name="section_month">Jadwal bulanan</string>
+    <string name="section_settings">Pengaturan</string>
+
+    <string name="prayer_imsak">Imsak</string>
+    <string name="prayer_fajr">Subuh</string>
+    <string name="prayer_sunrise">Terbit</string>
+    <string name="prayer_dhuhr">Dzuhur</string>
+    <string name="prayer_asr">Ashar</string>
+    <string name="prayer_maghrib">Maghrib</string>
+    <string name="prayer_isha">Isya</string>
+
+    <string name="action_today">Hari ini</string>
+    <string name="action_month">Bulanan</string>
+    <string name="action_settings">Pengaturan</string>
+    <string name="action_close">Tutup</string>
+    <string name="action_refresh">Perbarui lokasi</string>
+
+    <string name="settings_location">Lokasi</string>
+    <string name="settings_location_summary">Pilih kota atau pakai lokasi perangkat</string>
+    <string name="settings_method">Metode perhitungan</string>
+    <string name="settings_madhab">Madzhab (Ashar)</string>
+    <string name="settings_notifications">Notifikasi adzan</string>
+    <string name="settings_notifications_summary">Ingatkan saat waktu sholat tiba</string>
+    <string name="settings_reminder_lead">Ingatkan sebelum adzan</string>
+    <string name="settings_show_imsak">Tampilkan imsak</string>
+    <string name="settings_about">Tentang</string>
+    <string name="settings_about_summary">Dihitung di perangkat, tanpa internet</string>
+    <string name="settings_use_gps">Pakai lokasi perangkat</string>
+    <string name="settings_pick_city">Pilih kota</string>
+    <string name="settings_search_hint">Cari kota</string>
+
+    <string name="lead_none">Tepat waktu</string>
+    <string name="lead_5">5 menit sebelumnya</string>
+    <string name="lead_10">10 menit sebelumnya</string>
+    <string name="lead_15">15 menit sebelumnya</string>
+
+    <string name="notification_channel_name">Waktu sholat</string>
+    <string name="notification_channel_description">Pemberitahuan saat waktu sholat tiba</string>
+    <string name="notification_title">Waktu %1$s</string>
+    <string name="notification_text">%1$s pukul %2$s</string>
+    <string name="notification_reminder_text">%1$s lagi menuju %2$s (%3$s)</string>
+
+    <string name="location_unavailable">Lokasi tidak tersedia</string>
+    <string name="location_permission_needed">Izin lokasi dibutuhkan</string>
+    <plurals name="city_count">
+        <item quantity="other">%d kota</item>
+    </plurals>
+    <string name="countdown_hours">%1$d jam %2$d menit %3$02d detik lagi</string>
+    <string name="countdown_minutes">%1$d menit %2$02d detik lagi</string>
+    <string name="countdown_value">%1$s lagi</string>
+    <string name="countdown_after_isha">Menuju Subuh %1$s</string>
+    <string name="note_imsak">menahan makan</string>
+    <string name="note_sunrise">sudah masuk waktu dhuha</string>
+    <string name="zone_note">%1$s \u00b7 dihitung untuk zona %2$s</string>
+    <string name="month_title">Jadwal %1$s</string>
+    <string name="month_empty">Belum ada data</string>
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_about_engine">Perhitungan di perangkat, tanpa internet</string>
+    <string name="city_title">Pilih Kota</string>
+    <string name="city_gps">Pakai lokasi perangkat</string>
+    <string name="city_gps_summary">Cari kota terdekat dari GPS</string>
+    <string name="city_search_hint">Cari kota atau provinsi</string>
+    <string name="city_empty">Kota tidak ditemukan</string>
+    <string name="city_detail">%1$s \u00b7 %2$s</string>
+    <string name="location_value">%1$s \u00b7 %2$s</string>
+    <string name="month_col_date">Tgl</string>
+    <string name="month_prev">Bulan sebelumnya</string>
+    <string name="month_next">Bulan berikutnya</string>
+    <string name="month_prev_glyph">\u2039</string>
+    <string name="month_next_glyph">\u203a</string>
+    <string name="location_outside_indonesia">Di luar Indonesia \u00b7 memakai %1$s</string>
+    <string name="widget_countdown_hours">%1$d jam %2$d mnt lagi</string>
+    <string name="widget_countdown_minutes">%1$d mnt lagi</string>
+    <string name="widget_desc">Jadwal sholat hari ini, lengkap dengan waktu sholat berikutnya</string>
+
+    <string name="today_label">Hari ini</string>
+    <string name="now_label">Sekarang</string>
+    <string name="action_open_month">Lihat jadwal bulanan</string>
+    <string name="action_use_location">Pakai lokasi perangkat</string>
+    <string name="settings_general">Umum</string>
+    <string name="settings_calculation">Perhitungan</string>
+    <string name="qibla_title">Arah Kiblat</string>
+    <string name="qibla_hint">Putar perangkat hingga jarum menunjuk ke atas</string>
+    <string name="qibla_no_sensor">Perangkat tidak punya sensor arah. Gunakan angka derajat di bawah bersama kompas biasa.</string>
+    <string name="qibla_bearing">Arah kiblat</string>
+    <string name="qibla_distance">Jarak ke Kakbah</string>
+    <string name="qibla_note">Jarum menunjukkan arah kiblat relatif terhadap Utara sebenarnya. Jauhkan dari logam dan magnet agar sensor tetap akurat.</string>
+    <string name="qibla_accuracy_high">Akurasi sensor: tinggi</string>
+    <string name="qibla_accuracy_medium">Akurasi sensor: sedang</string>
+    <string name="qibla_accuracy_low">Akurasi sensor: rendah \u2014 gerakkan perangkat membentuk angka 8</string>
+    <string name="qibla_accuracy_unreliable">Akurasi sensor: belum terkalibrasi \u2014 gerakkan perangkat membentuk angka 8</string>
+    <string name="action_qibla">Arah kiblat</string>
+    <string name="section_qibla">Kiblat</string>
+    <string name="qibla_summary">%1$s dari Utara \u00b7 %2$s ke Kakbah</string>
+    <string name="action_cancel">Batal</string>
+    <string name="settings_madhab_summary">Menentukan waktu Ashar</string>
+    <string name="settings_method_summary">Standar perhitungan sudut subuh dan isya</string>
+    <string name="settings_title_value">Pengaturan</string>
+</resources>
