@@ -1,10 +1,8 @@
 package dev.rafa.waktusholat.ui
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,15 +17,17 @@ import android.widget.Toast
 import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.City
+import dev.rafa.waktusholat.data.DeviceLocation
 import java.text.Normalizer
 
 /**
- * Location picker over the built-in city table, plus "use my location".
+ * Location picker: a precise device fix that works anywhere in the world, or a city from the
+ * built-in Indonesian table for choosing a place without GPS.
  *
  * A plain [BaseAdapter] with client-side filtering is enough for ~500 rows. The search keys are
  * normalised once up front, so each keystroke is a substring scan with no allocation per row.
  */
-class CityPickerActivity : Activity() {
+class CityPickerActivity : BaseActivity() {
 
     private lateinit var list: ListView
     private lateinit var empty: TextView
@@ -49,18 +49,22 @@ class CityPickerActivity : Activity() {
         current?.let { city -> City.ALL.indexOf(city).takeIf { it > 2 }?.let { list.setSelection(it - 2) } }
 
         findViewById<View>(R.id.use_location).setOnClickListener { useDeviceLocation() }
-        if (preferences.useGps) {
+        if (preferences.followsDevice) {
+            val city = preferences.resolveCity()
             findViewById<TextView>(R.id.use_location_summary).text =
-                getString(R.string.city_gps_active, preferences.resolveCity().label)
+                getString(R.string.city_gps_active, city.label, city.zoneLabel)
         }
 
         findViewById<EditText>(R.id.search).addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
-                adapter.filter(s?.toString().orEmpty())
+                val query = s?.toString().orEmpty().trim()
+                adapter.filter(query)
+                bindWorldSearch(query)
                 val isEmpty = adapter.count == 0
-                empty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                // With a query typed, the worldwide row already offers the way forward.
+                empty.visibility = if (isEmpty && query.length < 2) View.VISIBLE else View.GONE
                 list.visibility = if (isEmpty) View.GONE else View.VISIBLE
             }
         })
@@ -73,38 +77,68 @@ class CityPickerActivity : Activity() {
         finish()
     }
 
-    /** Coarse location is plenty: the schedule snaps to the nearest built-in city anyway. */
+    /** Asks for precise location (the user may still grant approximate on Android 12+), then fixes. */
     private fun useDeviceLocation() {
-        if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION)
+        if (!DeviceLocation.hasPermission(this)) {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                REQUEST_LOCATION,
+            )
             return
         }
-        applyLastKnownLocation()
-    }
-
-    private fun applyLastKnownLocation() {
-        val manager = getSystemService(LocationManager::class.java)
-        // Re-checked here: the permission can be revoked while the app is backgrounded, and
-        // getLastKnownLocation throws rather than returning null in that case.
-        val granted = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val location = if (granted && manager != null) {
-            manager.getProviders(true)
-                .mapNotNull { runCatching { manager.getLastKnownLocation(it) }.getOrNull() }
-                .maxByOrNull { it.time }
-        } else {
-            null
-        }
-        when {
-            location == null -> toast(R.string.location_unavailable)
-            // A fix the app cannot serve is refused: the nearest built-in city would be thousands of
-            // kilometres away and its wall-clock zone meaningless.
-            !City.isServiceable(location.latitude, location.longitude) -> toast(R.string.location_outside)
-            else -> {
-                val app = application as WaktuSholatApp
-                app.preferences.setCoordinates(location.latitude, location.longitude)
-                app.notifyScheduleChanged()
+        val summary = findViewById<TextView>(R.id.use_location_summary)
+        val previous = summary.text
+        summary.setText(R.string.city_locating)
+        findViewById<View>(R.id.use_location).isEnabled = false
+        DeviceLocation.locate(this) { location ->
+            if (isFinishing || isDestroyed) return@locate
+            findViewById<View>(R.id.use_location).isEnabled = true
+            if (location == null) {
+                summary.text = previous
+                toast(R.string.location_unavailable)
+            } else {
+                (application as WaktuSholatApp).applyFix(location)
                 finish()
             }
+        }
+    }
+
+    /** Offers a worldwide search for anything typed, for places outside the built-in table. */
+    private fun bindWorldSearch(query: String) {
+        val row = findViewById<View>(R.id.search_world)
+        row.visibility = if (query.length >= 2) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.search_world_text).text = getString(R.string.search_world, query)
+        row.setOnClickListener { searchWorld(query) }
+    }
+
+    private fun searchWorld(query: String) {
+        val text = findViewById<TextView>(R.id.search_world_text)
+        val row = findViewById<View>(R.id.search_world)
+        text.setText(R.string.search_world_loading)
+        row.isEnabled = false
+        DeviceLocation.search(this, query) { found ->
+            if (isFinishing || isDestroyed) return@search
+            row.isEnabled = true
+            text.text = getString(R.string.search_world, query)
+            if (found.isEmpty()) {
+                toast(R.string.search_world_empty)
+                return@search
+            }
+            val labels = found.map { place ->
+                val zone = City(place.name, place.region, place.latitude, place.longitude, 0, place.zoneId).zoneLabel
+                listOf(place.name, place.region, zone).filter { it.isNotBlank() }.joinToString(" \u00b7 ")
+            }
+            android.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.search_world_title, query))
+                .setItems(labels.toTypedArray()) { _, which ->
+                    val place = found[which]
+                    val app = application as WaktuSholatApp
+                    app.preferences.setPickedPlace(place.latitude, place.longitude, place.zoneId, place.name, place.region)
+                    app.notifyScheduleChanged()
+                    finish()
+                }
+                .setNegativeButton(R.string.action_cancel, null)
+                .show()
         }
     }
 
@@ -113,8 +147,8 @@ class CityPickerActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQUEST_LOCATION) return
-        if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-            applyLastKnownLocation()
+        if (grantResults.any { it == PackageManager.PERMISSION_GRANTED }) {
+            useDeviceLocation()
         } else {
             toast(R.string.location_permission_needed)
         }

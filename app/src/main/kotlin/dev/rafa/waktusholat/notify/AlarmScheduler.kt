@@ -36,7 +36,6 @@ object AlarmScheduler {
         val lead = preferences.reminderLeadMinutes
         val now = System.currentTimeMillis()
         val day = WaktuSholatApp.instance.repository.day(now)
-        val zone = day.city.timeZoneHours
         val windows = listOf(day.times, day.tomorrow)
 
         // Prayer.OBLIGATORY is exactly FAJR, DHUHR, ASR, MAGHRIB, ISHA: the two entries that must
@@ -46,7 +45,7 @@ object AlarmScheduler {
             // the schedule's own minute, which is the adhan it belongs to.
             for (times in windows) {
                 val minute = times.minuteOfDay(prayer)
-                val triggerAtMillis = epochMillisAt(times.date, minute, zone) - lead * MILLIS_PER_MINUTE
+                val triggerAtMillis = epochMillisAt(times.date, minute, day.city.offsetMinutesOn(times.date)) - lead * MILLIS_PER_MINUTE
                 // Past occurrences are skipped: the first future one wins, and once both days have
                 // passed there is nothing to arm.
                 if (triggerAtMillis > now) {
@@ -101,18 +100,12 @@ object AlarmScheduler {
     }
 
     /**
-     * The instant of local midnight plus [minuteOfDay], in a zone [zone] hours from UTC.
-     *
-     * This is the inverse of [LocalClock.dateAt] and [LocalClock.minuteOfDay]: for a whole-hour
-     * offset the local epoch minute is `date.epochDay * 1440 + minuteOfDay`, so
-     * `epochMillis = (date.epochDay * 1440L + minuteOfDay - zone * 60L) * 60_000L`. Because
-     * [minuteOfDay] is in `0..1439` the value stays inside that local day, and dividing back out
-     * (`/ 60_000`, then `+ zone * 60`, then floorDiv/floorMod by 1440) returns exactly the date and
-     * the minute that went in — which [require] pins down for every call this module makes.
+     * The instant of local midnight plus [minuteOfDay] on [date], at [offsetMinutes] from UTC: the
+     * inverse of [dev.rafa.waktusholat.core.LocalClock.dateAt] and `minuteOfDay` for that offset.
      */
-    fun epochMillisAt(date: CivilDate, minuteOfDay: Int, zone: Int): Long {
+    fun epochMillisAt(date: CivilDate, minuteOfDay: Int, offsetMinutes: Int): Long {
         require(minuteOfDay in 0 until 1440) { "minuteOfDay out of range: $minuteOfDay" }
-        return (date.epochDay * 1440L + minuteOfDay - zone * 60L) * MILLIS_PER_MINUTE
+        return (date.epochDay * 1440L + minuteOfDay - offsetMinutes) * MILLIS_PER_MINUTE
     }
 
     /**

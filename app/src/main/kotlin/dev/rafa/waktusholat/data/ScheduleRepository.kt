@@ -30,7 +30,7 @@ class ScheduleRepository(private val preferences: Preferences) {
 
     /** Today's civil date in the city's time zone. */
     fun today(nowMillis: Long = System.currentTimeMillis()): CivilDate =
-        LocalClock.dateAt(nowMillis, city.timeZoneHours)
+        LocalClock.dateAt(nowMillis, city.offsetMinutesAt(nowMillis))
 
     fun timesFor(city: City, date: CivilDate): PrayerTimes =
         prayerTimesFor(city, date, preferences.method, preferences.madhab)
@@ -38,7 +38,7 @@ class ScheduleRepository(private val preferences: Preferences) {
     /** Today's and tomorrow's schedule for the selected location, cached per day. */
     fun day(nowMillis: Long = System.currentTimeMillis()): Day {
         val city = city
-        val date = LocalClock.dateAt(nowMillis, city.timeZoneHours)
+        val date = LocalClock.dateAt(nowMillis, city.offsetMinutesAt(nowMillis))
         val method = preferences.method
         val madhab = preferences.madhab
         cachedDay?.let { if (it.matches(city, date, method, madhab)) return it }
@@ -86,7 +86,7 @@ class ScheduleRepository(private val preferences: Preferences) {
         val city: City get() = day.city
         val times: PrayerTimes get() = day.times
 
-        val minuteOfDay: Int = LocalClock.minuteOfDay(nowMillis, day.city.timeZoneHours)
+        val minuteOfDay: Int = LocalClock.minuteOfDay(nowMillis, day.city.offsetMinutesAt(nowMillis))
 
         /** The obligatory prayer whose window we are in; before Fajr that is last night's Isha. */
         val current: Prayer = day.times.currentAt(minuteOfDay) ?: Prayer.ISHA
@@ -110,7 +110,7 @@ class ScheduleRepository(private val preferences: Preferences) {
         val nextAtMillis: Long = (nowMillis / MILLIS_PER_MINUTE + minutesRemaining) * MILLIS_PER_MINUTE
 
         /** Instant of the next local midnight, in epoch millis. */
-        val midnightAtMillis: Long = nowMillis + LocalClock.millisUntilNextDay(nowMillis, day.city.timeZoneHours)
+        val midnightAtMillis: Long = nowMillis + LocalClock.millisUntilNextDay(nowMillis, day.city.offsetMinutesAt(nowMillis))
 
         /** Fraction of the current prayer window already elapsed, `0f..1f`. */
         val progress: Float = run {

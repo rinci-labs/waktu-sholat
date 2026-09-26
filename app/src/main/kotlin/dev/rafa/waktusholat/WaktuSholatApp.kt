@@ -1,9 +1,11 @@
 package dev.rafa.waktusholat
 
 import android.app.Application
+import dev.rafa.waktusholat.data.DeviceLocation
 import dev.rafa.waktusholat.data.Preferences
 import dev.rafa.waktusholat.data.ScheduleRepository
 import dev.rafa.waktusholat.notify.AlarmScheduler
+import dev.rafa.waktusholat.ui.Language
 import dev.rafa.waktusholat.widget.WidgetUpdater
 
 /**
@@ -17,6 +19,8 @@ class WaktuSholatApp : Application() {
     val preferences: Preferences by lazy { Preferences(this) }
 
     val repository: ScheduleRepository by lazy { ScheduleRepository(preferences) }
+
+    override fun attachBaseContext(base: android.content.Context) = super.attachBaseContext(Language.wrap(base))
 
     override fun onCreate() {
         super.onCreate()
@@ -32,7 +36,38 @@ class WaktuSholatApp : Application() {
         WidgetUpdater.updateAll(this)
     }
 
+    /**
+     * Adopts a device fix: coordinates first (the schedule is right immediately, offline), then a
+     * place name from the geocoder when one is available, which repaints the label a moment later.
+     */
+    fun applyFix(location: android.location.Location) {
+        preferences.setCoordinates(location.latitude, location.longitude)
+        notifyScheduleChanged()
+        DeviceLocation.describe(this, location.latitude, location.longitude) { place ->
+            // Only name the fix if it is still the current one.
+            if (place != null && preferences.followsDevice && preferences.distanceFromFix(location.latitude, location.longitude) < 1f) {
+                preferences.setPlace(place.name, place.region)
+                notifyScheduleChanged()
+            }
+        }
+    }
+
+    /**
+     * When the device location is in use, quietly adopts a newer cached fix (no GPS request, no
+     * battery cost) if the phone has moved more than [REFIX_METRES] since the stored one.
+     */
+    fun refreshFixPassively() {
+        if (!preferences.followsDevice) return
+        val location = DeviceLocation.lastKnown(this) ?: return
+        if (location.time <= preferences.fixTime) return
+        if (preferences.distanceFromFix(location.latitude, location.longitude) < REFIX_METRES) return
+        applyFix(location)
+    }
+
     companion object {
+        /** About 4 seconds of prayer-time drift; smaller moves are not worth a repaint. */
+        private const val REFIX_METRES = 1_500f
+
         lateinit var instance: WaktuSholatApp
             private set
     }
