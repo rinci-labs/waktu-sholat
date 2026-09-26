@@ -60,7 +60,7 @@ def main() -> None:
         # Legacy icons are used as-is by older launchers, so the crescent fills most of the tile.
         write_icon(f"app/src/main/res/mipmap-{density}/ic_launcher.png", size, 0.66, False)
         write_icon(f"app/src/main/res/mipmap-{density}/ic_launcher_round.png", size, 0.58, True)
-    write_icon("app/src/main/res/mipmap-xxxhdpi/ic_launcher_play.png", 512, 0.66, False)
+    write_icon("store/ic_launcher_play.png", 512, 0.66, False)
 
 
 if __name__ == "__main__":
