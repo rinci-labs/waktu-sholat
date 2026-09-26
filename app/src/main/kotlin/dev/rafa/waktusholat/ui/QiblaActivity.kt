@@ -47,7 +47,7 @@ class QiblaActivity : Activity(), SensorEventListener {
         setContentView(R.layout.activity_qibla)
         setTitle(R.string.qibla_title)
 
-        repository = ScheduleRepository((application as WaktuSholatApp).preferences)
+        repository = (application as WaktuSholatApp).repository
 
         compass = findViewById(R.id.compass)
         bearingLabel = findViewById(R.id.bearing)

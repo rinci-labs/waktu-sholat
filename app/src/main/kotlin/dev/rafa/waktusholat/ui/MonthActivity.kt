@@ -36,7 +36,7 @@ class MonthActivity : Activity() {
         setContentView(R.layout.activity_month)
         setTitle(R.string.section_month)
 
-        repository = ScheduleRepository((application as WaktuSholatApp).preferences)
+        repository = (application as WaktuSholatApp).repository
         table = findViewById(R.id.table)
         title = findViewById(R.id.month_title)
 

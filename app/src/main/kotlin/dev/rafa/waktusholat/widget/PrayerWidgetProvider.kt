@@ -95,7 +95,7 @@ class PrayerWidgetProvider : AppWidgetProvider() {
             ids: IntArray,
             options: Bundle? = null
         ) {
-            val repository = ScheduleRepository(WaktuSholatApp.instance.preferences)
+            val repository = WaktuSholatApp.instance.repository
             val now = System.currentTimeMillis()
             for (id in ids) {
                 val options2 = options ?: manager.getAppWidgetOptions(id)
@@ -122,12 +122,12 @@ class PrayerWidgetProvider : AppWidgetProvider() {
          * `setExactAndAllowWhileIdle`: the content is informational, so let the system batch it.
          */
         private fun schedule(context: Context) {
-            val repository = ScheduleRepository(WaktuSholatApp.instance.preferences)
+            val repository = WaktuSholatApp.instance.repository
             val now = System.currentTimeMillis()
             val city = repository.city
             val minute = LocalClock.minuteOfDay(now, city.timeZoneHours)
 
-            val nextMinute = repository.moment(now).nextMinute
+            val nextMinute = repository.snapshot(now).nextMinute
             val nextPrayerAt = nextMinute?.let { nextPrayerMillis(now, minute, it) }
             val midnightAt = now + LocalClock.millisUntilNextDay(now, city.timeZoneHours) + 1_000L
             val at = if (nextPrayerAt == null) midnightAt else minOf(nextPrayerAt, midnightAt)

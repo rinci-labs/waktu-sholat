@@ -80,7 +80,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        repository = ScheduleRepository((application as WaktuSholatApp).preferences)
+        repository = (application as WaktuSholatApp).repository
 
         rows = findViewById(R.id.rows)
         cityLabel = findViewById(R.id.city)
@@ -124,7 +124,7 @@ class MainActivity : Activity() {
     private fun renderDay(now: Long) {
         val city = repository.city
         cityLabel.text = city.name
-        hijriLabel.text = repository.hijri()?.toString().orEmpty()
+        hijriLabel.text = repository.day(now).hijri?.toString().orEmpty()
         zoneNote.text = getString(R.string.zone_note, city.label, city.zoneLabel)
 
         val qibla = Qibla.of(city.latitude, city.longitude)

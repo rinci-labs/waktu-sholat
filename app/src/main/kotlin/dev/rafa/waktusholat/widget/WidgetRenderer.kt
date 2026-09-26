@@ -139,7 +139,7 @@ object WidgetRenderer {
         maxEntries: Int,
         appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID,
     ): RemoteViews {
-        val moment = repository.moment(nowMillis)
+        val moment = repository.day(nowMillis).let { PrayerMoment.at(it.times, it.tomorrow, LocalClock.minuteOfDay(nowMillis, it.city.timeZoneHours), 0) }
         val views = RemoteViews(context.packageName, layoutFor(form))
 
         when (form) {
@@ -229,7 +229,7 @@ object WidgetRenderer {
         moment: PrayerMoment,
         maxEntries: Int,
     ) {
-        val times = repository.todayTimes(nowMillis)
+        val times = repository.day(nowMillis).times
         val visible = visiblePrayers()
         val shown = window(visible, moment.prayer, maxEntries)
         views.removeAllViews(container)
@@ -264,7 +264,7 @@ object WidgetRenderer {
         val minute = moment.nextMinute
         if (next != null && minute != null) return Target(next, minute)
         // Isha has begun and no next prayer is known: the countdown runs to tomorrow's Fajr.
-        return Target(Prayer.FAJR, repository.tomorrowTimes(nowMillis)[Prayer.FAJR])
+        return Target(Prayer.FAJR, repository.day(nowMillis).tomorrow[Prayer.FAJR])
     }
 
     /** `2 jam 5 mnt lagi`, or the next-day wording once Isha has begun. */
@@ -279,7 +279,7 @@ object WidgetRenderer {
 
     /** `15 Rabiul Akhir 1448`; empty outside the Umm al-Qura table's range. */
     private fun hijriText(repository: ScheduleRepository, nowMillis: Long): String =
-        repository.hijri(repository.today(nowMillis))?.toString() ?: ""
+        repository.day(nowMillis).hijri?.toString() ?: ""
 
     /** `WIB 20:41`: the zone the schedule is expressed in plus the time there now. */
     private fun footer(city: City, nowMillis: Long): String {

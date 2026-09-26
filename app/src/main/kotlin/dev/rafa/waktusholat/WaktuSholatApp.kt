@@ -2,17 +2,21 @@ package dev.rafa.waktusholat
 
 import android.app.Application
 import dev.rafa.waktusholat.data.Preferences
-import dev.rafa.waktusholat.data.PrayerScheduleFactory
+import dev.rafa.waktusholat.data.ScheduleRepository
+import dev.rafa.waktusholat.notify.AlarmScheduler
+import dev.rafa.waktusholat.widget.PrayerWidgetProvider
 
 /**
- * Holds the no-argument collaborators the app needs. There is no DI framework: the object graph is
- * three items deep and a container would cost more than it saves.
+ * Holds the two collaborators the app needs. There is no DI framework: the object graph is two
+ * items deep and a container would cost more than it saves. Both are process-wide singletons, so
+ * the activities, the widgets and the alarm receivers share one preference cache and one schedule
+ * cache.
  */
 class WaktuSholatApp : Application() {
 
     val preferences: Preferences by lazy { Preferences(this) }
 
-    val scheduleFactory: PrayerScheduleFactory by lazy { PrayerScheduleFactory() }
+    val repository: ScheduleRepository by lazy { ScheduleRepository(preferences) }
 
     override fun onCreate() {
         super.onCreate()
@@ -21,11 +25,11 @@ class WaktuSholatApp : Application() {
 
     /**
      * Called whenever a setting that changes the schedule is written. Re-arms the adhan alarms and
-     * asks the widget to repaint, so the three surfaces never disagree.
+     * repaints every widget, so the three surfaces never disagree.
      */
     fun notifyScheduleChanged() {
-        dev.rafa.waktusholat.notify.AlarmScheduler.reschedule(this)
-        dev.rafa.waktusholat.widget.PrayerWidgetProvider.requestRefresh(this)
+        AlarmScheduler.reschedule(this)
+        PrayerWidgetProvider.requestRefresh(this)
     }
 
     companion object {

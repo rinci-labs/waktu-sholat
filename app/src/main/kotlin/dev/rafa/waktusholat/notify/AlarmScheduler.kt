@@ -8,8 +8,6 @@ import android.os.Build
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.CivilDate
 import dev.rafa.waktusholat.core.Prayer
-import dev.rafa.waktusholat.core.PrayerTimes
-import dev.rafa.waktusholat.data.ScheduleRepository
 
 /**
  * Arms the adhan alarms for the coming 24 hours. Alarms are not a persistent registration: every
@@ -36,16 +34,10 @@ object AlarmScheduler {
 
         val manager = app.getSystemService(AlarmManager::class.java) ?: return
         val lead = preferences.reminderLeadMinutes
-        val repository = ScheduleRepository(preferences)
-        val city = repository.city
-        val zone = city.timeZoneHours
         val now = System.currentTimeMillis()
-
-        val today = repository.today(now)
-        val windows = listOf(
-            repository.timesFor(city, today),
-            repository.timesFor(city, today.plusDays(1)),
-        )
+        val day = WaktuSholatApp.instance.repository.day(now)
+        val zone = day.city.timeZoneHours
+        val windows = listOf(day.times, day.tomorrow)
 
         // Prayer.OBLIGATORY is exactly FAJR, DHUHR, ASR, MAGHRIB, ISHA: the two entries that must
         // not ring (IMSAK and SUNRISE) are not in it.
