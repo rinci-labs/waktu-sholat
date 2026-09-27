@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.RectF
 import android.graphics.RadialGradient
 import android.graphics.Shader
 import android.os.Build
@@ -77,16 +78,20 @@ class Celestial(val progress: Float, val isMoon: Boolean) {
 }
 
 /**
- * The illustrated sky behind the header: the period's gradient, the sun or moon on its arc, stars
- * that twinkle, clouds that drift, and a mosque skyline standing on the horizon, all drawn as
- * vector shapes so it needs no image assets and stays sharp at any density.
+ * The illustrated sky behind the header, drawn entirely from vector shapes so it needs no assets
+ * and stays sharp at any density:
  *
- * Below the horizon is solid ground, behind the next-prayer card; the page sheet laid over its
- * bottom gives the scene a clean edge. A change of period crossfades over about a second.
+ * - the period's gradient with a soft glow on the horizon beneath the sun or moon;
+ * - the sun (with slowly turning rays by day) or a crescent moon, on its arc across the sky;
+ * - stars with depth that twinkle at their own pace, and the occasional shooting star at night;
+ * - two layers of soft clouds drifting at different speeds, tinted warm at dawn and dusk;
+ * - a small flock of birds crossing in the morning and afternoon;
+ * - a mosque skyline whose windows glow warmly after dark.
  *
- * Animation is deliberately cheap: paths are built once per size, frames are capped at 30 fps, and
- * the loop only runs while the view is actually visible and system animations are enabled. The
- * gradient is dithered so it shows no bands on 8-bit panels.
+ * Motion is time-based and synced to the display's vsync, so it is smooth at 60 or 120 Hz. The
+ * celestial layer moves slower than the page when scrolling ([parallax]), and on first show the sun
+ * or moon rises into place. Paths and shaders are built once per size or period, nothing allocates
+ * per frame, and the loop only runs while the view is visible and system animations are enabled.
  */
 class SkyView @JvmOverloads constructor(
     context: Context,
@@ -94,23 +99,46 @@ class SkyView @JvmOverloads constructor(
 ) : View(context, attrs) {
 
     private val density = resources.displayMetrics.density
-    private val skyPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
-    private val groundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    private val skyPaint = Paint(Paint.DITHER_FLAG)
+    private val horizonGlowPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
+    private val groundPaint = Paint()
     private val farPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val mosquePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val windowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
     private val bodyPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val rayPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
     private val starPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
-    private val cloudPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE }
+    private val sparklePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE; strokeCap = Paint.Cap.ROUND }
+    private val meteorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
+    private val cloudPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val birdPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
 
     private val mosque = Path()
     private val houses = Path()
     private val cloud = Path()
     private val moon = Path()
+    private val moonBite = Path()
+    private val bird = Path()
+    private val windows = ArrayList<RectF>()
 
-    /** Stars as (x fraction, y fraction, radius dp, phase). */
+    /** Stars as (x fraction, y fraction, radius dp, phase, speed). */
     private val stars: Array<FloatArray> = Random(7).let { rnd ->
-        Array(46) { floatArrayOf(rnd.nextFloat(), rnd.nextFloat() * 0.85f, 0.6f + rnd.nextFloat() * 1.1f, rnd.nextFloat() * 6.28f) }
+        Array(64) {
+            val depth = rnd.nextFloat()
+            floatArrayOf(
+                rnd.nextFloat(),
+                rnd.nextFloat() * 0.82f,
+                0.5f + depth * depth * 1.5f,
+                rnd.nextFloat() * 6.28f,
+                0.6f + rnd.nextFloat() * 1.8f,
+            )
+        }
     }
 
     private var period = Period.MALAM
@@ -132,7 +160,24 @@ class SkyView @JvmOverloads constructor(
             rebuild()
         }
 
+    /**
+     * Page scroll in pixels. The sky layer (stars, sun or moon, clouds, birds) is shifted down by a
+     * fraction of it, so it drifts away more slowly than the skyline and the content: depth.
+     */
+    var parallax: Float = 0f
+        set(value) {
+            if (field == value) return
+            field = value
+            invalidate()
+        }
+
     private val startedAt = SystemClock.uptimeMillis()
+    private var introStart = 0L
+
+    /** Current meteor slot and its (visible, start ms, x fraction, y fraction). */
+    private var meteorSlot = -1L
+    private val meteor = FloatArray(4)
+    private var meteorLength = 0f
 
     /** Size key the skyline paths were last built for, so colour changes never rebuild them. */
     private var pathsFor = -1f
@@ -151,14 +196,14 @@ class SkyView @JvmOverloads constructor(
                 shownTop = period.top
                 shownBottom = period.bottom
                 transitionStart = 0L
+                introStart = SystemClock.uptimeMillis()
             }
             hasShown = true
-            rebuild()
         }
-        invalidate()
+        rebuild()
     }
 
-    /** Advances the crossfade; true while it is still running. */
+    /** Advances the colour crossfade; true while it is still running. */
     private fun stepTransition(): Boolean {
         if (transitionStart == 0L) return false
         val f = ((SystemClock.uptimeMillis() - transitionStart) / TRANSITION_MILLIS.toFloat()).coerceIn(0f, 1f)
@@ -172,16 +217,40 @@ class SkyView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) = rebuild()
 
+    private fun horizonY(): Float = if (horizon > 0f) horizon else height.toFloat()
+
     private fun rebuild() {
         if (width == 0 || height == 0) return
         val w = width.toFloat()
-        val h = height.toFloat()
-        val horizon = if (horizon > 0f) horizon else h
+        val horizon = horizonY()
         val ground = mix(shownBottom, Color.BLACK, 0.55f)
-        skyPaint.shader = LinearGradient(0f, 0f, 0f, horizon, shownTop, shownBottom, Shader.TileMode.CLAMP)
+        skyPaint.shader = LinearGradient(
+            0f, 0f, 0f, horizon,
+            intArrayOf(shownTop, mix(shownTop, shownBottom, 0.55f), shownBottom),
+            floatArrayOf(0f, 0.55f, 1f),
+            Shader.TileMode.CLAMP,
+        )
+        // A wide, soft glow on the horizon under the sun or moon: warm at dawn and dusk.
+        val glowColor = when (period) {
+            Period.SUBUH, Period.SORE, Period.SENJA -> 0x66FFB37A
+            Period.MALAM -> 0x224F6BFF
+            else -> 0x33FFFFFF
+        }
+        val cx = w * (0.08f + 0.84f * celestial.progress.coerceIn(0f, 1f))
+        horizonGlowPaint.shader = RadialGradient(cx, horizon, w * 0.75f, glowColor, 0x00FFFFFF, Shader.TileMode.CLAMP)
+        val bodyRadius = (if (celestial.isMoon) 15f else 18f) * density
+        val glow = if (celestial.isMoon) 0x55DDE6FF else 0x80FFE2A8.toInt()
+        glowPaint.shader = RadialGradient(0f, 0f, bodyRadius * 3.4f, glow, 0x00FFFFFF, Shader.TileMode.CLAMP)
         groundPaint.color = ground
         farPaint.color = mix(shownBottom, Color.BLACK, 0.32f)
         mosquePaint.color = ground
+        val tint = when (period) {
+            Period.SUBUH, Period.SORE, Period.SENJA -> mix(Color.WHITE, 0xFFFFB38A.toInt(), 0.35f)
+            else -> Color.WHITE
+        }
+        cloudPaint.color = tint
+        birdPaint.color = mix(shownBottom, Color.BLACK, 0.6f)
+        birdPaint.strokeWidth = 1.6f * density
         if (pathsFor != w * 31 + horizon) {
             pathsFor = w * 31 + horizon
             buildHouses(w, horizon)
@@ -194,72 +263,194 @@ class SkyView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val w = width.toFloat()
         val h = height.toFloat()
-        val horizon = if (horizon > 0f) horizon else h
-        val t = (SystemClock.uptimeMillis() - startedAt) / 1000f
+        val horizon = horizonY()
+        val now = SystemClock.uptimeMillis()
+        val t = (now - startedAt) / 1000f
         val transitioning = stepTransition()
+        // Intro: 0 -> 1 over the first moments after the scene appears, eased out.
+        val intro = if (introStart == 0L) 1f else ((now - introStart) / INTRO_MILLIS.toFloat()).coerceIn(0f, 1f)
+        val introEased = 1f - (1f - intro) * (1f - intro) * (1f - intro)
 
         canvas.drawRect(0f, 0f, w, horizon, skyPaint)
-        canvas.drawRect(0f, horizon, w, h, groundPaint)
-        drawStars(canvas, w, horizon, t)
-        drawBody(canvas, w, horizon, t)
-        drawClouds(canvas, w, horizon, t)
+        canvas.drawRect(0f, 0f, w, horizon, horizonGlowPaint)
+
+        // Sky layer, with parallax. Everything here is later covered by the skyline and ground.
+        canvas.save()
+        canvas.translate(0f, parallax * PARALLAX)
+        drawStars(canvas, w, horizon, t, introEased)
+        drawMeteor(canvas, w, horizon, now)
+        drawBody(canvas, w, horizon, t, introEased)
+        drawClouds(canvas, w, horizon, t, introEased)
+        drawBirds(canvas, w, horizon, now)
+        canvas.restore()
 
         canvas.drawPath(houses, farPaint)
         canvas.drawPath(mosque, mosquePaint)
+        drawWindows(canvas, t)
+        canvas.drawRect(0f, horizon, w, h, groundPaint)
 
-        if (running || transitioning) postInvalidateDelayed(FRAME_MILLIS)
+        if (running || transitioning || intro < 1f) postInvalidateOnAnimation()
     }
 
-    private fun drawStars(canvas: Canvas, w: Float, horizon: Float, t: Float) {
+    private fun drawStars(canvas: Canvas, w: Float, horizon: Float, t: Float, intro: Float) {
         if (period.stars <= 0f) return
-        for (s in stars) {
-            val twinkle = 0.55f + 0.45f * sin(t * 1.6f + s[3])
-            starPaint.alpha = (255 * period.stars * twinkle).toInt()
-            canvas.drawCircle(s[0] * w, s[1] * horizon * 0.9f, s[2] * density, starPaint)
+        val base = period.stars * intro
+        for ((i, s) in stars.withIndex()) {
+            val twinkle = 0.45f + 0.55f * (0.5f + 0.5f * sin(t * s[4] + s[3]))
+            val alpha = base * twinkle
+            val x = s[0] * w
+            val y = s[1] * horizon * 0.92f
+            val r = s[2] * density
+            starPaint.alpha = (255 * alpha).toInt()
+            canvas.drawCircle(x, y, r, starPaint)
+            // The brightest few get a faint four-point sparkle.
+            if (i % 11 == 0 && twinkle > 0.8f) {
+                val len = r * 4f * (twinkle - 0.8f) / 0.2f
+                sparklePaint.alpha = (140 * alpha).toInt()
+                sparklePaint.strokeWidth = r * 0.5f
+                canvas.drawLine(x - len, y, x + len, y, sparklePaint)
+                canvas.drawLine(x, y - len, x, y + len, sparklePaint)
+            }
         }
     }
 
-    /** Sun or moon on a shallow arc from the left edge to the right, with a soft breathing glow. */
-    private fun drawBody(canvas: Canvas, w: Float, horizon: Float, t: Float) {
+    /** Now and then at night, a streak across the upper sky. Parameters are fixed per time slot. */
+    private fun drawMeteor(canvas: Canvas, w: Float, horizon: Float, now: Long) {
+        if (period != Period.MALAM && period != Period.SUBUH) return
+        val slot = now / METEOR_SLOT_MILLIS
+        if (slot != meteorSlot) {
+            meteorSlot = slot
+            val seed = Random(slot * 7919)
+            meteor[0] = if (seed.nextFloat() < 0.55f) 1f else 0f
+            meteor[1] = seed.nextInt((METEOR_SLOT_MILLIS - METEOR_MILLIS).toInt()).toFloat()
+            meteor[2] = 0.15f + seed.nextFloat() * 0.6f
+            meteor[3] = 0.05f + seed.nextFloat() * 0.25f
+        }
+        if (meteor[0] == 0f) return
+        val local = now % METEOR_SLOT_MILLIS - meteor[1].toLong()
+        if (local !in 0..METEOR_MILLIS) return
+        val f = local / METEOR_MILLIS.toFloat()
+        val dx = w * 0.32f
+        val dy = horizon * 0.18f
+        val length = kotlin.math.hypot(dx, dy) * METEOR_TAIL
+        if (meteorLength != length) {
+            // Along +x from the tail (transparent) to the head (white); rotated into place per frame.
+            meteorLength = length
+            meteorPaint.shader = LinearGradient(-length, 0f, 0f, 0f, 0x00FFFFFF, Color.WHITE, Shader.TileMode.CLAMP)
+        }
+        meteorPaint.strokeWidth = 1.8f * density
+        meteorPaint.alpha = (230 * sin(PI.toFloat() * f)).toInt()
+        canvas.save()
+        canvas.translate(w * meteor[2] + dx * f, horizon * meteor[3] + dy * f)
+        canvas.rotate(Math.toDegrees(kotlin.math.atan2(dy, dx).toDouble()).toFloat())
+        canvas.drawLine(-length, 0f, 0f, 0f, meteorPaint)
+        canvas.restore()
+    }
+
+    /** Sun or moon on a shallow arc, rising into place on first show, with a breathing glow. */
+    private fun drawBody(canvas: Canvas, w: Float, horizon: Float, t: Float, intro: Float) {
         val p = celestial.progress
         val x = w * (0.08f + 0.84f * p)
         val arc = horizon * 0.62f
-        val y = horizon + 18 * density - arc * sin(PI.toFloat() * p.coerceIn(-0.2f, 1.2f))
+        val restY = horizon + 18 * density - arc * sin(PI.toFloat() * p.coerceIn(-0.2f, 1.2f))
+        val y = horizon + 40 * density + (restY - horizon - 40 * density) * intro
         if (y > horizon + 30 * density) return
         val r = (if (celestial.isMoon) 15f else 18f) * density
-        val breathe = 1f + 0.05f * sin(t * 0.9f)
 
-        val glow = if (celestial.isMoon) 0x55DDE6FF else 0x77FFE2A8
-        glowPaint.shader = RadialGradient(x, y, r * 3.2f * breathe, glow, 0x00FFFFFF, Shader.TileMode.CLAMP)
-        canvas.drawCircle(x, y, r * 3.2f * breathe, glowPaint)
+        // Glow: one shader built around the origin (in rebuild), breathing by scaling the canvas.
+        val breathe = 1f + 0.06f * sin(t * 0.8f)
+        canvas.save()
+        canvas.translate(x, y)
+        canvas.scale(breathe, breathe)
+        canvas.drawCircle(0f, 0f, r * 3.4f, glowPaint)
+        canvas.restore()
 
         if (celestial.isMoon) {
-            moon.reset()
+            moon.rewind()
             moon.addCircle(x, y, r, Path.Direction.CW)
-            val bite = Path().apply { addCircle(x + r * 0.45f, y - r * 0.3f, r * 0.88f, Path.Direction.CW) }
-            moon.op(bite, Path.Op.DIFFERENCE)
+            moonBite.rewind()
+            moonBite.addCircle(x + r * 0.45f, y - r * 0.3f, r * 0.88f, Path.Direction.CW)
+            moon.op(moonBite, Path.Op.DIFFERENCE)
             bodyPaint.color = 0xFFF3F1E4.toInt()
             canvas.drawPath(moon, bodyPaint)
         } else {
-            bodyPaint.color = if (period == Period.SORE || period == Period.SUBUH) 0xFFFFD08A.toInt() else 0xFFFFF4D6.toInt()
+            val warm = period == Period.SORE || period == Period.SUBUH || period == Period.SENJA
+            if (!warm) {
+                // Slowly turning rays: twelve faint strokes around the disc.
+                rayPaint.color = 0x2EFFF4D6
+                rayPaint.strokeWidth = 2.2f * density
+                val turn = t * 6f
+                for (i in 0 until 12) {
+                    val a = Math.toRadians((turn + i * 30f).toDouble())
+                    val c = kotlin.math.cos(a).toFloat()
+                    val s = sin(a).toFloat()
+                    val inner = r * 1.5f
+                    val outer = r * (2.2f + 0.25f * sin(t * 1.3f + i))
+                    canvas.drawLine(x + c * inner, y + s * inner, x + c * outer, y + s * outer, rayPaint)
+                }
+            }
+            bodyPaint.color = if (warm) 0xFFFFD08A.toInt() else 0xFFFFF4D6.toInt()
             canvas.drawCircle(x, y, r, bodyPaint)
         }
     }
 
-    private fun drawClouds(canvas: Canvas, w: Float, horizon: Float, t: Float) {
+    /** Two parallax layers of soft clouds; each has a faint halo, which reads as a soft edge. */
+    private fun drawClouds(canvas: Canvas, w: Float, horizon: Float, t: Float, intro: Float) {
         if (period.clouds <= 0f) return
-        val span = w + 160 * density
-        for (i in 0 until 3) {
-            val speed = (6f + i * 3f) * density
-            val x = ((i * 0.37f * span + t * speed) % span) - 80 * density
-            val y = horizon * (0.28f + i * 0.17f)
-            val scale = 1f - i * 0.18f
-            cloudPaint.alpha = (255 * period.clouds * (1f - i * 0.22f)).toInt()
+        val span = w + 200 * density
+        for (i in 0 until CLOUDS) {
+            val far = i % 2 == 1
+            val speed = (if (far) 4f else 9f + i) * density
+            val x = ((i * 0.29f * span + t * speed) % span) - 100 * density
+            val y = horizon * (0.18f + (i * 0.13f) % 0.5f) + sin(t * 0.35f + i) * 2 * density
+            val scale = if (far) 0.62f else 1f - i * 0.08f
+            val alpha = period.clouds * intro * if (far) 0.55f else 1f
             canvas.save()
             canvas.translate(x, y)
-            canvas.scale(scale, scale)
+            canvas.scale(scale * 1.1f, scale * 1.1f)
+            cloudPaint.alpha = (255 * alpha * 0.28f).toInt()
+            canvas.drawPath(cloud, cloudPaint)
+            canvas.scale(1f / 1.1f, 1f / 1.1f)
+            cloudPaint.alpha = (255 * alpha).toInt()
             canvas.drawPath(cloud, cloudPaint)
             canvas.restore()
+        }
+    }
+
+    /** A flock of three crossing every so often in the morning and afternoon, wings flapping. */
+    private fun drawBirds(canvas: Canvas, w: Float, horizon: Float, now: Long) {
+        if (period != Period.PAGI && period != Period.SORE) return
+        val local = now % BIRD_CYCLE_MILLIS
+        if (local > BIRD_FLIGHT_MILLIS) return
+        val f = local / BIRD_FLIGHT_MILLIS.toFloat()
+        val baseX = -40 * density + (w + 80 * density) * f
+        val baseY = horizon * 0.45f - f * horizon * 0.12f
+        for (i in 0 until 3) {
+            val bx = baseX - i * 16 * density
+            val by = baseY + (if (i == 1) -8f else i * 6f) * density
+            val flap = sin((now / 1000f) * 9f + i * 1.7f)
+            val span = 6 * density
+            val lift = span * 0.55f * flap
+            bird.rewind()
+            bird.moveTo(bx - span, by - lift)
+            bird.quadTo(bx - span * 0.4f, by - span * 0.35f, bx, by)
+            bird.quadTo(bx + span * 0.4f, by - span * 0.35f, bx + span, by - lift)
+            canvas.drawPath(bird, birdPaint)
+        }
+    }
+
+    /** After dark the mosque's windows glow warm, flickering very gently. */
+    private fun drawWindows(canvas: Canvas, t: Float) {
+        val lit = when (period) {
+            Period.MALAM -> 1f
+            Period.SENJA, Period.SUBUH -> 0.7f
+            else -> 0f
+        }
+        if (lit <= 0f) return
+        for ((i, rect) in windows.withIndex()) {
+            val flicker = 0.85f + 0.15f * sin(t * (1.1f + i * 0.17f) + i)
+            windowPaint.color = Color.argb((210 * lit * flicker).toInt(), 255, 206, 120)
+            canvas.drawRoundRect(rect, rect.width() / 2, rect.width() / 2, windowPaint)
         }
     }
 
@@ -267,10 +458,11 @@ class SkyView @JvmOverloads constructor(
     private fun buildCloud() {
         val d = density
         cloud.reset()
-        cloud.addCircle(-26 * d, 4 * d, 14 * d, Path.Direction.CW)
-        cloud.addCircle(0f, -4 * d, 20 * d, Path.Direction.CW)
-        cloud.addCircle(26 * d, 4 * d, 15 * d, Path.Direction.CW)
-        cloud.addRoundRect(-40 * d, 2 * d, 42 * d, 18 * d, 9 * d, 9 * d, Path.Direction.CW)
+        cloud.addCircle(-28 * d, 5 * d, 13 * d, Path.Direction.CW)
+        cloud.addCircle(-6 * d, -5 * d, 19 * d, Path.Direction.CW)
+        cloud.addCircle(18 * d, -1 * d, 15 * d, Path.Direction.CW)
+        cloud.addCircle(36 * d, 6 * d, 11 * d, Path.Direction.CW)
+        cloud.addRoundRect(-40 * d, 4 * d, 46 * d, 18 * d, 7 * d, 7 * d, Path.Direction.CW)
     }
 
     /** A low, uneven row of rooftops across the whole width, behind the mosque. */
@@ -285,7 +477,6 @@ class SkyView @JvmOverloads constructor(
             val bh = (8 + rnd.nextInt(18)) * d
             houses.lineTo(x, horizon - bh)
             if (rnd.nextInt(5) == 0) {
-                // A small dome on every few roofs.
                 houses.quadTo(x + bw / 2, horizon - bh - 12 * d, x + bw, horizon - bh)
             } else {
                 houses.lineTo(x + bw, horizon - bh)
@@ -296,29 +487,25 @@ class SkyView @JvmOverloads constructor(
         houses.close()
     }
 
-    /** A mosque: hall, drum and onion dome with a crescent finial, side domes and two minarets. */
+    /** A mosque: hall, drum and onion dome with a crescent finial, side domes, two minarets. */
     private fun buildMosque(cx: Float, base: Float) {
         val d = density
         fun X(v: Float) = cx + v * d
         fun Y(v: Float) = base - v * d
         mosque.reset()
-        // Hall and wings.
         mosque.addRect(X(-58f), Y(34f), X(58f), base, Path.Direction.CW)
         mosque.addRect(X(-96f), Y(20f), X(96f), base, Path.Direction.CW)
-        // Drum and main dome.
         mosque.addRect(X(-36f), Y(40f), X(36f), Y(33f), Path.Direction.CW)
         mosque.moveTo(X(-36f), Y(40f))
         mosque.cubicTo(X(-40f), Y(70f), X(-14f), Y(80f), X(0f), Y(90f))
         mosque.cubicTo(X(14f), Y(80f), X(40f), Y(70f), X(36f), Y(40f))
         mosque.close()
-        // Finial with a crescent.
         mosque.addRect(X(-1f), Y(100f), X(1f), Y(89f), Path.Direction.CW)
         val crescent = Path().apply {
             addCircle(X(0f), Y(104f), 4.5f * d, Path.Direction.CW)
             op(Path().apply { addCircle(X(2f), Y(105f), 3.8f * d, Path.Direction.CW) }, Path.Op.DIFFERENCE)
         }
         mosque.addPath(crescent)
-        // Side domes.
         for (side in floatArrayOf(-1f, 1f)) {
             val sx = 76f * side
             mosque.moveTo(X(sx - 14f), Y(20f))
@@ -326,7 +513,6 @@ class SkyView @JvmOverloads constructor(
             mosque.cubicTo(X(sx + 4f), Y(38f), X(sx + 14f), Y(34f), X(sx + 14f), Y(20f))
             mosque.close()
         }
-        // Minarets: shaft, balcony, cap.
         for (side in floatArrayOf(-1f, 1f)) {
             val mx = 112f * side
             mosque.addRect(X(mx - 4.5f), Y(104f), X(mx + 4.5f), base, Path.Direction.CW)
@@ -337,6 +523,13 @@ class SkyView @JvmOverloads constructor(
             mosque.lineTo(X(mx + 6f), Y(108f))
             mosque.close()
         }
+        // Arched windows along the hall and wings, and one on each minaret.
+        windows.clear()
+        for (i in -2..2) windows += RectF(X(i * 18f - 3.5f), Y(26f), X(i * 18f + 3.5f), Y(12f))
+        for (side in floatArrayOf(-1f, 1f)) {
+            windows += RectF(X(side * 76f - 3f), Y(14f), X(side * 76f + 3f), Y(5f))
+            windows += RectF(X(side * 112f - 1.8f), Y(96f), X(side * 112f + 1.8f), Y(88f))
+        }
     }
 
     // --- Animation lifecycle: run only while visible, never when animations are turned off. ---
@@ -345,6 +538,7 @@ class SkyView @JvmOverloads constructor(
         super.onVisibilityAggregated(isVisible)
         val enabled = Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
         val shouldRun = isVisible && enabled
+        if (!enabled) introStart = 0L
         if (shouldRun != running) {
             running = shouldRun
             if (running) invalidate()
@@ -357,8 +551,15 @@ class SkyView @JvmOverloads constructor(
     }
 
     private companion object {
-        const val FRAME_MILLIS = 33L
         const val TRANSITION_MILLIS = 1200L
+        const val INTRO_MILLIS = 1400L
+        const val PARALLAX = 0.45f
+        const val CLOUDS = 5
+        const val METEOR_SLOT_MILLIS = 9_000L
+        const val METEOR_MILLIS = 900L
+        const val METEOR_TAIL = 0.28f
+        const val BIRD_CYCLE_MILLIS = 22_000L
+        const val BIRD_FLIGHT_MILLIS = 9_000L
 
         fun mix(a: Int, b: Int, amount: Float): Int {
             val inv = 1f - amount

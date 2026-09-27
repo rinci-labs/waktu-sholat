@@ -132,6 +132,7 @@ class MainActivity : BaseActivity() {
         scrim.alpha = 0f
         findViewById<View>(R.id.scroll).setOnScrollChangeListener { _, _, y, _, _ ->
             scrim.alpha = if (scrim.height == 0) 0f else (y.toFloat() / scrim.height).coerceIn(0f, 1f)
+            sky.parallax = y.toFloat()
         }
         // The skyline stands on the card's top edge; the ground runs on behind the card and ends
         // under the sheet's rounded corners.
