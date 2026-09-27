@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.Prayer
+import dev.rafa.waktusholat.widget.WidgetUpdater
 
 /**
  * Fired by [AlarmScheduler] at a prayer's instant. Work is a notification post plus a re-arm, both
@@ -29,5 +30,8 @@ class PrayerAlarmReceiver : BroadcastReceiver() {
         // Re-arm the whole window so tomorrow's occurrence is in place even if the process has not
         // been started since, which is the case when the phone has been asleep overnight.
         AlarmScheduler.reschedule(context)
+
+        // The prayer has just begun: switch the widgets to the next one on this exact minute.
+        if (!reminder) runCatching { WidgetUpdater.updateAll(context) }
     }
 }

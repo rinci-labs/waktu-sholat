@@ -7,7 +7,10 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.RemoteViews
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.data.ScheduleRepository
 import dev.rafa.waktusholat.ui.Language
@@ -19,9 +22,11 @@ import dev.rafa.waktusholat.ui.Language
  * widgets can never disagree about the minute.
  *
  * The relative "7 jam 37 mnt lagi" text changes every minute, so one alarm is armed for the next
- * minute boundary. It is `RTC`, not `RTC_WAKEUP`: while the screen is off it never wakes the
+ * minute boundary. It is exact, so the widget turns over to the next prayer on the very minute the
+ * current one begins, and `RTC`, not `RTC_WAKEUP`: while the screen is off it never wakes the
  * device, and the system delivers it once on the next wake, so the widget is current the moment it
- * can be seen. It is cancelled as soon as the last widget is removed.
+ * can be seen. It is cancelled as soon as the last widget is removed. Each widget's
+ * `updatePeriodMillis` restarts the chain should the alarm ever be lost.
  */
 object WidgetUpdater {
 
@@ -36,24 +41,24 @@ object WidgetUpdater {
         )
     }
 
-    /** Allowed lateness of the repaint; small enough that the minute never looks stale. */
+    /** Allowed lateness when exact alarms are not permitted; the system may stretch it further. */
     private const val WINDOW_MILLIS = 5_000L
 
     private const val MINUTE_MILLIS = 60_000L
 
-    /** Repaints every placed widget of every type, then re-arms the alarm. */
+    /** Arms the next repaint, then repaints every placed widget of every type. */
     fun updateAll(base: Context) {
         val context = Language.wrap(base)
         val manager = AppWidgetManager.getInstance(context) ?: return
         val snapshot = WaktuSholatApp.instance.repository.snapshot()
-        var placed = false
-        for (provider in PROVIDERS) {
-            val ids = manager.getAppWidgetIds(ComponentName(context, provider.javaClass))
-            if (ids.isEmpty()) continue
-            placed = true
-            for (id in ids) manager.updateAppWidget(id, provider.build(context, snapshot, sizeOf(manager, id)))
+        val placed = PROVIDERS.associateWith { manager.getAppWidgetIds(ComponentName(context, it.javaClass)) }
+            .filterValues { it.isNotEmpty() }
+        // Arm the next repaint before drawing, so a failure while drawing can never end the chain.
+        if (placed.isEmpty()) return cancel(context)
+        schedule(context, snapshot)
+        for ((provider, ids) in placed) {
+            for (id in ids) paint(manager, id) { provider.build(context, snapshot, sizeOf(manager, id)) }
         }
-        if (placed) schedule(context, snapshot) else cancel(context)
     }
 
     /** Repaints specific widgets of one type, e.g. after a resize. */
@@ -61,11 +66,17 @@ object WidgetUpdater {
         val context = Language.wrap(base)
         val manager = AppWidgetManager.getInstance(context) ?: return
         val snapshot = WaktuSholatApp.instance.repository.snapshot()
+        schedule(context, snapshot)
         for (id in ids) {
             val size = if (options != null) WidgetSize.of(options) else sizeOf(manager, id)
-            manager.updateAppWidget(id, provider.build(context, snapshot, size))
+            paint(manager, id) { provider.build(context, snapshot, size) }
         }
-        schedule(context, snapshot)
+    }
+
+    /** One widget failing to draw (say, a launcher reporting an odd size) must not blank the rest. */
+    private inline fun paint(manager: AppWidgetManager, id: Int, views: () -> RemoteViews) {
+        runCatching { manager.updateAppWidget(id, views()) }
+            .onFailure { Log.w("WidgetUpdater", "Widget $id failed to draw", it) }
     }
 
     private fun sizeOf(manager: AppWidgetManager, id: Int) = WidgetSize.of(manager.getAppWidgetOptions(id))
@@ -74,7 +85,12 @@ object WidgetUpdater {
         val alarms = context.getSystemService(AlarmManager::class.java) ?: return
         // Just past the next minute boundary, so the repaint lands on the new minute.
         val at = (snapshot.nowMillis / MINUTE_MILLIS + 1) * MINUTE_MILLIS + 500L
-        alarms.setWindow(AlarmManager.RTC, at, WINDOW_MILLIS, refreshIntent(context))
+        val intent = refreshIntent(context)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarms.canScheduleExactAlarms()) {
+            alarms.setExact(AlarmManager.RTC, at, intent)
+        } else {
+            alarms.setWindow(AlarmManager.RTC, at, WINDOW_MILLIS, intent)
+        }
     }
 
     fun cancel(context: Context) {
