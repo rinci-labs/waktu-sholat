@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Qibla compass. The dial is drawn in code so it needs no assets; the two figures beneath give the
-  exact answer even on a device without an orientation sensor.
+  Qibla compass. The location (tap to change) sits on top, then the dial with the Kaaba riding its
+  rim, drawn in code so it needs no assets. The card beneath gives the exact answer even on a
+  device without an orientation sensor.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -29,36 +30,50 @@
             android:paddingEnd="@dimen/screen_margin"
             android:paddingBottom="@dimen/space_32">
 
-            <TextView
-                android:id="@+id/location"
-                style="@style/Text.Body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="1" />
-
-            <TextView
-                android:id="@+id/hint"
-                style="@style/Text.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <!-- Location, as a chip that opens the city picker. -->
+            <LinearLayout
+                android:id="@+id/change_location"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/touch_target"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/space_4"
-                android:gravity="center"
-                android:text="@string/qibla_hint" />
+                android:background="@drawable/card_pressable"
+                android:contentDescription="@string/action_change_city"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/space_16"
+                android:paddingEnd="@dimen/space_12">
+
+                <TextView
+                    android:id="@+id/location"
+                    style="@style/Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_4"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_expand"
+                    android:tint="@color/text_secondary" />
+            </LinearLayout>
 
             <!-- The dial, covered by the calibration card until the magnetometer is trustworthy. -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_16">
+                android:layout_marginTop="@dimen/space_12">
 
                 <dev.rafa.waktusholat.ui.QiblaCompassView
                     android:id="@+id/compass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/space_12"
-                    android:layout_marginEnd="@dimen/space_12" />
+                    android:layout_marginStart="@dimen/space_4"
+                    android:layout_marginEnd="@dimen/space_4" />
 
                 <LinearLayout
                     android:id="@+id/calibration"
@@ -108,6 +123,18 @@
                 </LinearLayout>
             </FrameLayout>
 
+            <!-- What to do now; says so once the phone faces the Qibla. -->
+            <TextView
+                android:id="@+id/hint"
+                style="@style/Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_4"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="@string/qibla_hint"
+                android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/warning"
                 style="@style/Text"
@@ -121,102 +148,108 @@
                 android:textSize="14sp"
                 android:visibility="gone" />
 
+            <!-- The answer in numbers, and how far to trust the sensor. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_24"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+                android:background="@drawable/card"
+                android:orientation="vertical"
+                android:padding="@dimen/space_20">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/card"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_16">
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/Text.Label"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/qibla_bearing" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/bearing"
-                        style="@style/Text.Headline"
-                        android:layout_width="match_parent"
+                        <TextView
+                            style="@style/Text.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/qibla_bearing" />
+
+                        <TextView
+                            android:id="@+id/bearing"
+                            style="@style/Text.Headline"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_4"
+                            android:fontFeatureSettings="tnum"
+                            android:textColor="@color/brand" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/space_16"
+                        android:layout_marginEnd="@dimen/space_16"
+                        android:background="@color/outline" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_8"
-                        android:fontFeatureSettings="tnum"
-                        android:textColor="@color/brand" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Text.Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/qibla_distance" />
+
+                        <TextView
+                            android:id="@+id/distance"
+                            style="@style/Text.Headline"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_4"
+                            android:fontFeatureSettings="tnum" />
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/space_16"
+                    android:layout_marginBottom="@dimen/space_12"
+                    android:background="@color/outline" />
+
+                <TextView
+                    android:id="@+id/accuracy"
+                    style="@style/Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/declination"
+                    style="@style/Text.Caption"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/card"
-                    android:orientation="vertical"
-                    android:padding="@dimen/space_16">
+                    android:layout_marginTop="@dimen/space_4" />
 
-                    <TextView
-                        style="@style/Text.Label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/qibla_distance" />
-
-                    <TextView
-                        android:id="@+id/distance"
-                        style="@style/Text.Headline"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_8"
-                        android:fontFeatureSettings="tnum" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/recalibrate"
+                    style="@style/Text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/touch_target"
+                    android:layout_marginStart="-12dp"
+                    android:layout_marginTop="@dimen/space_4"
+                    android:layout_marginBottom="-12dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/space_12"
+                    android:paddingEnd="@dimen/space_12"
+                    android:text="@string/qibla_recalibrate"
+                    android:textColor="@color/brand" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/accuracy"
-                style="@style/Text.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_12"
-                android:gravity="center" />
-
-            <TextView
-                android:id="@+id/declination"
-                style="@style/Text.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_4"
-                android:gravity="center" />
-
-            <TextView
-                android:id="@+id/recalibrate"
-                style="@style/Text"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/touch_target"
-                android:layout_marginTop="@dimen/space_16"
-                android:background="@drawable/card_pressable"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:text="@string/qibla_recalibrate"
-                android:textColor="@color/brand" />
-
-            <TextView
-                android:id="@+id/change_location"
-                style="@style/Text"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/touch_target"
-                android:layout_marginTop="@dimen/space_8"
-                android:background="@drawable/card_pressable"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:text="@string/action_change_city"
-                android:textColor="@color/brand" />
 
             <TextView
                 style="@style/Text.Caption"

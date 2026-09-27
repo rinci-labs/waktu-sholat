@@ -226,11 +226,11 @@
                     android:paddingBottom="@dimen/space_32">
 
                     <TextView
-                        style="@style/Text.Label"
+                        style="@style/Text.Title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/space_4"
-                        android:layout_marginBottom="@dimen/space_8"
+                        android:layout_marginBottom="@dimen/space_12"
                         android:text="@string/section_today" />
 
                     <!-- Rows are inflated once per day and restyled each minute. -->

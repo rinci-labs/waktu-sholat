@@ -200,8 +200,9 @@ class MainActivity : BaseActivity() {
         val brand = getColor(R.color.brand)
         val primary = getColor(R.color.text_primary)
         val muted = getColor(R.color.text_secondary)
-        // Before Fajr the active window is last night's Isha, which is not on today's list.
-        val active = if (snapshot.hasPassed(Prayer.FAJR)) snapshot.current else null
+        // The list lights the same prayer the card above counts down to. After Isha that is
+        // tomorrow's Fajr, which is not on today's list, so nothing is lit.
+        val active = snapshot.next.takeUnless { snapshot.hasPassed(it) }
         for (row in rowViews) {
             val isActive = row.prayer == active
             val passed = !isActive && snapshot.hasPassed(row.prayer)
@@ -214,7 +215,6 @@ class MainActivity : BaseActivity() {
             row.time.setTextColor(color)
             row.name.typeface = if (isActive) medium else regular
             row.time.typeface = if (isActive) medium else regular
-            row.dot.visibility = if (isActive) View.VISIBLE else View.INVISIBLE
             if (isActive) row.root.setBackgroundResource(R.drawable.row_active) else row.root.background = null
         }
     }
@@ -230,6 +230,5 @@ class MainActivity : BaseActivity() {
         val name: TextView = root.findViewById(R.id.row_name)
         val time: TextView = root.findViewById(R.id.row_time)
         val note: TextView = root.findViewById(R.id.row_note)
-        val dot: View = root.findViewById(R.id.row_dot)
     }
 }

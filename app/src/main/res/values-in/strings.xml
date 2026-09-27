@@ -16,7 +16,7 @@
 
     <!-- Today -->
     <string name="next_prayer_label">Sholat berikutnya</string>
-    <string name="section_today">Hari ini</string>
+    <string name="section_today">Jadwal hari ini</string>
     <string name="current_since">%1$s sejak %2$s</string>
     <string name="countdown_in">%1$s lagi</string>
     <string name="rel_hours_minutes">%1$d jam %2$d menit</string>
@@ -50,9 +50,10 @@
 
     <!-- Qibla -->
     <string name="qibla_title">Arah kiblat</string>
-    <string name="qibla_hint">Putar perangkat hingga penanda di atas lurus dengan jarum</string>
+    <string name="qibla_hint">Putar HP sampai Kakbah tepat di atas</string>
+    <string name="qibla_aligned">Sudah menghadap kiblat</string>
     <string name="qibla_no_sensor">Perangkat tidak punya sensor arah. Gunakan angka derajat di bawah bersama kompas biasa.</string>
-    <string name="qibla_bearing">Arah</string>
+    <string name="qibla_bearing">Arah dari Utara</string>
     <string name="qibla_distance">Jarak ke Kakbah</string>
     <string name="qibla_note">Derajat dihitung dari Utara sebenarnya. Jauhkan perangkat dari logam dan magnet agar sensor tetap akurat.</string>
     <string name="qibla_accuracy_high">Akurasi sensor: tinggi</string>

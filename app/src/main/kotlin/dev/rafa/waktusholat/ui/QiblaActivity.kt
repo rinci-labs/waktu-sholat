@@ -212,6 +212,10 @@ class QiblaActivity : BaseActivity(), SensorEventListener {
                 if (android.os.Build.VERSION.SDK_INT >= 30) HapticFeedbackConstants.CONFIRM else HapticFeedbackConstants.VIRTUAL_KEY,
             )
         }
+        if (aligned != wasAligned) {
+            hint.setText(if (aligned) R.string.qibla_aligned else R.string.qibla_hint)
+            hint.setTextColor(getColor(if (aligned) R.color.brand else R.color.text_primary))
+        }
         wasAligned = aligned
     }
 
