@@ -16,8 +16,8 @@ fun signingValue(key: String, env: String): String? =
     keystoreProperties.getProperty(key) ?: providers.environmentVariable(env).orNull
 
 // CI passes -PversionName=1.2.3 -PversionCode=42 from the tag and run number.
-val appVersionName = providers.gradleProperty("versionName").getOrElse("1.4.0")
-val appVersionCode = providers.gradleProperty("versionCode").map { it.toInt() }.getOrElse(10400)
+val appVersionName = providers.gradleProperty("versionName").getOrElse("1.5.0")
+val appVersionCode = providers.gradleProperty("versionCode").map { it.toInt() }.getOrElse(10500)
 
 android {
     namespace = "dev.rafa.waktusholat"
