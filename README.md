@@ -31,6 +31,11 @@ Release signing reads `keystore.properties` locally (`storeFile`, `storePassword
 `keyPassword`) or `SIGNING_*` environment variables in CI. Without either it falls back to the
 debug key.
 
+## Website
+
+The landing page lives in [`site/`](site/) and deploys to Cloudflare Pages (root `site`, build
+`npm run build`, output `public`). See [site/README.md](site/README.md).
+
 ## Modules
 
 | Module | Contents |

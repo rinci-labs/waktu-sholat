@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@source "./index.html";
+@source "../public/assets/*.js";
+
+/*
+  Tokens mirror the app: its brand green, warm paper page and ink text, and the six sky periods
+  that the hero cycles through with the visitor's local time.
+*/
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #0e6b4e;
+  --color-brand-deep: #0a5039;
+  --color-brand-soft: #e2efe8;
+  --color-paper: #f6f5f1;
+  --color-card: #ffffff;
+  --color-line: #e3e0d8;
+  --color-ink: #16201b;
+  --color-ink-soft: #4f5752;
+  --color-night: #0b1437;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+    font-feature-settings: "ss01";
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---- Hero sky ------------------------------------------------------------------------------ */
+
+.sky {
+  --sky-top: #070b1c;
+  --sky-bottom: #1b2752;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  transition: background 1.2s ease;
+}
+
+.sky[data-period="subuh"] { --sky-top: #1b2350; --sky-bottom: #8e4a6b; }
+.sky[data-period="pagi"] { --sky-top: #1f5faf; --sky-bottom: #4a98da; }
+.sky[data-period="siang"] { --sky-top: #155e9c; --sky-bottom: #3b8fcf; }
+.sky[data-period="sore"] { --sky-top: #9a4a1e; --sky-bottom: #d08236; }
+.sky[data-period="senja"] { --sky-top: #2b1650; --sky-bottom: #a8465f; }
+.sky[data-period="malam"] { --sky-top: #070b1c; --sky-bottom: #1b2752; }
+
+.sky-stars circle {
+  animation: twinkle var(--d, 3s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+.sky[data-period="pagi"] .sky-stars,
+.sky[data-period="siang"] .sky-stars,
+.sky[data-period="sore"] .sky-stars {
+  opacity: 0;
+}
+
+.sky-stars {
+  transition: opacity 1.2s ease;
+}
+
+.sky-body {
+  transition: left 1.2s ease, top 1.2s ease;
+}
+
+.sky-body .glow {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+.sky-cloud {
+  animation: drift var(--speed, 90s) linear var(--delay, 0s) infinite;
+}
+
+.sky[data-period="malam"] .sky-cloud { opacity: 0.08; }
+.sky[data-period="subuh"] .sky-cloud,
+.sky[data-period="senja"] .sky-cloud { opacity: 0.22; }
+
+.skyline .window {
+  fill: #ffce78;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.sky[data-period="malam"] .skyline .window { opacity: 0.9; }
+.sky[data-period="senja"] .skyline .window,
+.sky[data-period="subuh"] .skyline .window { opacity: 0.6; }
+
+@keyframes twinkle {
+  from { opacity: 0.25; }
+  to { opacity: 1; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes drift {
+  from { transform: translateX(-20vw); }
+  to { transform: translateX(120vw); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-stars circle,
+  .sky-body .glow,
+  .sky-cloud {
+    animation: none;
+  }
+  .sky,
+  .sky-body {
+    transition: none;
+  }
+}
+
+/* ---- Phone frame --------------------------------------------------------------------------- */
+
+.phone {
+  border-radius: 2.6rem;
+  padding: 0.55rem;
+  background: #0f1512;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08) inset,
+    0 30px 60px -20px rgb(4 12 30 / 0.55),
+    0 12px 24px -12px rgb(4 12 30 / 0.4);
+}
+
+.phone img {
+  border-radius: 2.1rem;
+  display: block;
+  width: 100%;
+  height: auto;
+}

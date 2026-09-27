@@ -20,3 +20,6 @@ keystore.properties
 .DS_Store
 Thumbs.db
 keystore/
+
+# Python
+__pycache__/

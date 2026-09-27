@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Waktu Sholat: Jadwal Sholat Offline untuk Android</title>
+  <meta name="description" content="Jadwal sholat yang dihitung langsung di HP, tanpa internet dan tanpa iklan. Metode Kemenag, arah kiblat akurat, lima widget, dan bisa dipakai di mana pun di dunia. Gratis, sekitar 200 KB.">
+  <link rel="canonical" href="https://waktu-sholat.rafaar.com/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#0e6b4e">
+  <meta name="color-scheme" content="light">
+
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/assets/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Open Graph / social previews. Absolute URLs: crawlers do not resolve relative ones. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Waktu Sholat">
+  <meta property="og:url" content="https://waktu-sholat.rafaar.com/">
+  <meta property="og:title" content="Waktu Sholat: Jadwal Sholat Offline untuk Android">
+  <meta property="og:description" content="Jadwal sholat yang dihitung di HP, tanpa internet dan tanpa iklan. Metode Kemenag, arah kiblat akurat, dan lima widget. Gratis, sekitar 200 KB.">
+  <meta property="og:image" content="https://waktu-sholat.rafaar.com/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Waktu Sholat: layar utama dengan langit siang, siluet masjid, dan sholat berikutnya.">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Waktu Sholat: Jadwal Sholat Offline untuk Android">
+  <meta name="twitter:description" content="Jadwal sholat yang dihitung di HP, tanpa internet dan tanpa iklan. Gratis, sekitar 200 KB.">
+  <meta name="twitter:image" content="https://waktu-sholat.rafaar.com/og-image.png">
+  <meta name="twitter:image:alt" content="Waktu Sholat: layar utama dengan langit siang, siluet masjid, dan sholat berikutnya.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Waktu Sholat",
+    "alternateName": "Prayer Times",
+    "description": "Jadwal sholat offline untuk Android dengan metode Kemenag, arah kiblat, dan widget.",
+    "url": "https://waktu-sholat.rafaar.com/",
+    "image": "https://waktu-sholat.rafaar.com/og-image.png",
+    "screenshot": "https://waktu-sholat.rafaar.com/assets/screens/today.webp",
+    "applicationCategory": "LifestyleApplication",
+    "operatingSystem": "Android 7.0+",
+    "inLanguage": ["id", "en"],
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "IDR" },
+    "downloadUrl": "https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk",
+    "softwareVersion": "1.4.0",
+    "fileSize": "200KB",
+    "author": { "@type": "Organization", "name": "Rinci Labs", "url": "https://github.com/rinci-labs" }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <a href="#unduh" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2" data-i18n="skip">Langsung ke unduhan</a>
+
+  <!-- Hero: the app's own sky, following the visitor's local time of day. -->
+  <header id="top" class="sky relative isolate overflow-hidden text-white" data-period="malam">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
+      <svg class="sky-stars absolute inset-0 h-full w-full" preserveAspectRatio="none"></svg>
+      <div class="sky-body absolute" style="left:70%;top:22%">
+        <div class="glow absolute -inset-16 rounded-full"></div>
+        <div class="disc relative size-14 rounded-full"></div>
+      </div>
+      <svg class="sky-cloud absolute top-[18%] left-0 w-40 opacity-30" style="--speed:110s;--delay:-40s" viewBox="0 0 90 32"><g fill="#fff"><circle cx="24" cy="21" r="10"/><circle cx="42" cy="14" r="14"/><circle cx="62" cy="19" r="11"/><rect x="12" y="19" width="66" height="12" rx="6"/></g></svg>
+      <svg class="sky-cloud absolute top-[34%] left-0 w-28 opacity-20" style="--speed:150s;--delay:-95s" viewBox="0 0 90 32"><g fill="#fff"><circle cx="24" cy="21" r="10"/><circle cx="42" cy="14" r="14"/><circle cx="62" cy="19" r="11"/><rect x="12" y="19" width="66" height="12" rx="6"/></g></svg>
+      <!-- Skyline: low rooftops and a mosque, the same silhouette as in the app. -->
+      <svg class="skyline absolute bottom-0 left-0 w-full" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice">
+        <path fill="rgb(0 0 0 / 0.28)" d="M0 220V176h60v-14h54v22h40v-30h70v18h38v-26h52v34h44v-20h60v12h48v-28h66v20h58v-16h40v26h52v-18h64v24h46v-32h58v20h52v-12h64v26h44v-22h60v18h58v-26h48v20h62v-14h40v40Z"/>
+        <g fill="rgb(0 0 0 / 0.45)" transform="translate(-540 0)">
+          <rect x="880" y="148" width="232" height="72"/>
+          <rect x="804" y="176" width="384" height="44"/>
+          <rect x="924" y="136" width="144" height="16"/>
+          <path d="M924 136c-8-60 44-80 72-100 28 20 80 40 72 100Z"/>
+          <rect x="994" y="16" width="4" height="24"/>
+          <path d="M996 0a9 9 0 1 0 8 13 7 7 0 1 1-8-13Z"/>
+          <path d="M816 176c0-28 20-36 28-44 8 8 28 16 28 44Z"/>
+          <path d="M1120 176c0-28 20-36 28-44 8 8 28 16 28 44Z"/>
+          <rect x="763" y="12" width="18" height="208"/>
+          <rect x="757" y="60" width="30" height="8"/>
+          <path d="M760 12l12-32 12 32Z"/>
+          <rect x="1211" y="12" width="18" height="208"/>
+          <rect x="1205" y="60" width="30" height="8"/>
+          <path d="M1208 12l12-32 12 32Z"/>
+        </g>
+        <g class="window" transform="translate(-540 0)">
+          <rect x="920" y="168" width="14" height="28" rx="7"/><rect x="956" y="168" width="14" height="28" rx="7"/><rect x="990" y="168" width="14" height="28" rx="7"/><rect x="1024" y="168" width="14" height="28" rx="7"/><rect x="1058" y="168" width="14" height="28" rx="7"/>
+          <rect x="769" y="36" width="6" height="16" rx="3"/><rect x="1217" y="36" width="6" height="16" rx="3"/>
+        </g>
+      </svg>
+    </div>
+
+    <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
+      <a href="#top" class="flex items-center gap-2.5 font-semibold">
+        <img src="/assets/icon.svg" alt="" class="size-8">
+        <span>Waktu Sholat</span>
+      </a>
+      <div class="flex items-center gap-2 text-sm">
+        <a href="https://github.com/rinci-labs/waktu-sholat" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white sm:inline-block">GitHub</a>
+        <button type="button" id="lang" class="rounded-full border border-white/25 px-3 py-1.5 font-medium text-white/90 hover:bg-white/10" aria-label="Switch to English">EN</button>
+      </div>
+    </nav>
+
+    <div class="mx-auto grid max-w-6xl items-end gap-10 px-5 pt-8 pb-0 sm:px-8 lg:grid-cols-[1.1fr_1fr] lg:pt-14">
+      <div class="pb-16 lg:pb-40">
+        <p class="text-sm font-medium text-white/75"><span id="period-label" data-i18n="now">Sekarang malam di tempatmu</span></p>
+        <h1 class="mt-4 text-[2.6rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance sm:text-6xl" data-i18n="headline">Jadwal sholat yang tepat, tanpa internet.</h1>
+        <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85" data-i18n="lede">Waktu Sholat menghitung jadwal langsung di HP dengan metode Kemenag. Tanpa iklan, tanpa akun, dan ukurannya hanya sekitar 200 KB.</p>
+        <div class="mt-9 flex flex-wrap items-center gap-3">
+          <a href="https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk" data-download class="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-brand-deep shadow-lg shadow-black/20 hover:bg-brand-soft">
+            <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14"/></svg>
+            <span data-i18n="download">Unduh untuk Android</span>
+          </a>
+          <span class="text-sm text-white/75" data-release-line>Android 7.0 atau lebih baru</span>
+        </div>
+      </div>
+      <div class="relative mx-auto w-[min(78vw,320px)] translate-y-10 lg:mr-6 lg:w-[340px]">
+        <div class="phone">
+          <img src="/assets/screens/today.webp" width="540" height="1205" alt="Layar utama Waktu Sholat: langit siang dengan siluet masjid, sholat berikutnya Ashar pukul 14:54, dan jadwal hari ini." data-i18n-alt="alt_today">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- What it does, each claim next to the screen that shows it. -->
+    <section class="mx-auto max-w-6xl px-5 pt-28 pb-8 sm:px-8" aria-labelledby="features-title">
+      <h2 id="features-title" class="max-w-2xl text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl" data-i18n="features_title">Dibuat untuk dipakai lima kali sehari, bertahun-tahun.</h2>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft" data-i18n="features_lede">Semua yang penting ada, tanpa hal yang mengganggu. Waktunya dihitung dari posisi matahari di lokasimu, jadi tetap jalan saat tidak ada sinyal.</p>
+
+      <div class="mt-16 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div>
+          <h3 class="text-2xl font-bold tracking-[-0.01em]" data-i18n="f1_title">Sekali lihat, langsung tahu</h3>
+          <p class="mt-3 text-lg leading-relaxed text-ink-soft" data-i18n="f1_body">Sholat berikutnya dan sisa waktunya tertulis jelas, misalnya "1 jam 15 menit lagi". Latar langitnya ikut berubah dari subuh sampai malam, dan jadwal hari itu ada tepat di bawahnya.</p>
+          <ul class="mt-6 space-y-2.5 text-ink-soft">
+            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f1_a">Metode Kemenag dengan pembulatan resmi, sama dengan jadwal yang diterbitkan</span></li>
+            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f1_b">Tanggal Hijriah, jadwal bulanan, dan tema gelap</span></li>
+            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f1_c">Notifikasi adzan tepat waktu, dengan pengingat opsional</span></li>
+          </ul>
+        </div>
+        <div class="flex justify-center gap-5">
+          <div class="phone w-[46%] max-w-[250px]"><img src="/assets/screens/today.webp" width="540" height="1205" loading="lazy" alt="Tema terang" data-i18n-alt="alt_light"></div>
+          <div class="phone mt-12 w-[46%] max-w-[250px]"><img src="/assets/screens/today-dark.webp" width="540" height="1205" loading="lazy" alt="Tema gelap" data-i18n-alt="alt_dark"></div>
+        </div>
+      </div>
+
+      <div class="mt-28 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div class="order-2 flex justify-center lg:order-1">
+          <div class="phone w-[62%] max-w-[300px]"><img src="/assets/screens/qibla.webp" width="540" height="1205" loading="lazy" alt="Kompas arah kiblat 295 derajat dari Jakarta, dengan koreksi deklinasi magnetik." data-i18n-alt="alt_qibla"></div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <h3 class="text-2xl font-bold tracking-[-0.01em]" data-i18n="f2_title">Arah kiblat yang bisa dipercaya</h3>
+          <p class="mt-3 text-lg leading-relaxed text-ink-soft" data-i18n="f2_body">Kompas meminta kalibrasi dulu sebelum menunjukkan arah. Sensor HP menunjuk ke utara magnetis, jadi selisihnya dengan utara sebenarnya dikoreksi otomatis sesuai lokasimu.</p>
+          <ul class="mt-6 space-y-2.5 text-ink-soft">
+            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f2_a">Peringatan saat ada gangguan magnet atau HP dipegang miring</span></li>
+            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f2_b">Getar sekali saat HP pas menghadap kiblat</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-28 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div>
+          <h3 class="text-2xl font-bold tracking-[-0.01em]" data-i18n="f3_title">Lima widget untuk layar utama</h3>
+          <p class="mt-3 text-lg leading-relaxed text-ink-soft" data-i18n="f3_body">Pilih yang cocok: sholat berikutnya, jadwal sehari dalam satu baris, jadwal lengkap, hitung mundur, atau teks minimalis langsung di atas wallpaper. Warnanya mengikuti wallpaper di Android 12 ke atas.</p>
+          <p class="mt-4 text-lg leading-relaxed text-ink-soft" data-i18n="f3_body2">Widget diperbarui tiap menit tanpa membangunkan HP, jadi tidak menguras baterai.</p>
+        </div>
+        <div class="flex justify-center">
+          <div class="phone w-full max-w-[420px] !rounded-[2rem]"><img src="/assets/screens/widgets.webp" width="720" height="560" loading="lazy" class="!rounded-[1.6rem]" alt="Layar utama dengan widget Jadwal hari ini dan widget Minimalis." data-i18n-alt="alt_widgets"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- The small facts people check before installing. -->
+    <section class="mx-auto max-w-6xl px-5 py-24 sm:px-8" aria-labelledby="facts-title">
+      <h2 id="facts-title" class="sr-only" data-i18n="facts_title">Ringkasan</h2>
+      <dl class="grid gap-x-10 gap-y-10 border-y border-line py-12 sm:grid-cols-2 lg:grid-cols-4">
+        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_where">Di mana saja</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_where">±490 kota dan kabupaten tersimpan di HP. Di luar negeri, pakai GPS atau cari nama tempat mana pun di dunia.</dd></div>
+        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_lang">Dua bahasa</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_lang">Bahasa Indonesia dan English, bisa diganti di Pengaturan.</dd></div>
+        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_privacy">Privasi</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_privacy">Tanpa iklan, akun, atau pelacakan. Internet hanya untuk nama tempat dan cek pembaruan.</dd></div>
+        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_small">Ringan</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_small">Sekitar 200 KB, tanpa proses latar yang berjalan terus. Android 7.0 atau lebih baru.</dd></div>
+      </dl>
+    </section>
+
+    <!-- Download: the real latest release, and the three steps a sideloaded install takes. -->
+    <section id="unduh" class="bg-brand text-white" aria-labelledby="download-title">
+      <div class="mx-auto grid max-w-6xl gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+        <div>
+          <h2 id="download-title" class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl" data-i18n="dl_title">Unduh Waktu Sholat</h2>
+          <p class="mt-4 max-w-md text-lg leading-relaxed text-white/85" data-i18n="dl_lede">Gratis dan terbuka. Setelah terpasang, aplikasi memberi tahu saat ada versi baru dan bisa memperbarui dirinya sendiri.</p>
+          <a href="https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk" data-download class="mt-8 inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-brand-deep hover:bg-brand-soft">
+            <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14"/></svg>
+            <span data-i18n="download_apk">Unduh APK</span>
+          </a>
+          <dl class="mt-8 grid max-w-md grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm text-white/80">
+            <dt data-i18n="m_version">Versi</dt><dd class="tnum font-medium text-white" data-release="version">terbaru</dd>
+            <dt data-i18n="m_size">Ukuran</dt><dd class="tnum font-medium text-white" data-release="size">±200 KB</dd>
+            <dt data-i18n="m_date">Dirilis</dt><dd class="font-medium text-white" data-release="date">—</dd>
+            <dt>SHA-256</dt><dd class="font-medium break-all text-white/90" data-release="sha">—</dd>
+          </dl>
+          <a href="https://github.com/rinci-labs/waktu-sholat/releases" class="mt-6 inline-block text-sm font-medium text-white underline decoration-white/40 underline-offset-4 hover:decoration-white" data-i18n="all_releases">Semua versi dan catatan rilis</a>
+        </div>
+
+        <div class="rounded-3xl bg-white/[0.07] p-8 ring-1 ring-white/15 sm:p-10">
+          <h3 class="text-lg font-semibold" data-i18n="steps_title">Cara memasang</h3>
+          <ol class="mt-6 space-y-7">
+            <li class="grid grid-cols-[2.25rem_1fr] gap-4">
+              <span class="grid size-9 place-items-center rounded-full bg-white font-bold text-brand-deep">1</span>
+              <div><p class="font-semibold" data-i18n="s1_t">Unduh file APK</p><p class="mt-1 leading-relaxed text-white/80" data-i18n="s1_b">Buka halaman ini di HP Android lalu ketuk tombol unduh.</p></div>
+            </li>
+            <li class="grid grid-cols-[2.25rem_1fr] gap-4">
+              <span class="grid size-9 place-items-center rounded-full bg-white font-bold text-brand-deep">2</span>
+              <div><p class="font-semibold" data-i18n="s2_t">Izinkan pemasangan</p><p class="mt-1 leading-relaxed text-white/80" data-i18n="s2_b">Saat diminta, izinkan browser atau Files untuk memasang aplikasi. Ini hanya sekali.</p></div>
+            </li>
+            <li class="grid grid-cols-[2.25rem_1fr] gap-4">
+              <span class="grid size-9 place-items-center rounded-full bg-white font-bold text-brand-deep">3</span>
+              <div><p class="font-semibold" data-i18n="s3_t">Pilih lokasi dan nyalakan adzan</p><p class="mt-1 leading-relaxed text-white/80" data-i18n="s3_b">Pilih kotamu atau pakai lokasi HP, lalu nyalakan notifikasi adzan di Pengaturan.</p></div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Questions people actually ask about a sideloaded prayer app. -->
+    <section class="mx-auto max-w-3xl px-5 py-24 sm:px-8" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="text-3xl font-bold tracking-[-0.02em]" data-i18n="faq_title">Pertanyaan</h2>
+      <div class="mt-8 divide-y divide-line border-y border-line">
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-semibold"><span data-i18n="q1">Seberapa akurat jadwalnya?</span><span aria-hidden="true" class="text-2xl leading-none text-brand transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 leading-relaxed text-ink-soft" data-i18n="a1">Jadwal dihitung dengan metode Kemenag, termasuk pembulatan dan tambahan menit kehati-hatian (ihtiyati) yang dipakai jadwal resmi. Hasilnya diuji terhadap jadwal yang diterbitkan dan cocok sampai ke menitnya. Di luar negeri kamu bisa memilih metode lain seperti Umm Al-Qura atau MWL.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-semibold"><span data-i18n="q2">Kenapa tidak ada di Play Store?</span><span aria-hidden="true" class="text-2xl leading-none text-brand transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 leading-relaxed text-ink-soft" data-i18n="a2">Aplikasi ini dibagikan langsung lewat GitHub. Setiap rilis ditandatangani dengan kunci yang sama, dan aplikasi memeriksa checksum SHA-256 sebelum memasang pembaruan.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-semibold"><span data-i18n="q3">Adzan tidak muncul, apa yang harus dicek?</span><span aria-hidden="true" class="text-2xl leading-none text-brand transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 leading-relaxed text-ink-soft" data-i18n="a3">Buka Pengaturan di aplikasi. Kalau ada yang menghalangi, misalnya izin notifikasi atau penghemat baterai, akan muncul baris berwarna oranye dengan tombol untuk memperbaikinya. Gunakan "Kirim notifikasi uji" untuk memastikan.</p>
+        </details>
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 font-semibold"><span data-i18n="q4">Apakah ada versi iPhone?</span><span aria-hidden="true" class="text-2xl leading-none text-brand transition group-open:rotate-45">+</span></summary>
+          <p class="mt-3 leading-relaxed text-ink-soft" data-i18n="a4">Belum. Saat ini Waktu Sholat hanya tersedia untuk Android 7.0 atau lebih baru.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-line">
+    <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-8">
+      <div class="flex items-center gap-2.5">
+        <img src="/assets/icon.svg" alt="" class="size-6">
+        <span>Waktu Sholat</span>
+      </div>
+      <div class="flex gap-6">
+        <a href="https://github.com/rinci-labs/waktu-sholat" class="hover:text-ink">GitHub</a>
+        <a href="https://github.com/rinci-labs/waktu-sholat/releases" class="hover:text-ink" data-i18n="releases">Rilis</a>
+        <a href="https://github.com/rinci-labs/waktu-sholat/issues" class="hover:text-ink" data-i18n="report">Laporkan masalah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
