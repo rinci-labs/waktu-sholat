@@ -110,6 +110,8 @@ class SkyView @JvmOverloads constructor(
     private val windowPaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     private val farHills = Path()
+    private val farCity = Path()
+    private val farCityPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val midHills = Path()
     private val nearHills = Path()
     private val mosque = Path()
@@ -225,6 +227,8 @@ class SkyView @JvmOverloads constructor(
             Shader.TileMode.CLAMP,
         )
         midPaint.color = mix(shownBottom, Color.BLACK, 0.38f)
+        farCityPaint.color = mix(shownBottom, shownTop, 0.25f)
+        farCityPaint.alpha = 190
         nearPaint.color = mix(shownBottom, Color.BLACK, 0.55f)
 
         val bodyRadius = (if (celestial.isMoon) 14f else 17f) * density
@@ -261,6 +265,7 @@ class SkyView @JvmOverloads constructor(
         // The landscape scrolls with the page; the far band drifts a little for depth.
         canvas.save()
         canvas.translate(0f, parallax * PARALLAX * 0.25f)
+        canvas.drawPath(farCity, farCityPaint)
         canvas.drawPath(farHills, farPaint)
         canvas.restore()
         canvas.drawPath(midHills, midPaint)
@@ -384,22 +389,44 @@ class SkyView @JvmOverloads constructor(
     private fun buildLandscape(w: Float, horizon: Float) {
         val d = density
         val hill = HILLS_DP * d
+        fun ridgeY(x: Float, baseY: Float, amplitude: Float, waves: Float, phase: Float): Float {
+            val a = (x / w) * waves * 2 * PI.toFloat() + phase
+            return baseY - amplitude * (0.6f * sin(a) + 0.4f * sin(a * 0.53f + 1.3f))
+        }
         fun ridge(path: Path, baseY: Float, amplitude: Float, waves: Float, phase: Float) {
             path.rewind()
             path.moveTo(0f, horizon + 1)
             val steps = 48
             for (i in 0..steps) {
                 val x = w * i / steps
-                val a = (i.toFloat() / steps) * waves * 2 * PI.toFloat() + phase
-                val y = baseY - amplitude * (0.6f * sin(a) + 0.4f * sin(a * 0.53f + 1.3f))
-                path.lineTo(x, y)
+                path.lineTo(x, ridgeY(x, baseY, amplitude, waves, phase))
             }
             path.lineTo(w, horizon + 1)
             path.close()
         }
-        ridge(farHills, horizon - hill * 0.72f, hill * 0.16f, 1.3f, 0.6f)
+        val farBase = horizon - hill * 0.72f
+        ridge(farHills, farBase, hill * 0.16f, 1.3f, 0.6f)
         ridge(midHills, horizon - hill * 0.42f, hill * 0.12f, 0.9f, 2.4f)
         ridge(nearHills, horizon - hill * 0.12f, hill * 0.08f, 1.6f, 4.1f)
+
+        // A distant town on the far ridge: a few small domes and minarets, behind the far hills.
+        farCity.rewind()
+        for ((fx, minaret, s) in listOf(Triple(0.12f, false, 0.8f), Triple(0.16f, true, 0.9f), Triple(0.2f, false, 0.6f),
+            Triple(0.34f, true, 0.7f), Triple(0.38f, false, 0.7f))) {
+            val x = w * fx
+            val base = ridgeY(x, farBase, hill * 0.16f, 1.3f, 0.6f) + 4 * d
+            if (minaret) {
+                farCity.addRect(x - 2 * s * d, base - 34 * s * d, x + 2 * s * d, base, Path.Direction.CW)
+                farCity.moveTo(x - 3 * s * d, base - 34 * s * d)
+                farCity.lineTo(x, base - 42 * s * d)
+                farCity.lineTo(x + 3 * s * d, base - 34 * s * d)
+                farCity.close()
+            } else {
+                val r = 10 * s * d
+                farCity.addRect(x - r, base - 8 * s * d, x + r, base, Path.Direction.CW)
+                farCity.addArc(x - r, base - 8 * s * d - r, x + r, base - 8 * s * d + r, 180f, 180f)
+            }
+        }
 
         // Mosque on the middle ridge, at 72% of the width: drum, onion dome with a crescent
         // finial, two slender minarets. Its base sits on the ridge line at that x.
@@ -430,6 +457,38 @@ class SkyView @JvmOverloads constructor(
             mosque.lineTo(X(mx + 3.4f), Y(66f))
             mosque.close()
         }
+        // Date palms beside the mosque, standing on the middle ridge.
+        fun palm(x: Float, height: Float, lean: Float) {
+            val base = ridgeY(x, horizon - hill * 0.42f, hill * 0.12f, 0.9f, 2.4f) + 3 * d
+            val topX = x + lean * height * 0.35f
+            val topY = base - height
+            val half = height * 0.045f
+            mosque.moveTo(x - half, base)
+            mosque.quadTo(x + lean * height * 0.3f - half, base - height * 0.55f, topX - half * 0.6f, topY)
+            mosque.lineTo(topX + half * 0.6f, topY)
+            mosque.quadTo(x + lean * height * 0.3f + half, base - height * 0.55f, x + half, base)
+            mosque.close()
+            for (degrees in intArrayOf(-165, -140, -115, -90, -65, -40, -15, 10)) {
+                val a = Math.toRadians(degrees.toDouble())
+                val length = height * if (kotlin.math.abs(degrees + 85) < 40) 0.55f else 0.62f
+                val cos = kotlin.math.cos(a).toFloat()
+                val sinA = sin(a).toFloat()
+                val endX = topX + cos * length
+                val endY = topY + sinA * length * 0.55f + length * 0.35f
+                val ctrlX = topX + cos * length * 0.5f
+                val ctrlY = topY + sinA * length * 0.9f
+                val nx = -sinA * height * 0.032f
+                val ny = cos * height * 0.032f
+                mosque.moveTo(topX, topY)
+                mosque.quadTo(ctrlX + nx, ctrlY + ny, endX, endY)
+                mosque.quadTo(ctrlX - nx, ctrlY - ny, topX, topY)
+                mosque.close()
+            }
+        }
+        palm(cx - 86 * d, 58 * d, -0.2f)
+        palm(cx + 92 * d, 50 * d, 0.25f)
+        palm(cx + 112 * d, 36 * d, 0.1f)
+
         windows.clear()
         for (i in -1..1) windows += RectF(X(i * 14f - 3f), Y(16f), X(i * 14f + 3f), Y(6f))
         for (side in floatArrayOf(-1f, 1f)) windows += RectF(X(side * 46f - 1.2f), Y(60f), X(side * 46f + 1.2f), Y(54f))
