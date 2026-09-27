@@ -34,7 +34,7 @@ debug key.
 ## Website
 
 The landing page lives in [`site/`](site/) (Astro) and deploys to Cloudflare Pages (root `site`,
-build `npm run build`, output `dist`). Run it locally with `cd site && npm install && npm run dev`. See [site/README.md](site/README.md).
+build `pnpm run build`, output `dist`). Run it locally with `cd site && pnpm install && pnpm run dev`. See [site/README.md](site/README.md).
 
 ## Modules
 

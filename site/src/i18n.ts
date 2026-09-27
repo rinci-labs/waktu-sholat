@@ -63,7 +63,7 @@ const id = {
   altToday: "Layar utama Waktu Sholat: langit siang, sholat berikutnya Ashar, dan jadwal hari ini.",
   altLight: "Tema terang",
   altDark: "Tema gelap",
-  altQibla: "Kompas arah kiblat 295 derajat dari Jakarta, dengan koreksi deklinasi magnetik.",
+  altQibla: "Kompas arah kiblat 295 derajat dari Jakarta, dengan Kakbah di tepi kompas dan koreksi deklinasi magnetik.",
   altWidgets: "Layar utama dengan widget Jadwal hari ini dan widget Minimalis.",
 
   facts: [
@@ -162,7 +162,7 @@ const en: typeof id = {
   altToday: "Waktu Sholat home screen: a midday sky, the next prayer Asr, and today's schedule.",
   altLight: "Light theme",
   altDark: "Dark theme",
-  altQibla: "Qibla compass pointing 295 degrees from Jakarta, corrected for magnetic declination.",
+  altQibla: "Qibla compass pointing 295 degrees from Jakarta, with the Kaaba on its rim, corrected for magnetic declination.",
   altWidgets: "Home screen with the Today's times and Minimal widgets.",
 
   facts: [

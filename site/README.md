@@ -1,14 +1,14 @@
 # Waktu Sholat website
 
 Landing page for [waktu-sholat.rafaar.com](https://waktu-sholat.rafaar.com), built with
-[Astro](https://astro.build) and Tailwind CSS v4. Fully static: `npm run build` writes `dist/`.
+[Astro](https://astro.build) and Tailwind CSS v4. Fully static: `pnpm run build` writes `dist/`.
 
 ```sh
-npm install
-npm run dev      # http://localhost:4321, reloads on change
-npm run check    # type-check .astro and .ts files (strictest)
-npm run build    # static site into dist/
-npm run preview  # build, then serve dist/ at http://localhost:4321
+pnpm install
+pnpm dev          # http://localhost:4321, reloads on change
+pnpm check      # type-check .astro and .ts files (strictest)
+pnpm build      # static site into dist/
+pnpm preview  # build, then serve dist/ at http://localhost:4321
 ```
 
 The build fetches the latest GitHub release once, so the download section ships with the real
@@ -32,7 +32,7 @@ version, size and checksum; the browser refreshes it later in case a newer relea
 After changing either source:
 
 ```sh
-npm run sync-cities
+pnpm run sync-cities
 ```
 
 ## Cloudflare Pages
@@ -41,7 +41,7 @@ npm run sync-cities
 |---|---|
 | Framework preset | Astro |
 | Root directory | `site` |
-| Build command | `npm run build` |
+| Build command | `pnpm run build` |
 | Build output directory | `dist` |
 | Environment variable (optional) | `SITE_URL=https://waktu-sholat.rafaar.com` |
 
@@ -53,7 +53,7 @@ Then add the custom domain `waktu-sholat.rafaar.com` under the project's Custom 
 `public/og-image.png` (1200x630) is a screenshot of `/og/`:
 
 ```sh
-npm run preview   # in one terminal
+pnpm preview   # in one terminal
 chrome --headless=new --hide-scrollbars --window-size=1200,630 --virtual-time-budget=5000 \
   --screenshot=public/og-image.png http://localhost:4321/og/
 ```
