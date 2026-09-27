@@ -71,6 +71,7 @@
     <!-- Location -->
     <string name="city_title">Choose location</string>
     <string name="city_search_hint">Search city or province</string>
+    <string name="city_hint">Type a city, anywhere in the world</string>
     <string name="city_empty">No city found</string>
     <string name="city_detail">%1$s · %2$s</string>
     <string name="city_gps">Use device location</string>
@@ -109,7 +110,8 @@
     <string name="icon_auto">Automatic</string>
     <string name="icon_auto_long">Automatic · follows the time of day</string>
     <string name="icon_default">Green</string>
-    <string name="settings_about_text">Waktu Sholat %1$s\nCalculated on device · no ads</string>
+    <string name="settings_about_text">Waktu Sholat %1$s\nCalculated on device · no ads
+World cities: GeoNames (CC BY 4.0)</string>
 
     <string name="lead_none">On time</string>
     <string name="lead_5">5 minutes before</string>

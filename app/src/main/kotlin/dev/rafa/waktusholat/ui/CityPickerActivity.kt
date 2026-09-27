@@ -18,7 +18,7 @@ import dev.rafa.waktusholat.R
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.City
 import dev.rafa.waktusholat.data.DeviceLocation
-import java.text.Normalizer
+import dev.rafa.waktusholat.data.WorldCities
 
 /**
  * Location picker: a precise device fix that works anywhere in the world, or a city from the
@@ -42,11 +42,11 @@ class CityPickerActivity : BaseActivity() {
         empty = findViewById(R.id.empty)
 
         val preferences = (application as WaktuSholatApp).preferences
-        val current = if (preferences.useGps) null else preferences.resolveCity()
+        val current = if (preferences.followsDevice) null else preferences.resolveCity()
         adapter = CityAdapter(this, current)
         list.adapter = adapter
         list.setOnItemClickListener { _, _, position, _ -> select(adapter.getItem(position)) }
-        current?.let { city -> City.ALL.indexOf(city).takeIf { it > 2 }?.let { list.setSelection(it - 2) } }
+        refreshEmptyState("")
 
         findViewById<View>(R.id.use_location).setOnClickListener { useDeviceLocation() }
         if (preferences.followsDevice) {
@@ -60,19 +60,46 @@ class CityPickerActivity : BaseActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
                 val query = s?.toString().orEmpty().trim()
+                if (query.isNotEmpty()) loadWorldOnce()
                 adapter.filter(query)
                 bindWorldSearch(query)
-                val isEmpty = adapter.count == 0
-                // With a query typed, the worldwide row already offers the way forward.
-                empty.visibility = if (isEmpty && query.length < 2) View.VISIBLE else View.GONE
-                list.visibility = if (isEmpty) View.GONE else View.VISIBLE
+                refreshEmptyState(query)
             }
         })
     }
 
-    private fun select(city: City) {
+    /** Nothing is listed until something is typed; the hint says what can be searched. */
+    private fun refreshEmptyState(query: String) {
+        val isEmpty = adapter.count == 0
+        list.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        empty.visibility = if (isEmpty && query.length < 2) View.VISIBLE else View.GONE
+        empty.setText(if (query.isEmpty()) R.string.city_hint else R.string.city_empty)
+    }
+
+    private var worldRequested = false
+
+    /** The world list is parsed on the first keystroke, off the main thread, then kept for the process. */
+    private fun loadWorldOnce() {
+        if (worldRequested) return
+        worldRequested = true
+        Thread {
+            val world = WorldCities.load(applicationContext)
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                adapter.world = world
+                refreshEmptyState(findViewById<EditText>(R.id.search).text.toString().trim())
+            }
+        }.start()
+    }
+
+    private fun select(entry: CityAdapter.Entry) {
         val app = application as WaktuSholatApp
-        app.preferences.setCity(city)
+        val city = entry.city
+        if (entry.world) {
+            app.preferences.setPickedPlace(city.latitude, city.longitude, city.zoneId!!, city.name, city.province)
+        } else {
+            app.preferences.setCity(city)
+        }
         app.notifyScheduleChanged()
         finish()
     }
@@ -154,13 +181,31 @@ class CityPickerActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Search results only (nothing is listed for an empty query): the Indonesian table plus the
+     * offline world cities.
+     * Matches that start with the query come first, then word starts, then substrings; at the same
+     * rank Indonesian entries lead, and world cities keep their most-populous-first order.
+     */
     private class CityAdapter(private val context: Context, private val selected: City?) : BaseAdapter() {
 
-        private val keys: Array<String> = Array(City.ALL.size) { normalize("${City.ALL[it].name} ${City.ALL[it].province}") }
-        private var visible: List<City> = City.ALL
+        class Entry(val city: City, val world: Boolean)
+
+        private val keys: Array<String> = Array(City.ALL.size) { WorldCities.normalize(City.ALL[it].name) }
+        private val provinceKeys: Array<String> = Array(City.ALL.size) { WorldCities.normalize(City.ALL[it].province) }
+        private val all: List<Entry> = City.ALL.map { Entry(it, world = false) }
+        private var visible: List<Entry> = emptyList()
+        private var query = ""
+        private val locale = context.resources.configuration.locales[0]
+
+        var world: WorldCities? = null
+            set(value) {
+                field = value
+                if (query.isNotEmpty()) filter(query)
+            }
 
         override fun getCount(): Int = visible.size
-        override fun getItem(position: Int): City = visible[position]
+        override fun getItem(position: Int): Entry = visible[position]
         override fun getItemId(position: Int): Long = position.toLong()
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
@@ -168,21 +213,38 @@ class CityPickerActivity : BaseActivity() {
                 it.tag = Holder(it)
             }
             val holder = view.tag as Holder
-            val city = visible[position]
+            val city = visible[position].city
             holder.name.text = city.name
             holder.detail.text = context.getString(R.string.city_detail, city.province, city.zoneLabel)
-            holder.check.visibility = if (city == selected) View.VISIBLE else View.GONE
+            holder.check.visibility = if (isSelected(city)) View.VISIBLE else View.GONE
             return view
         }
 
-        /** Case- and accent-insensitive match over the city and province names. */
-        fun filter(query: String) {
-            val needle = normalize(query)
-            visible = if (needle.isEmpty()) {
-                City.ALL
-            } else {
-                City.ALL.filterIndexed { index, _ -> keys[index].contains(needle) }
+        private fun isSelected(city: City): Boolean = selected != null &&
+            selected.name == city.name && kotlin.math.abs(selected.latitude - city.latitude) < 0.01 &&
+            kotlin.math.abs(selected.longitude - city.longitude) < 0.01
+
+        /** Case- and accent-insensitive search over names (and Indonesian provinces). */
+        fun filter(text: String) {
+            query = text
+            val needle = WorldCities.normalize(text)
+            if (needle.isEmpty()) {
+                visible = emptyList()
+                notifyDataSetChanged()
+                return
             }
+            val ranked = ArrayList<Pair<Int, Entry>>()
+            for (i in keys.indices) {
+                val rank = WorldCities.rank(keys[i], needle).takeIf { it >= 0 }
+                    ?: if (provinceKeys[i].contains(needle)) 3 else continue
+                ranked += rank to all[i]
+            }
+            world?.search(needle, WORLD_LIMIT)?.forEach { match ->
+                ranked += match.rank to Entry(world!!.city(match.index, locale), world = true)
+            }
+            // Stable: Indonesian entries were added first, so they lead within a rank.
+            ranked.sortBy { it.first }
+            visible = ranked.take(RESULT_LIMIT).map { it.second }
             notifyDataSetChanged()
         }
 
@@ -191,13 +253,14 @@ class CityPickerActivity : BaseActivity() {
             val detail: TextView = view.findViewById(R.id.city_detail)
             val check: View = view.findViewById(R.id.city_selected)
         }
+
+        private companion object {
+            const val WORLD_LIMIT = 40
+            const val RESULT_LIMIT = 60
+        }
     }
 
     private companion object {
         const val REQUEST_LOCATION = 41
-        val ACCENTS = "\\p{Mn}+".toRegex()
-
-        fun normalize(text: String): String =
-            Normalizer.normalize(text.trim().lowercase(), Normalizer.Form.NFD).replace(ACCENTS, "")
     }
 }

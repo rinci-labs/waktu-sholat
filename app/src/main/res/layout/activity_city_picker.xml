@@ -143,9 +143,12 @@
             style="@style/Text.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="48dp"
             android:gravity="center"
-            android:text="@string/city_empty"
+            android:paddingStart="@dimen/screen_margin"
+            android:paddingEnd="@dimen/screen_margin"
+            android:text="@string/city_hint"
             android:visibility="gone" />
     </FrameLayout>
 </LinearLayout>

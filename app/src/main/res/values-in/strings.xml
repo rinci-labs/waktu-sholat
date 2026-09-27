@@ -71,6 +71,7 @@
     <!-- Location -->
     <string name="city_title">Pilih lokasi</string>
     <string name="city_search_hint">Cari kota atau provinsi</string>
+    <string name="city_hint">Ketik nama kota, di mana pun di dunia</string>
     <string name="city_empty">Kota tidak ditemukan</string>
     <string name="city_detail">%1$s · %2$s</string>
     <string name="city_gps">Pakai lokasi perangkat</string>
@@ -109,7 +110,8 @@
     <string name="icon_auto">Otomatis</string>
     <string name="icon_auto_long">Otomatis · ikut waktu</string>
     <string name="icon_default">Hijau</string>
-    <string name="settings_about_text">Waktu Sholat %1$s\nDihitung di perangkat · tanpa iklan</string>
+    <string name="settings_about_text">Waktu Sholat %1$s\nDihitung di perangkat · tanpa iklan
+Data kota dunia: GeoNames (CC BY 4.0)</string>
 
     <string name="lead_none">Tepat waktu</string>
     <string name="lead_5">5 menit sebelumnya</string>
