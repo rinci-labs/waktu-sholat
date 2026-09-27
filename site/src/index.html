@@ -64,25 +64,22 @@
 <body>
   <a href="#unduh" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-ink" data-i18n="skip">Langsung ke unduhan</a>
 
-  <!-- Hero: the same layered landscape as the app, in the colours of the visitor's time of day. -->
-  <header id="top" class="sky relative isolate overflow-x-clip text-white" data-period="malam">
-    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+  <!-- Hero: an illustrated poster. The app's own landscape, in the colours of the visitor's time of day. -->
+  <header id="top" class="sky relative isolate overflow-hidden text-white" data-period="malam">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
       <svg class="sky-stars absolute inset-0 h-full w-full"></svg>
-      <div class="sky-body absolute" style="left:84%;top:14%">
+      <div class="sky-body absolute" style="left:82%;top:14%">
         <div class="halo absolute -inset-14 rounded-full"></div>
-        <div class="disc relative size-12 rounded-full lg:size-14"></div>
+        <div class="disc relative size-10 rounded-full lg:size-16"></div>
       </div>
-      <div class="streak" style="--y:63%;--w:9rem;--speed:120s;--delay:-30s"></div>
-      <div class="streak" style="--y:70%;--w:13rem;--speed:160s;--delay:-110s"></div>
-      <svg class="landscape absolute bottom-0 left-0 w-full h-[240px]" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice">
+      <div class="streak hidden lg:block" style="--y:auto;--b:330px;--w:10rem;--speed:130s;--delay:-40s"></div>
+      <div class="streak hidden lg:block" style="--y:auto;--b:370px;--w:14rem;--speed:170s;--delay:-120s"></div>
+      <svg class="landscape absolute bottom-0 left-0 h-[300px] w-full" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
         <defs><linearGradient id="far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--hill-far-a)"/><stop offset="1" stop-color="var(--hill-far-b)"/></linearGradient></defs>
-        <path class="hill-far" fill="url(#far)" d="M0 241L0.0 89.1L15.0 88.0L30.0 87.0L45.0 86.0L60.0 85.2L75.0 84.5L90.0 84.0L105.0 83.6L120.0 83.3L135.0 83.1L150.0 83.1L165.0 83.3L180.0 83.6L195.0 84.0L210.0 84.6L225.0 85.3L240.0 86.1L255.0 87.1L270.0 88.2L285.0 89.5L300.0 90.8L315.0 92.3L330.0 93.8L345.0 95.5L360.0 97.2L375.0 99.0L390.0 100.8L405.0 102.7L420.0 104.7L435.0 106.7L450.0 108.6L465.0 110.6L480.0 112.6L495.0 114.5L510.0 116.5L525.0 118.3L540.0 120.2L555.0 121.9L570.0 123.6L585.0 125.2L600.0 126.7L615.0 128.1L630.0 129.4L645.0 130.6L660.0 131.6L675.0 132.6L690.0 133.4L705.0 134.0L720.0 134.6L735.0 135.0L750.0 135.2L765.0 135.3L780.0 135.3L795.0 135.1L810.0 134.8L825.0 134.4L840.0 133.8L855.0 133.2L870.0 132.4L885.0 131.5L900.0 130.5L915.0 129.4L930.0 128.3L945.0 127.0L960.0 125.7L975.0 124.4L990.0 123.0L1005.0 121.6L1020.0 120.1L1035.0 118.7L1050.0 117.2L1065.0 115.8L1080.0 114.4L1095.0 113.0L1110.0 111.6L1125.0 110.3L1140.0 109.1L1155.0 107.9L1170.0 106.8L1185.0 105.8L1200.0 104.9L1215.0 104.0L1230.0 103.3L1245.0 102.6L1260.0 102.1L1275.0 101.6L1290.0 101.3L1305.0 101.1L1320.0 101.0L1335.0 101.0L1350.0 101.1L1365.0 101.3L1380.0 101.6L1395.0 102.0L1410.0 102.4L1425.0 103.0L1440.0 103.7L1440 241Z"/>
-        <g class="hill-mid">
-          <path d="M0 241L0.0 151.0L15.0 151.8L30.0 152.6L45.0 153.5L60.0 154.4L75.0 155.3L90.0 156.3L105.0 157.2L120.0 158.2L135.0 159.2L150.0 160.2L165.0 161.3L180.0 162.3L195.0 163.3L210.0 164.3L225.0 165.4L240.0 166.4L255.0 167.4L270.0 168.4L285.0 169.4L300.0 170.4L315.0 171.3L330.0 172.2L345.0 173.1L360.0 174.0L375.0 174.9L390.0 175.7L405.0 176.5L420.0 177.2L435.0 177.9L450.0 178.6L465.0 179.2L480.0 179.8L495.0 180.3L510.0 180.8L525.0 181.3L540.0 181.7L555.0 182.0L570.0 182.3L585.0 182.6L600.0 182.8L615.0 182.9L630.0 183.0L645.0 183.1L660.0 183.1L675.0 183.0L690.0 182.9L705.0 182.8L720.0 182.6L735.0 182.4L750.0 182.1L765.0 181.8L780.0 181.4L795.0 181.0L810.0 180.5L825.0 180.1L840.0 179.5L855.0 179.0L870.0 178.4L885.0 177.8L900.0 177.2L915.0 176.5L930.0 175.8L945.0 175.1L960.0 174.4L975.0 173.7L990.0 173.0L1005.0 172.2L1020.0 171.5L1035.0 170.7L1050.0 169.9L1065.0 169.2L1080.0 168.4L1095.0 167.7L1110.0 167.0L1125.0 166.3L1140.0 165.6L1155.0 164.9L1170.0 164.2L1185.0 163.6L1200.0 162.9L1215.0 162.3L1230.0 161.8L1245.0 161.2L1260.0 160.7L1275.0 160.2L1290.0 159.8L1305.0 159.4L1320.0 159.0L1335.0 158.7L1350.0 158.4L1365.0 158.1L1380.0 157.9L1395.0 157.7L1410.0 157.5L1425.0 157.4L1440.0 157.4L1440 241Z"/>
-          <rect x="611.4" y="153.1" width="102.0" height="43.0"/><rect x="629.4" y="145.6" width="66.0" height="9.0"/><path d="M629.4 145.6C624.9 115.6 648.9 105.1 662.4 94.6C675.9 105.1 699.9 115.6 695.4 145.6Z"/><rect x="661.4" y="84.1" width="2.1" height="12.0"/><path fill-rule="evenodd" d="M657.6 79.6a4.8 4.8 0 1 0 9.6 0a4.8 4.8 0 1 0 -9.6 0ZM660.5 78.4a4.1 4.1 0 1 1 8.1 0a4.1 4.1 0 1 1 -8.1 0Z"/><rect x="589.5" y="87.1" width="7.8" height="109.0"/><rect x="586.8" y="111.1" width="13.2" height="3.8"/><path d="M588.3 87.1L593.4 72.1L598.5 87.1Z"/><rect x="727.5" y="87.1" width="7.8" height="109.0"/><rect x="724.8" y="111.1" width="13.2" height="3.8"/><path d="M726.3 87.1L731.4 72.1L736.5 87.1Z"/>
-        </g>
-        <g class="window"><rect x="636.9" y="162.1" width="9.0" height="15.0" rx="4.5"/><rect x="657.9" y="162.1" width="9.0" height="15.0" rx="4.5"/><rect x="678.9" y="162.1" width="9.0" height="15.0" rx="4.5"/><rect x="591.6" y="96.1" width="3.6" height="9.0" rx="1.8"/><rect x="729.6" y="96.1" width="3.6" height="9.0" rx="1.8"/></g>
-        <path class="hill-near" d="M0 241L0.0 227.3L15.0 228.1L30.0 228.8L45.0 229.4L60.0 229.9L75.0 230.3L90.0 230.6L105.0 230.8L120.0 230.9L135.0 230.8L150.0 230.7L165.0 230.5L180.0 230.1L195.0 229.7L210.0 229.2L225.0 228.7L240.0 228.0L255.0 227.3L270.0 226.5L285.0 225.7L300.0 224.9L315.0 224.0L330.0 223.1L345.0 222.2L360.0 221.3L375.0 220.5L390.0 219.6L405.0 218.8L420.0 218.0L435.0 217.3L450.0 216.6L465.0 216.0L480.0 215.4L495.0 214.9L510.0 214.5L525.0 214.2L540.0 213.9L555.0 213.8L570.0 213.7L585.0 213.7L600.0 213.8L615.0 213.9L630.0 214.1L645.0 214.4L660.0 214.8L675.0 215.2L690.0 215.7L705.0 216.2L720.0 216.7L735.0 217.3L750.0 217.8L765.0 218.4L780.0 219.0L795.0 219.6L810.0 220.1L825.0 220.7L840.0 221.1L855.0 221.6L870.0 222.0L885.0 222.3L900.0 222.6L915.0 222.8L930.0 223.0L945.0 223.0L960.0 223.0L975.0 222.9L990.0 222.7L1005.0 222.4L1020.0 222.1L1035.0 221.7L1050.0 221.2L1065.0 220.6L1080.0 220.0L1095.0 219.3L1110.0 218.5L1125.0 217.7L1140.0 216.9L1155.0 216.1L1170.0 215.2L1185.0 214.3L1200.0 213.4L1215.0 212.5L1230.0 211.7L1245.0 210.9L1260.0 210.1L1275.0 209.3L1290.0 208.6L1305.0 208.0L1320.0 207.5L1335.0 207.0L1350.0 206.6L1365.0 206.3L1380.0 206.1L1395.0 206.0L1410.0 206.1L1425.0 206.2L1440.0 206.4L1440 241Z"/>
+        <path fill="url(#far)" d="M0 301L0.0 91.4L12.0 90.6L24.0 89.9L36.0 89.3L48.0 88.9L60.0 88.5L72.0 88.3L84.0 88.3L96.0 88.4L108.0 88.6L120.0 88.9L132.0 89.4L144.0 90.0L156.0 90.7L168.0 91.6L180.0 92.6L192.0 93.7L204.0 95.0L216.0 96.3L228.0 97.7L240.0 99.3L252.0 100.9L264.0 102.7L276.0 104.5L288.0 106.4L300.0 108.3L312.0 110.3L324.0 112.3L336.0 114.4L348.0 116.5L360.0 118.6L372.0 120.8L384.0 122.9L396.0 125.0L408.0 127.1L420.0 129.2L432.0 131.2L444.0 133.2L456.0 135.2L468.0 137.1L480.0 138.9L492.0 140.6L504.0 142.2L516.0 143.8L528.0 145.3L540.0 146.6L552.0 147.8L564.0 149.0L576.0 150.0L588.0 150.9L600.0 151.6L612.0 152.3L624.0 152.8L636.0 153.2L648.0 153.4L660.0 153.5L672.0 153.5L684.0 153.4L696.0 153.1L708.0 152.7L720.0 152.2L732.0 151.6L744.0 150.9L756.0 150.1L768.0 149.2L780.0 148.1L792.0 147.0L804.0 145.8L816.0 144.6L828.0 143.2L840.0 141.8L852.0 140.4L864.0 138.9L876.0 137.4L888.0 135.9L900.0 134.3L912.0 132.8L924.0 131.2L936.0 129.6L948.0 128.1L960.0 126.6L972.0 125.1L984.0 123.7L996.0 122.3L1008.0 120.9L1020.0 119.6L1032.0 118.4L1044.0 117.3L1056.0 116.2L1068.0 115.2L1080.0 114.4L1092.0 113.5L1104.0 112.8L1116.0 112.2L1128.0 111.7L1140.0 111.3L1152.0 111.0L1164.0 110.7L1176.0 110.6L1188.0 110.6L1200.0 110.7L1212.0 110.9L1224.0 111.1L1236.0 111.5L1248.0 111.9L1260.0 112.5L1272.0 113.1L1284.0 113.7L1296.0 114.5L1308.0 115.3L1320.0 116.1L1332.0 117.0L1344.0 117.9L1356.0 118.9L1368.0 119.9L1380.0 120.9L1392.0 121.9L1404.0 123.0L1416.0 124.0L1428.0 125.0L1440.0 126.0L1440 301Z"/>
+        <g class="hill-mid"><path d="M0 301L0.0 221.3L12.0 221.8L24.0 222.3L36.0 222.7L48.0 223.1L60.0 223.5L72.0 223.8L84.0 224.1L96.0 224.3L108.0 224.5L120.0 224.6L132.0 224.7L144.0 224.8L156.0 224.8L168.0 224.7L180.0 224.6L192.0 224.5L204.0 224.4L216.0 224.2L228.0 223.9L240.0 223.6L252.0 223.3L264.0 223.0L276.0 222.6L288.0 222.1L300.0 221.7L312.0 221.2L324.0 220.7L336.0 220.1L348.0 219.5L360.0 218.9L372.0 218.3L384.0 217.7L396.0 217.0L408.0 216.3L420.0 215.6L432.0 214.9L444.0 214.2L456.0 213.5L468.0 212.7L480.0 212.0L492.0 211.3L504.0 210.5L516.0 209.8L528.0 209.0L540.0 208.3L552.0 207.6L564.0 206.8L576.0 206.1L588.0 205.4L600.0 204.8L612.0 204.1L624.0 203.4L636.0 202.8L648.0 202.2L660.0 201.6L672.0 201.1L684.0 200.5L696.0 200.0L708.0 199.5L720.0 199.1L732.0 198.7L744.0 198.3L756.0 197.9L768.0 197.6L780.0 197.3L792.0 197.0L804.0 196.8L816.0 196.6L828.0 196.4L840.0 196.3L852.0 196.2L864.0 196.2L876.0 196.1L888.0 196.1L900.0 196.2L912.0 196.3L924.0 196.4L936.0 196.5L948.0 196.7L960.0 196.9L972.0 197.1L984.0 197.4L996.0 197.6L1008.0 197.9L1020.0 198.3L1032.0 198.6L1044.0 199.0L1056.0 199.4L1068.0 199.8L1080.0 200.2L1092.0 200.6L1104.0 201.1L1116.0 201.5L1128.0 202.0L1140.0 202.5L1152.0 203.0L1164.0 203.5L1176.0 203.9L1188.0 204.4L1200.0 204.9L1212.0 205.4L1224.0 205.9L1236.0 206.3L1248.0 206.8L1260.0 207.2L1272.0 207.7L1284.0 208.1L1296.0 208.5L1308.0 208.9L1320.0 209.3L1332.0 209.6L1344.0 209.9L1356.0 210.2L1368.0 210.5L1380.0 210.8L1392.0 211.0L1404.0 211.2L1416.0 211.3L1428.0 211.5L1440.0 211.6L1440 301Z"/><rect x="652.0" y="159.1" width="136.0" height="58.0"/><rect x="676.0" y="149.1" width="88.0" height="12.0"/><path d="M676.0 149.1C670.0 109.1 702.0 95.1 720.0 81.1C738.0 95.1 770.0 109.1 764.0 149.1Z"/><rect x="718.6" y="67.1" width="2.8" height="16.0"/><path fill-rule="evenodd" d="M713.6 61.1a6.4 6.4 0 1 0 12.8 0a6.4 6.4 0 1 0 -12.8 0ZM717.4 59.5a5.4 5.4 0 1 1 10.8 0a5.4 5.4 0 1 1 -10.8 0Z"/><rect x="622.8" y="71.1" width="10.4" height="146.0"/><rect x="619.2" y="103.1" width="17.6" height="5.0"/><path d="M621.2 71.1L628.0 51.1L634.8 71.1Z"/><rect x="806.8" y="71.1" width="10.4" height="146.0"/><rect x="803.2" y="103.1" width="17.6" height="5.0"/><path d="M805.2 71.1L812.0 51.1L818.8 71.1Z"/></g>
+        <g class="window"><rect x="686.0" y="171.1" width="12.0" height="20.0" rx="6.0"/><rect x="714.0" y="171.1" width="12.0" height="20.0" rx="6.0"/><rect x="742.0" y="171.1" width="12.0" height="20.0" rx="6.0"/><rect x="625.6" y="83.1" width="4.8" height="12.0" rx="2.4"/><rect x="809.6" y="83.1" width="4.8" height="12.0" rx="2.4"/></g>
+        <path class="hill-near" d="M0 301L0.0 263.6L12.0 264.5L24.0 265.3L36.0 266.3L48.0 267.3L60.0 268.3L72.0 269.4L84.0 270.6L96.0 271.7L108.0 272.9L120.0 274.1L132.0 275.3L144.0 276.5L156.0 277.7L168.0 278.9L180.0 280.1L192.0 281.2L204.0 282.3L216.0 283.3L228.0 284.3L240.0 285.3L252.0 286.1L264.0 287.0L276.0 287.7L288.0 288.3L300.0 288.9L312.0 289.4L324.0 289.8L336.0 290.1L348.0 290.3L360.0 290.5L372.0 290.5L384.0 290.5L396.0 290.4L408.0 290.2L420.0 289.9L432.0 289.5L444.0 289.1L456.0 288.5L468.0 288.0L480.0 287.3L492.0 286.6L504.0 285.9L516.0 285.1L528.0 284.3L540.0 283.5L552.0 282.6L564.0 281.7L576.0 280.8L588.0 279.9L600.0 279.1L612.0 278.2L624.0 277.3L636.0 276.5L648.0 275.7L660.0 275.0L672.0 274.3L684.0 273.6L696.0 273.0L708.0 272.5L720.0 272.0L732.0 271.6L744.0 271.2L756.0 271.0L768.0 270.7L780.0 270.6L792.0 270.5L804.0 270.5L816.0 270.6L828.0 270.7L840.0 270.9L852.0 271.1L864.0 271.4L876.0 271.8L888.0 272.2L900.0 272.6L912.0 273.1L924.0 273.6L936.0 274.1L948.0 274.7L960.0 275.2L972.0 275.8L984.0 276.4L996.0 277.0L1008.0 277.5L1020.0 278.1L1032.0 278.6L1044.0 279.1L1056.0 279.6L1068.0 280.0L1080.0 280.3L1092.0 280.7L1104.0 280.9L1116.0 281.1L1128.0 281.3L1140.0 281.4L1152.0 281.4L1164.0 281.3L1176.0 281.2L1188.0 281.0L1200.0 280.8L1212.0 280.4L1224.0 280.0L1236.0 279.6L1248.0 279.1L1260.0 278.5L1272.0 277.9L1284.0 277.2L1296.0 276.5L1308.0 275.7L1320.0 274.9L1332.0 274.1L1344.0 273.2L1356.0 272.3L1368.0 271.5L1380.0 270.6L1392.0 269.7L1404.0 268.9L1416.0 268.0L1428.0 267.2L1440.0 266.4L1440 301Z"/>
       </svg>
     </div>
 
@@ -92,59 +89,62 @@
         <span>Waktu Sholat</span>
       </a>
       <div class="flex items-center gap-1 text-sm">
+        <a href="#hari" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block" data-i18n="nav_day">Cara kerja</a>
         <a href="#fitur" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block" data-i18n="nav_features">Fitur</a>
-        <a href="#unduh" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block" data-i18n="nav_download">Unduh</a>
         <a href="https://github.com/rinci-labs/waktu-sholat" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block">GitHub</a>
         <button type="button" id="lang" class="ml-1 rounded-full border border-white/25 px-3 py-1.5 font-medium text-white/90 hover:bg-white/10" aria-label="Switch to English">EN</button>
       </div>
     </nav>
 
-    <div class="mx-auto grid max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
-      <div class="pt-8 lg:pt-20 lg:pb-72">
-        <p class="text-sm font-medium text-white/75" id="period-label">Sekarang malam di tempatmu</p>
-        <h1 class="mt-4 max-w-xl text-[2.5rem] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-6xl" data-i18n="headline">Jadwal sholat yang tepat, tanpa internet.</h1>
-        <p class="mt-6 max-w-lg text-lg leading-relaxed text-pretty text-white/85" data-i18n="lede">Waktu Sholat menghitung jadwal langsung di HP dengan metode Kemenag. Tanpa iklan, tanpa akun, dan ukurannya hanya sekitar 200 KB.</p>
-        <div class="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <a href="https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk" data-download class="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-brand-deep shadow-lg shadow-black/15 transition hover:bg-brand-soft">
-            <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14"/></svg>
-            <span data-i18n="download">Unduh untuk Android</span>
-          </a>
-          <span class="text-sm text-white/75" data-release-line>Android 7.0 atau lebih baru</span>
-        </div>
-      </div>
-      <div class="relative mx-auto w-[min(76vw,300px)] self-end lg:mr-4 lg:w-[330px]">
-        <div class="phone translate-y-16">
-          <img src="/assets/screens/today.webp" width="540" height="1205" alt="Layar utama Waktu Sholat: langit siang, sholat berikutnya Ashar pukul 14:54, dan jadwal hari ini." data-i18n-alt="alt_today">
-        </div>
+    <div class="mx-auto max-w-3xl px-5 pt-10 pb-[330px] text-center sm:px-8 sm:pt-16 sm:pb-[380px]">
+      <p class="text-sm font-medium text-white/75" id="period-label">Sekarang malam di tempatmu</p>
+      <h1 class="mx-auto mt-5 max-w-2xl text-[2.6rem] leading-[1.05] font-extrabold tracking-[-0.035em] text-balance sm:text-[4.25rem]" data-i18n="headline">Jadwal sholat yang tepat, tanpa internet.</h1>
+      <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-pretty text-white/85" data-i18n="lede">Waktu Sholat menghitung jadwal langsung di HP dengan metode Kemenag. Tanpa iklan, tanpa akun, dan ukurannya hanya sekitar 200 KB.</p>
+      <div class="mt-9 flex flex-col items-center gap-4">
+        <a href="https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk" data-download class="inline-flex items-center gap-2.5 rounded-full bg-white px-7 py-4 font-semibold text-brand-deep shadow-lg shadow-black/15 transition hover:bg-brand-soft">
+          <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14"/></svg>
+          <span data-i18n="download">Unduh untuk Android</span>
+        </a>
+        <span class="text-sm text-white/75" data-release-line>Android 7.0 atau lebih baru</span>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- Three things to know before scrolling further. -->
-    <section class="mx-auto max-w-6xl px-5 pt-32 sm:px-8" aria-labelledby="summary-title">
-      <h2 id="summary-title" class="sr-only" data-i18n="summary_title">Ringkasan</h2>
-      <ul class="grid gap-8 sm:grid-cols-3">
-        <li>
-          <span class="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand"><svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-          <h3 class="mt-4 font-semibold" data-i18n="h1_t">Tepat sampai menitnya</h3>
-          <p class="mt-1.5 leading-relaxed text-ink-soft" data-i18n="h1_b">Metode Kemenag dengan pembulatan resmi, dihitung di HP tanpa internet.</p>
-        </li>
-        <li>
-          <span class="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand"><svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg></span>
-          <h3 class="mt-4 font-semibold" data-i18n="h2_t">Kiblat terkalibrasi</h3>
-          <p class="mt-1.5 leading-relaxed text-ink-soft" data-i18n="h2_b">Kompas dikalibrasi dulu dan dikoreksi ke utara sebenarnya.</p>
-        </li>
-        <li>
-          <span class="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand"><svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
-          <h3 class="mt-4 font-semibold" data-i18n="h3_t">Di mana pun di dunia</h3>
-          <p class="mt-1.5 leading-relaxed text-ink-soft" data-i18n="h3_b">Pilih kota, pakai GPS, atau cari tempat mana pun, dan zona waktunya ikut benar.</p>
-        </li>
-      </ul>
+    <!-- The idea behind the app's sky: a day is divided by the prayers, and each part has its light. -->
+    <section id="hari" class="mx-auto max-w-6xl scroll-mt-8 px-5 pt-24 sm:px-8" aria-labelledby="day-title">
+      <div class="max-w-2xl">
+        <h2 id="day-title" class="text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl" data-i18n="day_title">Satu hari, lima waktu</h2>
+        <p class="mt-4 text-lg leading-relaxed text-ink-soft" data-i18n="day_body">Waktu Sholat membagi harimu menurut jadwal sholat di lokasimu. Langit di aplikasi ikut berganti: subuh, pagi, siang, sore, senja, dan malam. Contoh untuk Jakarta:</p>
+      </div>
+
+      <!-- Wide screens: a 24-hour strip in the colours of each part of the day. -->
+      <div class="relative mt-12 hidden md:block">
+        <div class="daystrip h-24 rounded-3xl"></div>
+        <div class="day-now absolute top-0 hidden h-24 w-0.5 bg-white/90" aria-hidden="true"><span class="absolute -top-7 left-1/2 -translate-x-1/2 rounded-full bg-ink px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-white" data-i18n="now_short">Sekarang</span></div>
+        <ol class="relative mt-4 h-14 text-sm">
+          <li class="day-mark" style="--at:18.4%"><span class="font-semibold" data-i18n="p_fajr">Subuh</span><span class="tnum text-ink-soft">04:25</span></li>
+          <li class="day-mark" style="--at:23.4%"><span class="font-semibold" data-i18n="p_sunrise">Terbit</span><span class="tnum text-ink-soft">05:37</span></li>
+          <li class="day-mark" style="--at:49.1%"><span class="font-semibold" data-i18n="p_dhuhr">Dzuhur</span><span class="tnum text-ink-soft">11:47</span></li>
+          <li class="day-mark" style="--at:62.2%"><span class="font-semibold" data-i18n="p_asr">Ashar</span><span class="tnum text-ink-soft">14:55</span></li>
+          <li class="day-mark" style="--at:74.4%"><span class="font-semibold" data-i18n="p_maghrib">Maghrib</span><span class="tnum text-ink-soft">17:51</span></li>
+          <li class="day-mark" style="--at:79.1%"><span class="font-semibold" data-i18n="p_isha">Isya</span><span class="tnum text-ink-soft">18:59</span></li>
+        </ol>
+      </div>
+
+      <!-- Phones: the same day as a list, each prayer with the colour of its sky. -->
+      <ol class="mt-10 divide-y divide-line overflow-hidden rounded-3xl border border-line bg-card md:hidden">
+        <li class="flex items-center gap-4 px-5 py-4"><span class="size-8 shrink-0 rounded-full" style="background:linear-gradient(#1b2350,#8e4a6b)"></span><span class="flex-1 font-semibold" data-i18n="p_fajr">Subuh</span><span class="tnum text-ink-soft">04:25</span></li>
+        <li class="flex items-center gap-4 px-5 py-4"><span class="size-8 shrink-0 rounded-full" style="background:linear-gradient(#1f5faf,#4a98da)"></span><span class="flex-1 font-semibold" data-i18n="p_sunrise">Terbit</span><span class="tnum text-ink-soft">05:37</span></li>
+        <li class="flex items-center gap-4 px-5 py-4"><span class="size-8 shrink-0 rounded-full" style="background:linear-gradient(#155e9c,#3b8fcf)"></span><span class="flex-1 font-semibold" data-i18n="p_dhuhr">Dzuhur</span><span class="tnum text-ink-soft">11:47</span></li>
+        <li class="flex items-center gap-4 px-5 py-4"><span class="size-8 shrink-0 rounded-full" style="background:linear-gradient(#9a4a1e,#d08236)"></span><span class="flex-1 font-semibold" data-i18n="p_asr">Ashar</span><span class="tnum text-ink-soft">14:55</span></li>
+        <li class="flex items-center gap-4 px-5 py-4"><span class="size-8 shrink-0 rounded-full" style="background:linear-gradient(#2b1650,#a8465f)"></span><span class="flex-1 font-semibold" data-i18n="p_maghrib">Maghrib</span><span class="tnum text-ink-soft">17:51</span></li>
+        <li class="flex items-center gap-4 px-5 py-4"><span class="size-8 shrink-0 rounded-full" style="background:linear-gradient(#070b1c,#1b2752)"></span><span class="flex-1 font-semibold" data-i18n="p_isha">Isya</span><span class="tnum text-ink-soft">18:59</span></li>
+      </ol>
     </section>
 
     <!-- Each claim next to the screen that shows it; one screenshot per section on phones. -->
-    <section id="fitur" class="mx-auto max-w-6xl scroll-mt-8 px-5 py-24 sm:px-8" aria-labelledby="features-title">
+    <section id="fitur" class="mx-auto max-w-6xl scroll-mt-8 px-5 py-28 sm:px-8" aria-labelledby="features-title">
       <h2 id="features-title" class="max-w-2xl text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl" data-i18n="features_title">Dibuat untuk dipakai lima kali sehari, bertahun-tahun.</h2>
 
       <div class="mt-16 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">

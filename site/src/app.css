@@ -55,7 +55,7 @@
 .sky[data-period="malam"] { --sky-top: #070b1c; --sky-mid: #131b3c; --sky-bottom: #1b2752; --hill-far-a: #162044; --hill-far-b: #151e3f; --hill-mid: #101832; --hill-near: #0c1124; }
 
 .sky {
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 50%, var(--sky-bottom) calc(100% - 180px));
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) calc(100% - 200px));
 }
 
 .landscape .hill-mid { fill: var(--hill-mid); }
@@ -84,7 +84,8 @@
 /* Long streak clouds instead of puffy ones: a bar and a shorter wisp beneath it. */
 .streak {
   position: absolute;
-  top: var(--y);
+  top: var(--y, auto);
+  bottom: var(--b, auto);
   left: 0;
   width: var(--w);
   height: 7px;
@@ -105,6 +106,45 @@
 .sky[data-period="malam"] .streak { opacity: 0.12; }
 .sky[data-period="subuh"] .streak,
 .sky[data-period="senja"] .streak { opacity: 0.45; }
+
+/* ---- Day strip: 24 hours in the colours of each part of the day (Jakarta sample times) ------- */
+
+.daystrip {
+  background: linear-gradient(90deg,
+    #0c1430 0%, #131b3c 15%,
+    #1b2350 17%, #8e4a6b 20.5%,
+    #4a98da 24.5%, #3b8fcf 45%,
+    #2b7bba 55%, #d08236 64%, #ba6b2c 72%,
+    #a8465f 75.5%, #2b1650 78.5%,
+    #131b3c 82%, #0c1430 100%);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06);
+}
+
+.day-mark {
+  position: absolute;
+  left: var(--at);
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.day-mark::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 1rem);
+  height: 6rem;
+  width: 1px;
+  background: rgb(255 255 255 / 0.55);
+}
+
+/* Terbit sits 5% after Subuh: shift the pair apart so their labels never touch. */
+.day-mark:nth-child(1) { transform: translateX(-80%); }
+.day-mark:nth-child(2) { transform: translateX(-20%); }
+.day-mark:nth-child(5) { transform: translateX(-80%); }
+.day-mark:nth-child(6) { transform: translateX(-20%); }
 
 @keyframes twinkle { from { opacity: 0.25; } to { opacity: 1; } }
 @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }

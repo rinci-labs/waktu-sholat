@@ -8,6 +8,16 @@
   const en = {
     skip: "Skip to download",
     nav_features: "Features",
+    nav_day: "How it works",
+    day_title: "One day, five prayers",
+    day_body: "Waktu Sholat divides your day by the prayer times at your location, and the sky in the app follows along: dawn, morning, midday, afternoon, dusk and night. An example for Jakarta:",
+    now_short: "Now",
+    p_fajr: "Fajr",
+    p_sunrise: "Sunrise",
+    p_dhuhr: "Dhuhr",
+    p_asr: "Asr",
+    p_maghrib: "Maghrib",
+    p_isha: "Isha",
     nav_download: "Download",
     summary_title: "Summary",
     h1_t: "Right to the minute",
@@ -145,14 +155,26 @@
     const h = now.getHours() + now.getMinutes() / 60;
     const isMoon = h < 5.66 || h >= 17.9;
     const p = isMoon ? ((h >= 17.9 ? h - 17.9 : h + 24 - 17.9) / 10.4) : (h - 5.66) / 12.24;
-    // Wide screens: an arc across the open middle of the hero, between the text and the phone.
+    // Wide screens: a low arc just above the hills, under the centred text.
     // Phones: a small arc in the top-right corner, clear of the headline.
     const q = Math.min(Math.max(p, 0), 1);
     const wide = window.matchMedia("(min-width: 1024px)").matches;
-    const x = wide ? 30 + 30 * q : 62 + 26 * q;
-    const y = wide ? 58 - 44 * Math.sin(Math.PI * q) : 15 - 7 * Math.sin(Math.PI * q);
-    body.style.left = `${x}%`;
-    body.style.top = `${y}%`;
+    if (wide) {
+      body.style.top = "auto";
+      body.style.left = `${8 + 84 * q}%`;
+      body.style.bottom = `${250 + 110 * Math.sin(Math.PI * q)}px`;
+    } else {
+      body.style.bottom = "auto";
+      body.style.left = `${82 + 8 * q}%`;
+      body.style.top = `${9 - 2 * Math.sin(Math.PI * q)}%`;
+    }
+
+    // The "now" marker on the day strip, at the visitor's local time.
+    const marker = document.querySelector(".day-now");
+    if (marker) {
+      marker.style.left = `${(h / 24) * 100}%`;
+      marker.classList.remove("hidden");
+    }
 
     const warm = period === "subuh" || period === "sore" || period === "senja";
     if (isMoon) {
