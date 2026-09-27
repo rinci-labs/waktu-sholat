@@ -20,6 +20,7 @@ import dev.rafa.waktusholat.core.CalculationMethod
 import dev.rafa.waktusholat.core.Madhab
 import dev.rafa.waktusholat.data.Preferences
 import dev.rafa.waktusholat.notify.Notifications
+import dev.rafa.waktusholat.update.Updater
 
 /**
  * All settings as grouped rows. Choices with several options open a single-choice dialog; toggles
@@ -43,8 +44,14 @@ class SettingsActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        visible = true
         // A location or permission change made elsewhere has to be reflected on return.
         render()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        visible = false
     }
 
     private fun render() {
@@ -54,6 +61,7 @@ class SettingsActivity : BaseActivity() {
         location.removeAllViews()
         calculation.removeAllViews()
         general.removeAllViews()
+        renderUpdates()
 
         val city = preferences.resolveCity()
         addValueRow(
@@ -347,6 +355,66 @@ class SettingsActivity : BaseActivity() {
             .show()
     }
 
+    /** Update check state for the row: idle, checking, or the version being downloaded. */
+    private var checking = false
+
+    private fun renderUpdates() {
+        val group = findViewById<LinearLayout>(R.id.group_updates)
+        group.removeAllViews()
+        val installed = Updater.currentVersion(this)
+        val downloading = Updater.pendingDownload(this) >= 0
+        addValueRow(
+            group,
+            title = getString(R.string.update_check),
+            summary = when {
+                checking -> getString(R.string.update_checking)
+                downloading -> getString(R.string.update_downloading_row)
+                else -> getString(R.string.update_installed, installed)
+            },
+        ) { if (!checking) checkForUpdate() }
+        addToggleRow(
+            group,
+            title = getString(R.string.update_auto),
+            summary = getString(R.string.update_auto_summary),
+            checked = with(Updater) { autoCheckEnabled },
+            divider = true,
+        ) { enabled -> with(Updater) { autoCheckEnabled = enabled } }
+    }
+
+    private fun checkForUpdate() {
+        checking = true
+        renderUpdates()
+        Updater.check(this) { result ->
+            checking = false
+            if (isFinishing || isDestroyed) return@check
+            renderUpdates()
+            when (result) {
+                is Updater.Result.UpToDate ->
+                    android.widget.Toast.makeText(this, getString(R.string.update_latest, result.version), android.widget.Toast.LENGTH_LONG).show()
+                Updater.Result.Failed ->
+                    android.widget.Toast.makeText(this, R.string.update_failed, android.widget.Toast.LENGTH_LONG).show()
+                is Updater.Result.Available -> offerUpdate(result.release)
+            }
+        }
+    }
+
+    /** Release notes and size, then download on confirmation. */
+    private fun offerUpdate(release: Updater.Release) {
+        val size = getString(R.string.update_size, release.apkSize / 1_048_576.0)
+        val notes = release.notes.take(1_500)
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.update_available_title, release.version))
+            .setMessage(if (notes.isEmpty()) size else "$notes\n\n$size")
+            .setPositiveButton(R.string.update_download) { _, _ ->
+                if (!Updater.download(this, release)) {
+                    runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Updater.RELEASES_PAGE))) }
+                }
+                render()
+            }
+            .setNegativeButton(R.string.update_later, null)
+            .show()
+    }
+
     /** A value row styled as a warning, for settings that stop notifications from appearing. */
     private fun addWarningRow(parent: LinearLayout, title: String, summary: String, onClick: () -> Unit) {
         addValueRow(parent, title = title, summary = summary, divider = true, onClick = onClick)
@@ -409,8 +477,13 @@ class SettingsActivity : BaseActivity() {
         else -> R.string.lead_none
     }
 
-    private companion object {
-        const val REQUEST_NOTIFICATIONS = 42
-        val LEADS = listOf(0, 5, 10, 15)
+    companion object {
+        /** True while this screen is in front, so a finished update download opens the installer. */
+        @Volatile
+        var visible = false
+            private set
+
+        private const val REQUEST_NOTIFICATIONS = 42
+        private val LEADS = listOf(0, 5, 10, 15)
     }
 }

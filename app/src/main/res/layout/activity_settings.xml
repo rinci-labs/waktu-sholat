@@ -54,6 +54,14 @@
                 style="@style/SettingsGroup" />
 
             <TextView
+                style="@style/SettingsHeader"
+                android:text="@string/settings_updates" />
+
+            <LinearLayout
+                android:id="@+id/group_updates"
+                style="@style/SettingsGroup" />
+
+            <TextView
                 android:id="@+id/about"
                 style="@style/Text.Caption"
                 android:layout_width="match_parent"

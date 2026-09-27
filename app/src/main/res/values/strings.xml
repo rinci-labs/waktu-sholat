@@ -132,6 +132,25 @@
     <string name="settings_notify_test">Send a test notification</string>
     <string name="settings_notify_test_summary">Check that the adhan notification appears</string>
 
+    <string name="settings_updates">Updates</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_installed">Installed version %1$s</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_downloading_row">Downloading the update…</string>
+    <string name="update_auto">Check automatically</string>
+    <string name="update_auto_summary">Once a day when the app opens</string>
+    <string name="update_latest">You have the latest version (%1$s)</string>
+    <string name="update_failed">Could not check for updates. Check your connection.</string>
+    <string name="update_available_title">Version %1$s is available</string>
+    <string name="update_available_text">Tap to download and install</string>
+    <string name="update_download">Download and install</string>
+    <string name="update_later">Later</string>
+    <string name="update_size">%1$.1f MB · verified with SHA-256</string>
+    <string name="update_downloading">Waktu Sholat %1$s</string>
+    <string name="update_ready_title">Waktu Sholat %1$s is ready</string>
+    <string name="update_ready_text">Tap to install the update</string>
+    <string name="update_channel">App updates</string>
+
     <!-- Widgets -->
     <string name="widget_next_label">Next prayer</string>
     <string name="widget_next_desc">The next prayer and how long until it</string>

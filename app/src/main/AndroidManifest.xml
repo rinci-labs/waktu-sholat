@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Network is used only for the optional place name/search and for update checks; prayer
+         times are always computed offline. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -224,6 +228,16 @@
         <receiver
             android:name=".ui.IconAutoReceiver"
             android:exported="false" />
+
+        <!-- DownloadManager (another uid) announces completion, so this must be exported; the
+             receiver ignores any id but the app's own pending download and verifies its SHA-256. -->
+        <receiver
+            android:name=".update.UpdateDownloadReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".notify.PrayerAlarmReceiver"

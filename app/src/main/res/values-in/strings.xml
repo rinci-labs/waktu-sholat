@@ -132,6 +132,25 @@
     <string name="settings_notify_test">Kirim notifikasi uji</string>
     <string name="settings_notify_test_summary">Cek apakah notifikasi adzan muncul</string>
 
+    <string name="settings_updates">Pembaruan</string>
+    <string name="update_check">Cek pembaruan</string>
+    <string name="update_installed">Versi terpasang %1$s</string>
+    <string name="update_checking">Memeriksa…</string>
+    <string name="update_downloading_row">Mengunduh pembaruan…</string>
+    <string name="update_auto">Cek otomatis</string>
+    <string name="update_auto_summary">Sekali sehari saat aplikasi dibuka</string>
+    <string name="update_latest">Sudah versi terbaru (%1$s)</string>
+    <string name="update_failed">Gagal memeriksa pembaruan. Periksa koneksi internet.</string>
+    <string name="update_available_title">Versi %1$s tersedia</string>
+    <string name="update_available_text">Ketuk untuk mengunduh dan memasang</string>
+    <string name="update_download">Unduh dan pasang</string>
+    <string name="update_later">Nanti</string>
+    <string name="update_size">%1$.1f MB · diverifikasi SHA-256</string>
+    <string name="update_downloading">Waktu Sholat %1$s</string>
+    <string name="update_ready_title">Waktu Sholat %1$s siap</string>
+    <string name="update_ready_text">Ketuk untuk memasang pembaruan</string>
+    <string name="update_channel">Pembaruan aplikasi</string>
+
     <!-- Widgets -->
     <string name="widget_next_label">Sholat berikutnya</string>
     <string name="widget_next_desc">Waktu sholat berikutnya dan berapa lama lagi</string>

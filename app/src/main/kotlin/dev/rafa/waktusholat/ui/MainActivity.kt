@@ -84,6 +84,7 @@ class MainActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         (application as WaktuSholatApp).refreshFixPassively()
+        dev.rafa.waktusholat.update.Updater.autoCheck(this)
         // Settings may have changed while stopped; force a full re-render.
         renderedDay = null
         handler.post(tick)
