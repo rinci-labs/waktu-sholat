@@ -24,6 +24,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Full history and tags, so the notes can list the commits since the previous release.
+          fetch-depth: 0
 
       - name: Resolve version
         id: version
@@ -86,11 +89,24 @@ jobs:
           APK="waktu-sholat-$VERSION.apk"
           cp app/build/outputs/apk/release/app-release.apk "$APK"
           sha256sum "$APK" > "$APK.sha256"
+          # A stable name as well, so https://github.com/<repo>/releases/latest/download/waktu-sholat.apk
+          # always points at the newest build (used by the website's download button).
+          cp "$APK" waktu-sholat.apk
           TAG="v$VERSION"
+          # Notes: one line per change since the previous tag, version bumps and merges left out.
+          PREVIOUS=$(git describe --tags --abbrev=0 "$GITHUB_SHA^" 2>/dev/null || true)
+          RANGE=${PREVIOUS:+$PREVIOUS..}$GITHUB_SHA
+          {
+            echo "## What's new"
+            git log --no-merges --format='- %s' "$RANGE" | grep -vE '^- (build: bump|Merge )' || true
+            echo
+            echo "APK SHA-256: \`$(cut -d' ' -f1 "$APK.sha256")\`"
+          } > notes.md
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$APK" "$APK.sha256" --clobber
+            gh release upload "$TAG" "$APK" "$APK.sha256" waktu-sholat.apk --clobber
+            gh release edit "$TAG" --notes-file notes.md
           else
-            gh release create "$TAG" "$APK" "$APK.sha256" --title "Waktu Sholat $VERSION" --generate-notes --target "$GITHUB_SHA"
+            gh release create "$TAG" "$APK" "$APK.sha256" waktu-sholat.apk --title "Waktu Sholat $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
           fi
 
       - name: Clean up signing key

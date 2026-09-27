@@ -12,7 +12,8 @@ place on Earth. English and Bahasa Indonesia. The release APK is under 200 KB.
   worldwide place search; the time zone of a searched place is chosen offline from ICU data
 - English and Bahasa Indonesia, switchable in Settings (and in the system's per-app language
   screen on Android 13+)
-- Seven launcher icon themes, chosen in Settings
+- Launcher icon themes, fixed or automatic (follows the time of day)
+- In-app updates from GitHub Releases: daily check, download, SHA-256 verification, install
 - Monthly timetable, Qibla compass, adhan notifications with optional reminder lead time
 - Five home-screen widgets: **Next prayer**, **Today's times**, **Full schedule**, **Countdown**
   and **Minimal**. Relative times refresh each minute with a non-waking alarm (nothing runs while
