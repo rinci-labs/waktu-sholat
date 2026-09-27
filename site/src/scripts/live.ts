@@ -114,7 +114,6 @@ if (nav) {
   update();
 }
 
-// Release details: the build already has them; refresh in case a newer release came out since.
 function renderRelease(r: Release) {
   const set = (key: string, value: string) => $$(`[data-release="${key}"]`).forEach((el) => (el.textContent = value));
   set("version", r.version);
@@ -124,20 +123,12 @@ function renderRelease(r: Release) {
   set("tag", `v${r.version}`);
 }
 
-const CACHE = "release:v1";
+// The latest release, straight from GitHub on every visit: a new tag shows up without rebuilding
+// the site. The build's numbers stay if the request fails (offline, rate-limited).
 (async () => {
   try {
-    const cached = sessionStorage.getItem(CACHE);
-    if (cached) return renderRelease(JSON.parse(cached) as Release);
-  } catch {}
-  try {
-    const res = await fetch(RELEASE_API, { headers: { Accept: "application/vnd.github+json" } });
-    if (!res.ok) return;
-    const r = parseRelease(await res.json());
-    if (!r) return;
-    renderRelease(r);
-    try {
-      sessionStorage.setItem(CACHE, JSON.stringify(r));
-    } catch {}
+    const res = await fetch(RELEASE_API, { headers: { Accept: "application/vnd.github+json" }, cache: "no-cache" });
+    const r = res.ok ? parseRelease(await res.json()) : null;
+    if (r) renderRelease(r);
   } catch {}
 })();
