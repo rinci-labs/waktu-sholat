@@ -81,31 +81,36 @@
 .sky-body { transition: left 1.2s ease, top 1.2s ease; }
 .sky-body .halo { animation: breathe 6s ease-in-out infinite; }
 
-/* Long streak clouds instead of puffy ones: a bar and a shorter wisp beneath it. */
-.streak {
+/* Flat clouds drifting across, and a small flock of birds by day. */
+.cloud {
   position: absolute;
-  top: var(--y, auto);
-  bottom: var(--b, auto);
   left: 0;
-  width: var(--w);
-  height: 7px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.3);
-  animation: drift var(--speed, 120s) linear var(--delay, 0s) infinite;
+  fill: rgb(255 255 255 / 0.42);
+  animation: drift var(--speed, 160s) linear var(--delay, 0s) infinite;
 }
-.streak::after {
-  content: "";
+.sky[data-period="malam"] .cloud { fill: rgb(255 255 255 / 0.07); }
+.sky[data-period="subuh"] .cloud,
+.sky[data-period="senja"] .cloud { fill: rgb(255 214 200 / 0.28); }
+.sky[data-period="sore"] .cloud { fill: rgb(255 236 214 / 0.4); }
+
+.birds {
   position: absolute;
-  top: 12px;
-  left: 25%;
-  width: 55%;
-  height: 5px;
-  border-radius: 999px;
-  background: inherit;
+  top: 34%;
+  left: 0;
+  color: rgb(10 30 50 / 0.45);
+  animation: fly 38s linear -12s infinite;
 }
-.sky[data-period="malam"] .streak { opacity: 0.12; }
-.sky[data-period="subuh"] .streak,
-.sky[data-period="senja"] .streak { opacity: 0.45; }
+.sky[data-period="malam"] .birds,
+.sky[data-period="subuh"] .birds,
+.sky[data-period="senja"] .birds { display: none; }
+
+.landscape .far-city { fill: var(--hill-far-a); opacity: 0.75; }
+
+@keyframes fly {
+  from { transform: translate(-15vw, 0); }
+  50% { transform: translate(55vw, -30px); }
+  to { transform: translate(120vw, 10px); }
+}
 
 /* ---- Day strip: 24 hours in the colours of each part of the day (Jakarta sample times) ------- */
 
@@ -151,7 +156,7 @@
 @keyframes drift { from { transform: translateX(-30vw); } to { transform: translateX(130vw); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .sky-stars circle, .sky-body .halo, .streak { animation: none; }
+  .sky-stars circle, .sky-body .halo, .cloud, .birds { animation: none; }
   .sky-body, .landscape .window { transition: none; }
 }
 

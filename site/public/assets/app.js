@@ -160,9 +160,11 @@
     const q = Math.min(Math.max(p, 0), 1);
     const wide = window.matchMedia("(min-width: 1024px)").matches;
     if (wide) {
+      // Just above the far ridge, whatever height the landscape takes on this screen.
+      const land = sky.querySelector(".landscape").getBoundingClientRect().height;
       body.style.top = "auto";
       body.style.left = `${8 + 84 * q}%`;
-      body.style.bottom = `${250 + 110 * Math.sin(Math.PI * q)}px`;
+      body.style.bottom = `${land * 0.55 + 20 + 120 * Math.sin(Math.PI * q)}px`;
     } else {
       body.style.bottom = "auto";
       body.style.left = `${82 + 8 * q}%`;
@@ -205,7 +207,7 @@
   }
 
   setInterval(updateSky, 60_000);
-  window.matchMedia("(min-width: 1024px)").addEventListener("change", updateSky);
+  window.addEventListener("resize", () => requestAnimationFrame(updateSky), { passive: true });
 
   // ---- Latest release -----------------------------------------------------------------------------
 
