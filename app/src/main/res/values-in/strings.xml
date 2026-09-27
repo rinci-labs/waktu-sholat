@@ -100,7 +100,7 @@
     <string name="settings_madhab">Madzhab Ashar</string>
     <string name="settings_madhab_summary">Menentukan awal waktu Ashar</string>
     <string name="settings_general">Umum</string>
-    <string name="settings_notifications">Notifikasi adzan</string>
+    <string name="settings_notifications">Notifikasi waktu sholat</string>
     <string name="settings_notifications_summary">Beri tahu saat waktu sholat tiba</string>
     <string name="settings_reminder_lead">Waktu pengingat</string>
     <string name="settings_exact_alarm">Izinkan alarm tepat waktu</string>
@@ -126,13 +126,13 @@ Data kota dunia: GeoNames (CC BY 4.0)</string>
 
     <string name="notification_reminder_title">%1$s %2$s lagi</string>
     <string name="settings_notify_permission">Izinkan notifikasi</string>
-    <string name="settings_notify_permission_summary">Notifikasi aplikasi ini mati, jadi adzan tidak bisa muncul</string>
+    <string name="settings_notify_permission_summary">Notifikasi aplikasi ini mati, jadi waktu sholat tidak bisa diberitahukan</string>
     <string name="settings_notify_blocked">Notifikasi diblokir</string>
     <string name="settings_notify_blocked_summary">Nyalakan notifikasi aplikasi ini di pengaturan sistem</string>
     <string name="settings_battery">Izinkan berjalan di latar</string>
-    <string name="settings_battery_summary">Penghemat baterai bisa menghentikan adzan di sebagian HP (Oppo, Realme, Xiaomi, Samsung)</string>
+    <string name="settings_battery_summary">Penghemat baterai bisa menghentikan notifikasi sholat di sebagian HP (Oppo, Realme, Xiaomi, Samsung)</string>
     <string name="settings_notify_test">Kirim notifikasi uji</string>
-    <string name="settings_notify_test_summary">Cek apakah notifikasi adzan muncul</string>
+    <string name="settings_notify_test_summary">Cek apakah notifikasi waktu sholat muncul</string>
 
     <string name="settings_updates">Pembaruan</string>
     <string name="update_check">Cek pembaruan</string>

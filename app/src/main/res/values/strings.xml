@@ -100,7 +100,7 @@
     <string name="settings_madhab">Asr madhab</string>
     <string name="settings_madhab_summary">Decides when Asr begins</string>
     <string name="settings_general">General</string>
-    <string name="settings_notifications">Adhan notifications</string>
+    <string name="settings_notifications">Prayer notifications</string>
     <string name="settings_notifications_summary">Notify when each prayer time begins</string>
     <string name="settings_reminder_lead">Reminder</string>
     <string name="settings_exact_alarm">Allow exact alarms</string>
@@ -126,13 +126,13 @@ World cities: GeoNames (CC BY 4.0)</string>
 
     <string name="notification_reminder_title">%1$s in %2$s</string>
     <string name="settings_notify_permission">Allow notifications</string>
-    <string name="settings_notify_permission_summary">Notifications are off for this app, so the adhan cannot appear</string>
+    <string name="settings_notify_permission_summary">Notifications are off for this app, so prayer times cannot be announced</string>
     <string name="settings_notify_blocked">Notifications are blocked</string>
     <string name="settings_notify_blocked_summary">Turn on this app\'s notifications in system settings</string>
     <string name="settings_battery">Allow running in the background</string>
-    <string name="settings_battery_summary">Battery saving can stop the adhan on some phones (Oppo, Realme, Xiaomi, Samsung)</string>
+    <string name="settings_battery_summary">Battery saving can stop prayer notifications on some phones (Oppo, Realme, Xiaomi, Samsung)</string>
     <string name="settings_notify_test">Send a test notification</string>
-    <string name="settings_notify_test_summary">Check that the adhan notification appears</string>
+    <string name="settings_notify_test_summary">Check that the prayer notification appears</string>
 
     <string name="settings_updates">Updates</string>
     <string name="update_check">Check for updates</string>

@@ -187,7 +187,6 @@ class MainActivity : BaseActivity() {
         val period = Period.of(snapshot)
         sky.show(period, Celestial.of(snapshot))
         scrim.setBackgroundColor(period.top)
-        findViewById<TextView>(R.id.period).setText(period.label)
         countdown.text = getString(R.string.countdown_in, Relative.long(this, snapshot.minutesRemaining))
         findViewById<TextView>(R.id.next_name).text = PrayerLabels.of(this, snapshot.next)
         findViewById<TextView>(R.id.next_time).text = PrayerTimes.format(snapshot.nextMinute)
