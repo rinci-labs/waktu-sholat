@@ -5,10 +5,10 @@ Landing page for [waktu-sholat.rafaar.com](https://waktu-sholat.rafaar.com), bui
 
 ```sh
 pnpm install
-pnpm dev          # http://localhost:4321, reloads on change
-pnpm check      # type-check .astro and .ts files (strictest)
-pnpm build      # static site into dist/
-pnpm preview  # build, then serve dist/ at http://localhost:4321
+pnpm dev       # http://localhost:4321, reloads on change
+pnpm check     # type-check .astro and .ts files (strictest)
+pnpm build     # static site into dist/
+pnpm preview   # build, then serve dist/ at http://localhost:4321
 ```
 
 The build fetches the latest GitHub release once, so the download section ships with the real
