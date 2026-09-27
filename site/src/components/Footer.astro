@@ -1,0 +1,24 @@
+---
+import { t, type Lang, REPO } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const s = t(Astro.props.lang);
+const gh = `https://github.com/${REPO}`;
+---
+
+<footer class="border-t border-line">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-8">
+    <div class="flex items-center gap-2.5">
+      <img src="/icon.svg" alt="" width="24" height="24" class="size-6" loading="lazy" />
+      <span>Waktu Sholat</span>
+      <span class="hidden text-ink-soft/70 lg:inline">{s.credit}</span>
+    </div>
+    <div class="flex gap-6">
+      <a href={gh} class="hover:text-ink">GitHub</a>
+      <a href={`${gh}/releases`} class="hover:text-ink">{s.releases}</a>
+      <a href={`${gh}/issues`} class="hover:text-ink">{s.report}</a>
+    </div>
+  </div>
+</footer>

@@ -14,7 +14,7 @@ place on Earth. English and Bahasa Indonesia. The release APK is under 200 KB.
   screen on Android 13+)
 - Launcher icon themes, fixed or automatic (follows the time of day)
 - In-app updates from GitHub Releases: daily check, download, SHA-256 verification, install
-- Monthly timetable, Qibla compass, adhan notifications with optional reminder lead time
+- Monthly timetable, Qibla compass, prayer-time notifications with optional reminder lead time
 - Five home-screen widgets: **Next prayer**, **Today's times**, **Full schedule**, **Countdown**
   and **Minimal**. Relative times refresh each minute with a non-waking alarm (nothing runs while
   the screen is off); widgets follow the wallpaper colours on Android 12+
@@ -33,8 +33,8 @@ debug key.
 
 ## Website
 
-The landing page lives in [`site/`](site/) and deploys to Cloudflare Pages (root `site`, build
-`npm run build`, output `public`). See [site/README.md](site/README.md).
+The landing page lives in [`site/`](site/) (Astro) and deploys to Cloudflare Pages (root `site`,
+build `npm run build`, output `dist`). Run it locally with `cd site && npm install && npm run dev`. See [site/README.md](site/README.md).
 
 ## Modules
 

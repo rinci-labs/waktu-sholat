@@ -1,0 +1,86 @@
+---
+// Document shell: SEO, Open Graph, hreflang and structured data for one language of the page.
+import "../styles/global.css";
+import { t, type Lang, APK_URL } from "../i18n";
+import type { Release } from "../lib/release";
+
+interface Props {
+  lang: Lang;
+  release: Release | null;
+}
+
+const { lang, release } = Astro.props;
+const s = t(lang);
+const site = Astro.site!;
+const url = new URL(lang === "id" ? "/" : "/en/", site).href;
+const alternates = { id: new URL("/", site).href, en: new URL("/en/", site).href };
+const image = new URL("/og-image.png", site).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Waktu Sholat",
+  alternateName: "Prayer Times",
+  description: s.metaDescription,
+  url,
+  image,
+  screenshot: new URL("/screens/today.webp", site).href,
+  applicationCategory: "LifestyleApplication",
+  operatingSystem: "Android 7.0+",
+  inLanguage: ["id", "en"],
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "IDR" },
+  downloadUrl: APK_URL,
+  ...(release && { softwareVersion: release.version, fileSize: `${Math.round(release.sizeBytes / 1024)}KB` }),
+  author: { "@type": "Organization", name: "Rinci Labs", url: "https://github.com/rinci-labs" },
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{s.htmlTitle}</title>
+    <meta name="description" content={s.metaDescription} />
+    <link rel="canonical" href={url} />
+    <link rel="alternate" hreflang="id" href={alternates.id} />
+    <link rel="alternate" hreflang="en" href={alternates.en} />
+    <link rel="alternate" hreflang="x-default" href={alternates.id} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0e6b4e" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Waktu Sholat" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={s.htmlTitle} />
+    <meta property="og:description" content={s.ogDescription} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={s.ogAlt} />
+    <meta property="og:locale" content={lang === "id" ? "id_ID" : "en_US"} />
+    <meta property="og:locale:alternate" content={lang === "id" ? "en_US" : "id_ID"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={s.htmlTitle} />
+    <meta name="twitter:description" content={s.ogDescription} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image:alt" content={s.ogAlt} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,62 @@
+---
+// Today at the chosen place as a 24-hour strip (wide screens) or a list (phones), with a "now" marker.
+import { t, type Lang } from "../i18n";
+import { fmt, P } from "../lib/prayer";
+import { JAKARTA, SKY, at, dayGradient, type Day, type Period } from "../lib/day";
+
+interface Props {
+  lang: Lang;
+  day: Day;
+}
+const { lang, day } = Astro.props;
+const s = t(lang);
+const [before, after] = s.dayBody.split("{city}");
+const marks: [number, Period][] = [
+  [P.Fajr, "subuh"],
+  [P.Sunrise, "pagi"],
+  [P.Dhuhr, "siang"],
+  [P.Asr, "sore"],
+  [P.Maghrib, "senja"],
+  [P.Isha, "malam"],
+];
+---
+
+<section id="hari" class="mx-auto max-w-6xl px-5 pt-28 sm:px-8" aria-labelledby="day-title">
+  <div class="max-w-2xl">
+    <h2 id="day-title" class="text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl">{s.dayTitle}</h2>
+    <p class="mt-4 text-lg leading-relaxed text-ink-soft">
+      {before}<span class="font-semibold text-ink" data-place-name>{JAKARTA.name}</span>{after}
+    </p>
+  </div>
+
+  <div class="relative mt-14 hidden md:block">
+    <div class="daystrip h-24 rounded-3xl" style={`background:${dayGradient(day.times)}`} data-strip></div>
+    <div class="absolute top-0 h-24 w-0.5 bg-white/90 transition-[left] duration-700" style={`left:${at(day.minute)}`} data-now aria-hidden="true">
+      <span class="absolute -top-8 left-1/2 -translate-x-1/2 rounded-full bg-ink px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-white">
+        {s.now} <span class="tnum" data-now-time>{fmt(day.minute)}</span>
+      </span>
+    </div>
+    <ol class="relative mt-4 h-14 text-sm">
+      {
+        marks.map(([i]) => (
+          <li class="day-mark" style={`--at:${at(day.times[i]!)}`} data-mark={i}>
+            <span class="font-semibold">{s.prayers[i]}</span>
+            <span class="tnum text-ink-soft" data-time>{fmt(day.times[i]!)}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <ol class="mt-10 divide-y divide-line overflow-hidden rounded-3xl border border-line bg-card md:hidden">
+    {
+      marks.map(([i, p]) => (
+        <li class="flex items-center gap-4 px-5 py-4" data-mark={i}>
+          <span class="size-8 shrink-0 rounded-full" style={`background:linear-gradient(${SKY[p][0]},${SKY[p][1]})`} />
+          <span class="flex-1 font-semibold">{s.prayers[i]}</span>
+          <span class="tnum text-ink-soft" data-time>{fmt(day.times[i]!)}</span>
+        </li>
+      ))
+    }
+  </ol>
+</section>

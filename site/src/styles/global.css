@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+/*
+  Tokens mirror the app: its brand green, warm paper page and ink text, and the six sky periods the
+  hero moves through with the time in Jakarta.
+*/
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #0e6b4e;
+  --color-brand-deep: #0a5039;
+  --color-brand-soft: #e2efe8;
+  --color-paper: #f6f5f1;
+  --color-card: #ffffff;
+  --color-line: #e3e0d8;
+  --color-ink: #16201b;
+  --color-ink-soft: #4f5752;
+  --color-night: #0b1437;
+
+  --ease-sky: cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ---- Header: transparent over the sky, paper once the page scrolls ----------------------- */
+
+.site-nav {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+}
+.site-nav[data-scrolled] {
+  color: var(--color-ink);
+  background: rgb(246 245 241 / 0.86);
+  box-shadow: 0 1px 0 var(--color-line);
+  backdrop-filter: blur(14px) saturate(1.4);
+}
+.site-nav .nav-cta {
+  background: #fff;
+  color: var(--color-brand-deep);
+}
+.site-nav[data-scrolled] .nav-cta {
+  background: var(--color-brand);
+  color: #fff;
+}
+.site-nav[data-scrolled] .nav-muted { color: var(--color-ink-soft); }
+.site-nav[data-scrolled] .nav-muted:hover { color: var(--color-ink); }
+.site-nav[data-scrolled] .nav-ring { border-color: var(--color-line); }
+
+/* ---- Hero sky: the app's layered landscape ------------------------------------------------ */
+
+/* Registered so the gradient and hills cross-fade when the period changes, not snap. */
+@property --sky-top { syntax: "<color>"; inherits: true; initial-value: #070b1c; }
+@property --sky-mid { syntax: "<color>"; inherits: true; initial-value: #131b3c; }
+@property --sky-bottom { syntax: "<color>"; inherits: true; initial-value: #1b2752; }
+@property --hill-far-a { syntax: "<color>"; inherits: true; initial-value: #162044; }
+@property --hill-far-b { syntax: "<color>"; inherits: true; initial-value: #151e3f; }
+@property --hill-mid { syntax: "<color>"; inherits: true; initial-value: #101832; }
+@property --hill-near { syntax: "<color>"; inherits: true; initial-value: #0c1124; }
+
+/* Colours per period, computed with the same formulas as the Android SkyView. */
+.sky[data-period="subuh"] { --sky-top: #1b2350; --sky-mid: #603a60; --sky-bottom: #8e4a6b; --hill-far-a: #714064; --hill-far-b: #6e3953; --hill-mid: #582d42; --hill-near: #3f2130; }
+.sky[data-period="pagi"] { --sky-top: #1f5faf; --sky-mid: #3881c8; --sky-bottom: #4a98da; --hill-far-a: #3f89cf; --hill-far-b: #3976aa; --hill-mid: #2d5e87; --hill-near: #214462; }
+.sky[data-period="siang"] { --sky-top: #155e9c; --sky-mid: #2b7bba; --sky-bottom: #3b8fcf; --hill-far-a: #3182c2; --hill-far-b: #2e6fa1; --hill-mid: #245880; --hill-near: #1a405d; }
+.sky[data-period="sore"] { --sky-top: #9a4a1e; --sky-mid: #ba6b2c; --sky-bottom: #d08236; --hill-far-a: #c27430; --hill-far-b: #a2652a; --hill-mid: #805021; --hill-near: #5d3a18; }
+.sky[data-period="senja"] { --sky-top: #2b1650; --sky-mid: #763259; --sky-bottom: #a8465f; --hill-far-a: #883a5b; --hill-far-b: #83364a; --hill-mid: #682b3a; --hill-near: #4b1f2a; }
+.sky[data-period="malam"] { --sky-top: #070b1c; --sky-mid: #131b3c; --sky-bottom: #1b2752; --hill-far-a: #162044; --hill-far-b: #151e3f; --hill-mid: #101832; --hill-near: #0c1124; }
+
+.sky {
+  --land: clamp(250px, 40vh, 440px);
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) calc(100% - var(--land) * 0.4));
+  transition:
+    --sky-top 1.4s var(--ease-sky), --sky-mid 1.4s var(--ease-sky), --sky-bottom 1.4s var(--ease-sky),
+    --hill-far-a 1.4s var(--ease-sky), --hill-far-b 1.4s var(--ease-sky),
+    --hill-mid 1.4s var(--ease-sky), --hill-near 1.4s var(--ease-sky);
+}
+
+.landscape .far-town { fill: var(--hill-far-a); opacity: 0.75; }
+.landscape .hill-mid { fill: var(--hill-mid); }
+.landscape .hill-near { fill: var(--hill-near); }
+
+.landscape .window {
+  fill: #ffce78;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.sky[data-period="malam"] .window { opacity: 0.9; }
+.sky:is([data-period="senja"], [data-period="subuh"]) .window { opacity: 0.65; }
+
+.sky-stars { opacity: 1; transition: opacity 1.4s ease; }
+.sky:is([data-period="pagi"], [data-period="siang"], [data-period="sore"]) .sky-stars { opacity: 0; }
+.sky:is([data-period="subuh"], [data-period="senja"]) .sky-stars { opacity: 0.45; }
+.sky-stars circle {
+  fill: #fff;
+  animation: twinkle var(--d, 3s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+/*
+  Sun and moon. The script sets --q (0..1 along the arc) and --arc (0..1 height). The arc runs in
+  the band between the hero copy and the hills, and starts and ends behind the far ridge, so the sun
+  rises and sets over the landscape and never sits on top of text.
+*/
+.sky-body {
+  --q: 0.5;
+  --arc: 1;
+  position: absolute;
+  left: calc(6% + 88% * var(--q));
+  bottom: calc(var(--land) * (0.48 + 0.32 * var(--arc)));
+  translate: -50% 50%;
+  transition: left 1.4s var(--ease-sky), bottom 1.4s var(--ease-sky);
+}
+
+.sky-body > * { transition: opacity 1.2s ease, background 1.4s ease; }
+.sky-body .sun { background: radial-gradient(circle at 40% 38%, #fffbe8, #ffe39a 60%, #ffcf6b); }
+.sky-body .sun-halo {
+  background: radial-gradient(circle, rgb(255 236 170 / 0.45), rgb(255 236 170 / 0) 68%);
+  animation: breathe 7s ease-in-out infinite;
+}
+.sky:is([data-period="sore"], [data-period="senja"], [data-period="subuh"]) .sun {
+  background: radial-gradient(circle at 40% 38%, #fff1d6, #ffb86b 60%, #ff9350);
+}
+.sky:is([data-period="sore"], [data-period="senja"], [data-period="subuh"]) .sun-halo {
+  background: radial-gradient(circle, rgb(255 170 110 / 0.5), rgb(255 170 110 / 0) 68%);
+}
+.sky-body .moon {
+  background: #f3f0e2;
+  box-shadow: 0 0 40px 6px rgb(230 235 255 / 0.18);
+  mask: radial-gradient(circle at 72% 34%, transparent 42%, #000 43%);
+}
+.sky-body:not([data-moon]) .moon,
+.sky-body[data-moon] :is(.sun, .sun-halo) { opacity: 0; }
+
+/* Flat clouds drifting across, and a small flock of birds by day. */
+.cloud {
+  position: absolute;
+  left: 0;
+  fill: rgb(255 255 255 / 0.42);
+  animation: drift var(--speed, 160s) linear var(--delay, 0s) infinite;
+  transition: fill 1.4s ease;
+}
+.sky[data-period="malam"] .cloud { fill: rgb(255 255 255 / 0.07); }
+.sky:is([data-period="subuh"], [data-period="senja"]) .cloud { fill: rgb(255 214 200 / 0.26); }
+.sky[data-period="sore"] .cloud { fill: rgb(255 236 214 / 0.4); }
+
+.birds {
+  position: absolute;
+  top: 36%;
+  left: 0;
+  color: rgb(10 30 50 / 0.42);
+  animation: fly 40s linear -12s infinite;
+  transition: opacity 1s ease;
+}
+.sky:is([data-period="malam"], [data-period="subuh"], [data-period="senja"]) .birds { opacity: 0; }
+
+/* Glass card over the sky: tinted by the sky beneath it. */
+.glass {
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.06));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.18),
+    0 30px 60px -30px rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(18px) saturate(1.3);
+}
+
+/* The card's rows: past prayers fade, the next one is lit. */
+.times-row { transition: background-color 0.4s ease, opacity 0.4s ease; }
+.times-row[data-state="past"] { opacity: 0.55; }
+.times-row[data-state="next"] {
+  background: rgb(255 255 255 / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
+}
+
+/* Location dialog: fades and lifts in; the backdrop fades with it. */
+.place-dialog[open] { animation: rise 0.25s var(--ease-sky); }
+.place-dialog::backdrop { animation: fade 0.25s ease; }
+@keyframes fade { from { opacity: 0; } }
+
+/* ---- Day strip: 24 hours of Jakarta in the colours of each part of the day ----------------- */
+
+.daystrip { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.06); }
+
+.day-mark {
+  position: absolute;
+  left: var(--at);
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  translate: -50% 0;
+  white-space: nowrap;
+}
+.day-mark::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 1rem);
+  height: 6rem;
+  width: 1px;
+  background: rgb(255 255 255 / 0.55);
+}
+/* Fajr and Sunrise sit close together, as do Maghrib and Isha: nudge each pair apart. */
+.day-mark:nth-child(1), .day-mark:nth-child(5) { translate: -80% 0; }
+.day-mark:nth-child(2), .day-mark:nth-child(6) { translate: -20% 0; }
+
+@keyframes twinkle { from { opacity: 0.25; } to { opacity: 1; } }
+@keyframes breathe { 0%, 100% { scale: 1; } 50% { scale: 1.08; } }
+@keyframes drift { from { transform: translateX(-30vw); } to { transform: translateX(130vw); } }
+@keyframes fly {
+  from { transform: translate(-15vw, 0); }
+  50% { transform: translate(55vw, -30px); }
+  to { transform: translate(120vw, 10px); }
+}
+@keyframes rise {
+  from { opacity: 0; translate: 0 14px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+/* One orchestrated entrance: the hero copy and card rise in once on load. */
+.rise { animation: rise 0.9s var(--ease-sky) both; animation-delay: var(--rise, 0s); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-stars circle, .sun-halo, .cloud, .birds, .rise { animation: none; }
+  .sky, .sky-body, .sky-body > *, .window { transition: none; }
+}
+
+/* ---- Phone frame --------------------------------------------------------------------------- */
+
+.phone {
+  border-radius: 2.4rem;
+  padding: 0.4rem;
+  background: #0f1512;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08) inset,
+    0 30px 60px -20px rgb(4 12 30 / 0.55),
+    0 12px 24px -12px rgb(4 12 30 / 0.4);
+}
+.phone img {
+  border-radius: 2.05rem;
+  display: block;
+  width: 100%;
+  height: auto;
+}

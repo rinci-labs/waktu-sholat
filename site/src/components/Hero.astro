@@ -1,0 +1,48 @@
+---
+import { t, type Lang, APK_URL } from "../i18n";
+import { celestial, periodOf, type Day } from "../lib/day";
+import type { Release } from "../lib/release";
+import Scene from "./Scene.astro";
+import TodayCard from "./TodayCard.astro";
+import Icon from "./Icon.astro";
+
+interface Props {
+  lang: Lang;
+  day: Day;
+  release: Release | null;
+}
+const { lang, day, release } = Astro.props;
+const s = t(lang);
+const body = celestial(day);
+const bounds = day.times.slice(1);
+---
+
+<div id="top" class="sky relative isolate flex min-h-[min(100svh,1080px)] flex-col overflow-hidden text-white" data-period={periodOf(day)} data-sky>
+  {/* Before first paint: pick the period from the build day's Jakarta times, so the sky never
+      flashes the wrong colours. live.ts then recomputes for the visitor's chosen place. */}
+  <script is:inline define:vars={{ bounds }}>
+    const d = new Date(Date.now() + 252e5), m = d.getUTCHours() * 60 + d.getUTCMinutes();
+    const i = bounds.findIndex((b) => m < b);
+    document.currentScript.parentElement.dataset.period = ["malam", "subuh", "pagi", "siang", "sore", "senja", "malam"][i < 0 ? 6 : i];
+  </script>
+  <Scene progress={body.progress} moon={body.moon} />
+
+  <div class="mx-auto grid w-full max-w-6xl flex-1 content-center items-center gap-10 px-5 pt-24 pb-[calc(var(--land)*0.92)] sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+    <div class="rise">
+      <h1 class="max-w-xl text-[2.6rem] leading-[1.04] font-extrabold tracking-[-0.035em] text-balance sm:text-6xl lg:text-[4.1rem]">{s.headline}</h1>
+      <p class="mt-5 max-w-lg text-lg leading-relaxed text-pretty text-white/85">{s.lede}</p>
+      <a
+        href={APK_URL}
+        data-download
+        class="group mt-8 inline-flex items-center gap-2.5 rounded-full bg-white py-3.5 pr-3.5 pl-6 font-semibold text-brand-deep shadow-lg shadow-black/15 transition-colors hover:bg-brand-soft"
+        title={s.minAndroid}
+      >
+        <Icon name="download" class="size-5" />
+        {s.download}
+        <span class="tnum rounded-full bg-brand-soft px-2.5 py-1 text-xs font-semibold text-brand transition-colors group-hover:bg-white" data-release="tag">{release ? `v${release.version}` : "APK"}</span>
+      </a>
+    </div>
+
+    <TodayCard lang={lang} day={day} />
+  </div>
+</div>

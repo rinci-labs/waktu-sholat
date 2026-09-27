@@ -1,14 +1,22 @@
 {
   "name": "waktu-sholat-site",
   "private": true,
-  "description": "Landing page for Waktu Sholat. Static; public/ is the deploy root.",
+  "type": "module",
+  "description": "Landing page for Waktu Sholat, built with Astro. Deploy root: dist/.",
   "scripts": {
-    "build": "tailwindcss -i ./src/app.css -o ./public/assets/app.css --minify && node scripts/build.mjs",
-    "dev": "node scripts/build.mjs && tailwindcss -i ./src/app.css -o ./public/assets/app.css --watch",
-    "preview": "npm run build && node scripts/serve.mjs"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro build && astro preview",
+    "check": "astro check",
+    "sync-cities": "node scripts/sync-cities.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.3.5"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.0",
-    "tailwindcss": "^4.1.0"
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
   }
 }

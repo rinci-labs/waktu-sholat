@@ -1,0 +1,53 @@
+---
+// The illustrated sky behind the hero. All geometry is generated at build time (lib/scene.ts);
+// colours come from CSS variables, so a period change is a single attribute swap.
+import { landscape, stars, W, H } from "../lib/scene";
+
+interface Props {
+  progress: number;
+  moon: boolean;
+}
+const { progress, moon } = Astro.props;
+const land = landscape();
+const clamp = Math.min(Math.max(progress, 0), 1);
+const bodyStyle = `--q:${clamp.toFixed(3)};--arc:${Math.sin(Math.PI * clamp).toFixed(3)}`;
+
+const clouds = [
+  { style: "top:17%;--speed:150s;--delay:-30s", width: 150, cls: "hidden md:block" },
+  { style: "top:29%;--speed:200s;--delay:-120s;opacity:.7", width: 110, cls: "hidden md:block" },
+  { style: "top:10%;--speed:240s;--delay:-60s;opacity:.55", width: 90, cls: "" },
+];
+---
+
+<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+  <svg class="sky-stars absolute inset-0 h-full w-full" set:html={stars()} />
+  <div class="sky-body" style={bodyStyle} data-moon={moon ? "" : undefined} data-sky-body>
+    <div class="sun-halo absolute -inset-16 rounded-full"></div>
+    <div class="sun relative size-11 rounded-full lg:size-16"></div>
+    <div class="moon absolute inset-0 m-auto size-9 rounded-full lg:size-12"></div>
+  </div>
+  {
+    clouds.map((c) => (
+      <svg class:list={["cloud", c.cls]} style={c.style} width={c.width} viewBox="0 0 120 40">
+        <rect x="18" y="16" width="92" height="16" rx="8" />
+        <rect x="36" y="4" width="46" height="20" rx="10" />
+        <rect x="4" y="24" width="60" height="12" rx="6" opacity=".7" />
+      </svg>
+    ))
+  }
+  <svg class="birds hidden md:block" width="120" viewBox="0 0 120 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+    <path d="M10 20q7-7 12 0q5-7 12 0" /><path d="M48 10q6-6 10 0q4-6 10 0" /><path d="M80 26q5-5 9 0q4-5 9 0" />
+  </svg>
+  <svg class="landscape absolute bottom-0 left-0 h-(--land) w-full" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <linearGradient id="far" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--hill-far-a)" /><stop offset="1" stop-color="var(--hill-far-b)" />
+      </linearGradient>
+    </defs>
+    <g class="far-town" set:html={land.town} />
+    <path fill="url(#far)" d={land.far} />
+    <g class="hill-mid" set:html={land.mid} />
+    <g class="window" set:html={land.windows} />
+    <g class="hill-near" set:html={land.near} />
+  </svg>
+</div>

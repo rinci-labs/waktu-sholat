@@ -1,0 +1,21 @@
+---
+// The few line icons the page uses, drawn on a 24px grid.
+const paths = {
+  download: "M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14",
+  check: "m5 12.5 4.5 4.5L19 7.5",
+  pin: "M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 1 1 13 0c0 5.4-6.5 11-6.5 11Zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
+  plus: "M12 5v14M5 12h14",
+  chevron: "m7 10 5 5 5-5",
+  search: "m20 20-4.2-4.2M17 11a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z",
+  locate: "M12 3v3m0 12v3M3 12h3m12 0h3m-3 0a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-4 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z",
+  close: "M6 6l12 12M18 6 6 18",
+} as const;
+
+interface Props {
+  name: keyof typeof paths;
+  class?: string;
+}
+const { name, class: className } = Astro.props;
+---
+
+<svg aria-hidden="true" class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d={paths[name]} /></svg>

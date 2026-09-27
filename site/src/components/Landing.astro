@@ -1,0 +1,58 @@
+---
+// The whole page for one language. Everything is static; scripts/live.ts only updates numbers.
+import Base from "../layouts/Base.astro";
+import Nav from "./Nav.astro";
+import Hero from "./Hero.astro";
+import DayStrip from "./DayStrip.astro";
+import Features from "./Features.astro";
+import Facts from "./Facts.astro";
+import Download from "./Download.astro";
+import Faq from "./Faq.astro";
+import Footer from "./Footer.astro";
+import { t, type Lang } from "../i18n";
+import { JAKARTA, dayAt } from "../lib/day";
+import { latestRelease } from "../lib/release";
+import type { ClientStrings } from "../scripts/live";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const day = dayAt(JAKARTA);
+const release = await latestRelease();
+
+const client: ClientStrings = {
+  lang,
+  prayers: s.prayers,
+  weekdays: s.weekdays,
+  months: s.months,
+  inTime: s.inTime,
+  hours: s.hours,
+  hoursOnly: s.hoursOnly,
+  minutes: s.minutes,
+  lessMinute: s.lessMinute,
+  locating: s.locating,
+  locationFailed: s.locationFailed,
+  noResults: s.noResults,
+  myLocation: s.myLocation,
+};
+---
+
+<Base lang={lang} release={release}>
+  <a href="#unduh" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-ink">{s.skip}</a>
+  <Nav lang={lang} />
+  <Hero lang={lang} day={day} release={release} />
+  <main>
+    <DayStrip lang={lang} day={day} />
+    <Features lang={lang} />
+    <Facts lang={lang} />
+    <Download lang={lang} release={release} />
+    <Faq lang={lang} />
+  </main>
+  <Footer lang={lang} />
+  <script type="application/json" id="strings" set:html={JSON.stringify(client)} />
+  <script>
+    import "../scripts/live";
+  </script>
+</Base>

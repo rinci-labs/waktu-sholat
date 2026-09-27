@@ -1,0 +1,66 @@
+---
+// The real latest release, and the three steps a sideloaded install takes.
+import { t, type Lang, APK_URL, REPO } from "../i18n";
+import { formatDate, formatSize, type Release } from "../lib/release";
+import Icon from "./Icon.astro";
+
+interface Props {
+  lang: Lang;
+  release: Release | null;
+}
+const { lang, release } = Astro.props;
+const s = t(lang);
+const meta: [string, string, string][] = [
+  [s.mVersion, "version", release?.version ?? s.latest],
+  [s.mSize, "size", release ? formatSize(release.sizeBytes) : "< 300 KB"],
+  [s.mDate, "date", release ? formatDate(release.publishedAt, lang) : "—"],
+];
+---
+
+<section id="unduh" class="mx-auto max-w-6xl px-5 sm:px-8" aria-labelledby="download-title">
+  <div class="grid gap-10 overflow-hidden rounded-[2rem] bg-brand px-6 py-12 text-white sm:px-12 sm:py-16 lg:grid-cols-[1fr_1fr] lg:gap-16">
+    <div>
+      <h2 id="download-title" class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{s.dlTitle}</h2>
+      <p class="mt-4 max-w-md text-lg leading-relaxed text-white/85">{s.dlLede}</p>
+      <a href={APK_URL} data-download class="mt-8 inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-brand-deep transition-colors hover:bg-brand-soft">
+        <Icon name="download" class="size-5" />
+        {s.downloadApk}
+      </a>
+
+      <dl class="mt-8 flex flex-wrap gap-2 text-sm">
+        {
+          meta.map(([label, key, value]) => (
+            <div class="flex gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 ring-1 ring-white/15">
+              <dt class="text-white/70">{label}</dt>
+              <dd class="tnum font-semibold" data-release={key}>{value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <details class="group mt-4 max-w-md text-sm">
+        <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-white/75 hover:text-white [&::-webkit-details-marker]:hidden">
+          SHA-256 <Icon name="chevron" class="size-4 transition-transform group-open:rotate-180" />
+        </summary>
+        <p class="mt-2 rounded-xl bg-black/15 px-3 py-2 font-mono text-xs leading-5 break-all text-white/90" data-release="sha">{release?.sha256 ?? "—"}</p>
+      </details>
+      <a href={`https://github.com/${REPO}/releases`} class="mt-6 inline-block text-sm font-medium underline decoration-white/40 underline-offset-4 hover:decoration-white">{s.allReleases}</a>
+    </div>
+
+    <div>
+      <h3 class="text-lg font-semibold">{s.stepsTitle}</h3>
+      <ol class="mt-6 space-y-3">
+        {
+          s.steps.map(([title, body], i) => (
+            <li class="grid grid-cols-[2.25rem_1fr] gap-4 rounded-2xl bg-white/[0.07] p-5 ring-1 ring-white/10">
+              <span class="grid size-9 place-items-center rounded-full bg-white font-bold text-brand-deep">{i + 1}</span>
+              <div>
+                <p class="font-semibold">{title}</p>
+                <p class="mt-1 leading-relaxed text-white/80">{body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

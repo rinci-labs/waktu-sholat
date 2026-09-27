@@ -1,0 +1,21 @@
+---
+import { t, type Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const s = t(Astro.props.lang);
+---
+
+<section class="mx-auto max-w-6xl px-5 pb-24 sm:px-8">
+  <dl class="grid gap-10 border-y border-line py-12 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      s.facts.map(([k, v]) => (
+        <div>
+          <dt class="font-semibold">{k}</dt>
+          <dd class="mt-2 leading-relaxed text-ink-soft">{v}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>

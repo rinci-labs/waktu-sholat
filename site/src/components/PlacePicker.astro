@@ -1,0 +1,50 @@
+---
+// Location picker: the visitor's own position, or a search over every city the app knows. The city
+// list (/cities.json) loads on first open only; scripts/places.ts drives it.
+import { t, type Lang } from "../i18n";
+import Icon from "./Icon.astro";
+
+interface Props {
+  lang: Lang;
+}
+const s = t(Astro.props.lang);
+---
+
+<dialog
+  class="place-dialog m-auto mt-[12vh] w-[min(28rem,calc(100vw-2rem))] rounded-3xl bg-card p-6 text-ink shadow-2xl backdrop:bg-night/50 backdrop:backdrop-blur-sm"
+  aria-labelledby="place-title"
+  data-place-dialog
+>
+  <div class="flex items-center justify-between gap-4">
+    <h2 id="place-title" class="text-lg font-bold tracking-[-0.01em]">{s.placeTitle}</h2>
+    <button type="button" class="-my-2 -mr-2 grid size-9 place-items-center rounded-full text-ink-soft hover:bg-paper hover:text-ink" data-place-close>
+      <Icon name="close" class="size-5" /><span class="sr-only">{s.close}</span>
+    </button>
+  </div>
+
+  <label class="relative mt-5 block">
+    <span class="sr-only">{s.searchLabel}</span>
+    <Icon name="search" class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-ink-soft" />
+    <input
+      type="search"
+      class="w-full rounded-2xl border border-line bg-paper py-3.5 pr-4 pl-12 text-base placeholder:text-ink-soft/70 focus:border-brand focus:bg-card focus:outline-none"
+      placeholder={s.searchPlaceholder}
+      autocomplete="off"
+      spellcheck="false"
+      enterkeyhint="search"
+      role="combobox"
+      aria-expanded="false"
+      aria-controls="place-results"
+      aria-autocomplete="list"
+      data-place-input
+    />
+  </label>
+
+  <ul id="place-results" role="listbox" aria-label={s.searchLabel} class="-mx-2 mt-2 max-h-[44vh] overflow-y-auto overscroll-contain empty:hidden" data-place-results></ul>
+  <p class="mt-3 px-1 text-sm text-ink-soft empty:hidden" aria-live="polite" data-place-status></p>
+
+  <button type="button" class="mt-3 flex w-full items-center justify-center gap-2.5 rounded-2xl border border-line py-3.5 font-semibold text-brand transition-colors hover:border-brand hover:bg-brand-soft" data-place-locate>
+    <Icon name="locate" class="size-5" />
+    {s.useMyLocation}
+  </button>
+</dialog>

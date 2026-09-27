@@ -1,0 +1,28 @@
+---
+// Four short answers, all visible: a 2x2 grid at the page's full width, like the sections above.
+import { t, type Lang, REPO } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const s = t(Astro.props.lang);
+---
+
+<section class="mx-auto max-w-6xl px-5 py-28 sm:px-8" aria-labelledby="faq-title">
+  <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+    <h2 id="faq-title" class="text-3xl font-bold tracking-[-0.02em] sm:text-4xl">{s.faqTitle}</h2>
+    <p class="text-ink-soft">
+      {s.faqMore} <a href={`https://github.com/${REPO}/issues`} class="font-semibold text-brand underline decoration-brand/30 underline-offset-4 hover:decoration-brand">{s.report}</a>
+    </p>
+  </div>
+  <dl class="mt-10 grid gap-4 md:grid-cols-2">
+    {
+      s.faq.map(([q, a]) => (
+        <div class="rounded-3xl border border-line bg-card p-6 sm:p-8">
+          <dt class="text-lg font-semibold tracking-[-0.01em]">{q}</dt>
+          <dd class="mt-3 leading-relaxed text-ink-soft">{a}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>

@@ -1,41 +1,59 @@
 # Waktu Sholat website
 
-Static landing page for [waktu-sholat.rafaar.com](https://waktu-sholat.rafaar.com). `public/` is the
-deploy root; the built files are committed, so it deploys with or without a build step.
+Landing page for [waktu-sholat.rafaar.com](https://waktu-sholat.rafaar.com), built with
+[Astro](https://astro.build) and Tailwind CSS v4. Fully static: `npm run build` writes `dist/`.
 
 ```sh
 npm install
-npm run build   # renders src/index.html into public/ and builds public/assets/app.css
-npm run dev     # same, then rebuilds the CSS on change
-npm run preview # build, then serve public/ at http://localhost:4173
+npm run dev      # http://localhost:4321, reloads on change
+npm run check    # type-check .astro and .ts files (strictest)
+npm run build    # static site into dist/
+npm run preview  # build, then serve dist/ at http://localhost:4321
 ```
 
-`npm run build` fills in the site URL (set `SITE_URL` to override the default,
-`https://waktu-sholat.rafaar.com`) and the app version read from `../app/build.gradle.kts`, and
-writes `sitemap.xml` and `robots.txt`.
+The build fetches the latest GitHub release once, so the download section ships with the real
+version, size and checksum; the browser refreshes it later in case a newer release came out.
+
+## Layout
+
+| Path | Contents |
+|---|---|
+| `src/pages/` | `/` (Indonesian), `/en/`, `sitemap.xml`, `robots.txt`, `og/` (share image source) |
+| `src/components/` | One component per section; `Landing.astro` composes the page for a language |
+| `src/lib/` | `prayer.ts` (Kemenag calculator ported from the app), `day.ts` (periods, sun position, day strip), `scene.ts` (landscape SVG, generated at build time), `release.ts` |
+| `src/scripts/` | Browser code: `live.ts` (sky, schedule and day strip every minute), `places.ts` (location picker) |
+| `src/i18n.ts` | All copy, ID and EN |
+| `public/cities.json` | Every city the app knows, loaded when the location picker opens |
+
+## City data
+
+`public/cities.json` is generated from the app's `data/cities.csv` and
+`app/src/main/assets/world_cities.tsv`, and committed so the site builds from `site/` alone.
+After changing either source:
+
+```sh
+npm run sync-cities
+```
 
 ## Cloudflare Pages
 
 | Setting | Value |
 |---|---|
+| Framework preset | Astro |
 | Root directory | `site` |
 | Build command | `npm run build` |
-| Build output directory | `public` |
+| Build output directory | `dist` |
 | Environment variable (optional) | `SITE_URL=https://waktu-sholat.rafaar.com` |
 
 Then add the custom domain `waktu-sholat.rafaar.com` under the project's Custom domains.
-
-## Download button
-
-It links to `releases/latest/download/waktu-sholat.apk`, a stable asset name the release workflow
-uploads on every tag; the page also reads the latest release from the GitHub API to show its
-version, size, date and SHA-256.
+`public/_headers` sets security headers and long caching for `/_astro/*`.
 
 ## Share image
 
-`public/og-image.png` (1200x630) is rendered from `src/og.html`:
+`public/og-image.png` (1200x630) is a screenshot of `/og/`:
 
 ```sh
-chrome --headless=new --hide-scrollbars --allow-file-access-from-files --window-size=1200,630 \
-  --screenshot=public/og-image.png "file://$PWD/src/og.html"
+npm run preview   # in one terminal
+chrome --headless=new --hide-scrollbars --window-size=1200,630 --virtual-time-budget=5000 \
+  --screenshot=public/og-image.png http://localhost:4321/og/
 ```
