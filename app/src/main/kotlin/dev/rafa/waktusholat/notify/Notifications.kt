@@ -14,6 +14,7 @@ import dev.rafa.waktusholat.core.PrayerTimes
 import dev.rafa.waktusholat.ui.Language
 import dev.rafa.waktusholat.ui.MainActivity
 import dev.rafa.waktusholat.ui.PrayerLabels
+import dev.rafa.waktusholat.ui.Relative
 
 /**
  * Posts the adhan notification. The framework builder is used directly: there is no support library
@@ -57,28 +58,50 @@ object Notifications {
             android.content.pm.PackageManager.PERMISSION_GRANTED
     }
 
+    /** Why a notification would not appear, most fixable first. */
+    enum class Status { OK, NO_PERMISSION, BLOCKED }
+
+    /**
+     * Whether posted notifications will actually show: the Android 13 runtime permission, the app's
+     * notification switch in system settings, and the adhan channel's own switch.
+     */
+    fun status(context: Context): Status {
+        if (!canPostNotifications(context)) return Status.NO_PERMISSION
+        val manager = context.getSystemService(NotificationManager::class.java) ?: return Status.BLOCKED
+        if (!manager.areNotificationsEnabled()) return Status.BLOCKED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = manager.getNotificationChannel(CHANNEL)
+            if (channel != null && channel.importance == NotificationManager.IMPORTANCE_NONE) return Status.BLOCKED
+        }
+        return Status.OK
+    }
+
+    /** Posts a sample for the next prayer right now, so the user can check sound and permission. */
+    fun postTest(context: Context) {
+        val snapshot = WaktuSholatApp.instance.repository.snapshot()
+        show(context, snapshot.next, snapshot.nextMinute, reminderMinutes = 0, force = true)
+    }
+
     /**
      * Posts the adhan (or its lead reminder) for [prayer] at [minuteOfDay] local wall-clock minutes.
      * [isReminder] only chooses the wording; it never changes the prayer itself.
      */
-    fun post(context: Context, prayer: Prayer, minuteOfDay: Int, isReminder: Boolean, leadMinutes: Int) {
+    fun post(context: Context, prayer: Prayer, minuteOfDay: Int, isReminder: Boolean, leadMinutes: Int) =
+        show(context, prayer, minuteOfDay, if (isReminder) leadMinutes else 0, force = false)
+
+    private fun show(context: Context, prayer: Prayer, minuteOfDay: Int, reminderMinutes: Int, force: Boolean) {
         val app = Language.wrap(context.applicationContext)
-        if (!WaktuSholatApp.instance.preferences.notificationsEnabled) return
+        if (!force && !WaktuSholatApp.instance.preferences.notificationsEnabled) return
         if (!canPostNotifications(app)) return
 
-        ensureChannel(context)
+        ensureChannel(app)
 
         val name = PrayerLabels.of(app, prayer)
         val time = PrayerTimes.format(minuteOfDay)
-        val reminder = isReminder && leadMinutes > 0
+        val reminder = reminderMinutes > 0
 
         val title = if (reminder) {
-            app.getString(
-                R.string.notification_reminder_text,
-                app.getString(leadLabel(leadMinutes)),
-                name,
-                time,
-            )
+            app.getString(R.string.notification_reminder_title, name, Relative.long(app, reminderMinutes))
         } else {
             app.getString(R.string.notification_title, name)
         }
@@ -124,10 +147,4 @@ object Notifications {
         manager.notify(prayer.ordinal, builder.build())
     }
 
-    private fun leadLabel(leadMinutes: Int): Int = when (leadMinutes) {
-        5 -> R.string.lead_5
-        10 -> R.string.lead_10
-        15 -> R.string.lead_15
-        else -> R.string.lead_none
-    }
 }

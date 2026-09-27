@@ -6,12 +6,17 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <!-- The adhan alarm is the one feature that must be on time, so the app asks for exact alarms.
-         On Android 12+ this is a special access the user can grant or revoke; AlarmScheduler checks
-         canScheduleExactAlarms() and falls back to an inexact doze-aware alarm when it is withheld,
-         so the app works either way. -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- The adhan must ring on the minute, which needs exact alarms. Android 13+ grants
+         USE_EXACT_ALARM at install and never revokes it (the permission for apps whose core job is
+         alarms at set times); Android 12/12L only have the user-grantable SCHEDULE_EXACT_ALARM.
+         Without either, AlarmScheduler falls back to an inexact alarm the system may delay by up
+         to an hour, which is why the adhan used to arrive late or seem missing on Android 14. -->
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <!-- Location is optional: a city can be picked from the built-in table. A device fix gives the
          exact point anywhere in the world; the geocoder (network) only names it. -->

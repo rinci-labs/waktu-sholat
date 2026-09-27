@@ -8,6 +8,8 @@ import android.os.Build
 import dev.rafa.waktusholat.WaktuSholatApp
 import dev.rafa.waktusholat.core.CivilDate
 import dev.rafa.waktusholat.core.Prayer
+import dev.rafa.waktusholat.core.PrayerTimes
+import dev.rafa.waktusholat.data.ScheduleRepository
 
 /**
  * Arms the adhan alarms for the coming 24 hours. Alarms are not a persistent registration: every
@@ -21,6 +23,7 @@ object AlarmScheduler {
     const val EXTRA_REMINDER = "reminder"
 
     private const val MILLIS_PER_MINUTE = 60_000L
+    private const val REMINDER_OFFSET = 100
 
     /** Re-arms everything; the single entry point used by the app, its receivers and the settings. */
     fun reschedule(context: Context) {
@@ -41,17 +44,33 @@ object AlarmScheduler {
         // Prayer.OBLIGATORY is exactly FAJR, DHUHR, ASR, MAGHRIB, ISHA: the two entries that must
         // not ring (IMSAK and SUNRISE) are not in it.
         for (prayer in Prayer.OBLIGATORY) {
-            // The lead time moves the alarm earlier; a reminder that crosses midnight still shows
-            // the schedule's own minute, which is the adhan it belongs to.
-            for (times in windows) {
-                val minute = times.minuteOfDay(prayer)
-                val triggerAtMillis = epochMillisAt(times.date, minute, day.city.offsetMinutesOn(times.date)) - lead * MILLIS_PER_MINUTE
-                // Past occurrences are skipped: the first future one wins, and once both days have
-                // passed there is nothing to arm.
-                if (triggerAtMillis > now) {
-                    schedule(manager, app, prayer, minute, lead, triggerAtMillis)
-                    break
-                }
+            // The adhan itself always rings at the prayer's minute. A reminder, when set, is its own
+            // alarm (its own request code) that many minutes earlier, so one never replaces the
+            // other. Past occurrences are skipped: the first future one of each wins.
+            armFirstFuture(manager, app, windows, day, prayer, now, leadMinutes = 0)
+            if (lead > 0) {
+                armFirstFuture(manager, app, windows, day, prayer, now, leadMinutes = lead)
+            } else {
+                cancelOne(manager, app, prayer, reminder = true)
+            }
+        }
+    }
+
+    private fun armFirstFuture(
+        manager: AlarmManager,
+        context: Context,
+        windows: List<PrayerTimes>,
+        day: ScheduleRepository.Day,
+        prayer: Prayer,
+        now: Long,
+        leadMinutes: Int,
+    ) {
+        for (times in windows) {
+            val minute = times.minuteOfDay(prayer)
+            val at = epochMillisAt(times.date, minute, day.city.offsetMinutesOn(times.date)) - leadMinutes * MILLIS_PER_MINUTE
+            if (at > now) {
+                schedule(manager, context, prayer, minute, leadMinutes > 0, at)
+                return
             }
         }
     }
@@ -61,27 +80,34 @@ object AlarmScheduler {
         val app = context.applicationContext
         val manager = app.getSystemService(AlarmManager::class.java) ?: return
         for (prayer in Prayer.entries) {
-            // FLAG_NO_CREATE: cancel must never arm a brand-new broadcast for a prayer that was
-            // never scheduled.
-            val pending = PendingIntent.getBroadcast(
-                app,
-                prayer.ordinal,
-                receiverIntent(app, prayer, 0, false),
-                PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
-            ) ?: continue
-            manager.cancel(pending)
+            cancelOne(manager, app, prayer, reminder = false)
+            cancelOne(manager, app, prayer, reminder = true)
         }
     }
+
+    private fun cancelOne(manager: AlarmManager, context: Context, prayer: Prayer, reminder: Boolean) {
+        // FLAG_NO_CREATE: cancel must never arm a brand-new broadcast that was never scheduled.
+        val pending = PendingIntent.getBroadcast(
+            context,
+            requestCode(prayer, reminder),
+            receiverIntent(context, prayer, 0, reminder),
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
+        ) ?: return
+        manager.cancel(pending)
+    }
+
+    /** Adhan alarms use the prayer ordinal; reminders are offset so both can be pending at once. */
+    private fun requestCode(prayer: Prayer, reminder: Boolean) = prayer.ordinal + if (reminder) REMINDER_OFFSET else 0
 
     private fun schedule(
         manager: AlarmManager,
         context: Context,
         prayer: Prayer,
         minute: Int,
-        lead: Int,
+        reminder: Boolean,
         triggerAtMillis: Long,
     ) {
-        val intent = pendingIntent(context, prayer, minute, lead > 0)
+        val intent = pendingIntent(context, prayer, minute, reminder)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !manager.canScheduleExactAlarms()) {
             // Exact alarms need the SCHEDULE_EXACT_ALARM permission *and*, on Android 12+, a
@@ -109,14 +135,14 @@ object AlarmScheduler {
     }
 
     /**
-     * One pending intent per prayer, keyed by the ordinal. The same request code is used every day,
+     * One pending intent per prayer (and one per reminder). The same request code is used every day,
      * so the current alarm is simply replaced rather than stacked; FLAG_UPDATE_CURRENT refreshes the
-     * minute and reminder extras for the new day.
+     * minute extra for the new day.
      */
     private fun pendingIntent(context: Context, prayer: Prayer, minute: Int, reminder: Boolean): PendingIntent =
         PendingIntent.getBroadcast(
             context,
-            prayer.ordinal,
+            requestCode(prayer, reminder),
             receiverIntent(context, prayer, minute, reminder),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )

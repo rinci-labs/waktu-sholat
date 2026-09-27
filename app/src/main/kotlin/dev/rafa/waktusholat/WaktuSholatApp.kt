@@ -25,6 +25,9 @@ class WaktuSholatApp : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        // A force-stop (or an OEM battery manager acting like one) wipes every pending alarm and the
+        // system sends nothing afterwards, so every process start re-arms them. It is idempotent.
+        runCatching { AlarmScheduler.reschedule(this) }
     }
 
     /**

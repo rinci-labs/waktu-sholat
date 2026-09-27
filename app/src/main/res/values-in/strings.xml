@@ -121,7 +121,16 @@
     <string name="notification_channel_description">Pemberitahuan saat waktu sholat tiba</string>
     <string name="notification_title">Waktu %1$s</string>
     <string name="notification_text">%1$s pukul %2$s</string>
-    <string name="notification_reminder_text">%1$s lagi menuju %2$s (%3$s)</string>
+
+    <string name="notification_reminder_title">%1$s %2$s lagi</string>
+    <string name="settings_notify_permission">Izinkan notifikasi</string>
+    <string name="settings_notify_permission_summary">Notifikasi aplikasi ini mati, jadi adzan tidak bisa muncul</string>
+    <string name="settings_notify_blocked">Notifikasi diblokir</string>
+    <string name="settings_notify_blocked_summary">Nyalakan notifikasi aplikasi ini di pengaturan sistem</string>
+    <string name="settings_battery">Izinkan berjalan di latar</string>
+    <string name="settings_battery_summary">Penghemat baterai bisa menghentikan adzan di sebagian HP (Oppo, Realme, Xiaomi, Samsung)</string>
+    <string name="settings_notify_test">Kirim notifikasi uji</string>
+    <string name="settings_notify_test_summary">Cek apakah notifikasi adzan muncul</string>
 
     <!-- Widgets -->
     <string name="widget_next_label">Sholat berikutnya</string>

@@ -121,7 +121,16 @@
     <string name="notification_channel_description">Notifies when a prayer time begins</string>
     <string name="notification_title">Time for %1$s</string>
     <string name="notification_text">%1$s at %2$s</string>
-    <string name="notification_reminder_text">%2$s in %1$s (%3$s)</string>
+
+    <string name="notification_reminder_title">%1$s in %2$s</string>
+    <string name="settings_notify_permission">Allow notifications</string>
+    <string name="settings_notify_permission_summary">Notifications are off for this app, so the adhan cannot appear</string>
+    <string name="settings_notify_blocked">Notifications are blocked</string>
+    <string name="settings_notify_blocked_summary">Turn on this app\'s notifications in system settings</string>
+    <string name="settings_battery">Allow running in the background</string>
+    <string name="settings_battery_summary">Battery saving can stop the adhan on some phones (Oppo, Realme, Xiaomi, Samsung)</string>
+    <string name="settings_notify_test">Send a test notification</string>
+    <string name="settings_notify_test_summary">Check that the adhan notification appears</string>
 
     <!-- Widgets -->
     <string name="widget_next_label">Next prayer</string>

@@ -115,13 +115,50 @@ class SettingsActivity : BaseActivity() {
                     preferences.reminderLeadMinutes,
                 ) { preferences.reminderLeadMinutes = it }
             }
-            if (!canScheduleExactAlarms()) {
-                addValueRow(
+            // Everything that silently stops an adhan from appearing, each with its fix one tap away.
+            when (Notifications.status(this)) {
+                Notifications.Status.NO_PERMISSION -> addWarningRow(
                     general,
-                    title = getString(R.string.settings_exact_alarm),
-                    summary = getString(R.string.settings_exact_alarm_summary),
-                    divider = true,
+                    getString(R.string.settings_notify_permission),
+                    getString(R.string.settings_notify_permission_summary),
+                ) {
+                    // The system dialog when it can still appear; the result handler falls back
+                    // to the app's notification settings once the user has denied it for good.
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), REQUEST_NOTIFICATIONS)
+                    } else {
+                        openNotificationSettings()
+                    }
+                }
+                Notifications.Status.BLOCKED -> addWarningRow(
+                    general,
+                    getString(R.string.settings_notify_blocked),
+                    getString(R.string.settings_notify_blocked_summary),
+                ) { openNotificationSettings() }
+                Notifications.Status.OK -> Unit
+            }
+            if (!canScheduleExactAlarms()) {
+                addWarningRow(
+                    general,
+                    getString(R.string.settings_exact_alarm),
+                    getString(R.string.settings_exact_alarm_summary),
                 ) { openExactAlarmSettings() }
+            }
+            if (!ignoresBatteryOptimizations()) {
+                addWarningRow(
+                    general,
+                    getString(R.string.settings_battery),
+                    getString(R.string.settings_battery_summary),
+                ) { requestBatteryExemption() }
+            }
+            addValueRow(
+                general,
+                title = getString(R.string.settings_notify_test),
+                summary = getString(R.string.settings_notify_test_summary),
+                divider = true,
+            ) {
+                Notifications.postTest(this)
+                if (Notifications.status(this) != Notifications.Status.OK) render()
             }
         }
         addToggleRow(
@@ -310,6 +347,37 @@ class SettingsActivity : BaseActivity() {
             .show()
     }
 
+    /** A value row styled as a warning, for settings that stop notifications from appearing. */
+    private fun addWarningRow(parent: LinearLayout, title: String, summary: String, onClick: () -> Unit) {
+        addValueRow(parent, title = title, summary = summary, divider = true, onClick = onClick)
+        val row = parent.getChildAt(parent.childCount - 1)
+        row.findViewById<TextView>(R.id.setting_title).setTextColor(getColor(R.color.warning_text))
+    }
+
+    private fun openNotificationSettings() {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        } else {
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName"))
+        }
+        runCatching { startActivity(intent) }
+    }
+
+    private fun ignoresBatteryOptimizations(): Boolean =
+        getSystemService(android.os.PowerManager::class.java)?.isIgnoringBatteryOptimizations(packageName) != false
+
+    /**
+     * Asks to be exempt from battery optimisation. Aggressive vendor battery managers (ColorOS, MIUI,
+     * One UI...) otherwise stop the app's alarms, which is the most common reason an adhan is missed.
+     */
+    @android.annotation.SuppressLint("BatteryLife")
+    private fun requestBatteryExemption() {
+        val direct = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
+        runCatching { startActivity(direct) }.onFailure {
+            runCatching { startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) }
+        }
+    }
+
     private fun canScheduleExactAlarms(): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
             getSystemService(AlarmManager::class.java)?.canScheduleExactAlarms() != false
@@ -323,7 +391,15 @@ class SettingsActivity : BaseActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_NOTIFICATIONS) render()
+        if (requestCode == REQUEST_NOTIFICATIONS) {
+            val denied = grantResults.firstOrNull() != android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (denied && Build.VERSION.SDK_INT >= 33 &&
+                !shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)
+            ) {
+                openNotificationSettings()
+            }
+            render()
+        }
     }
 
     private fun leadLabel(minutes: Int): Int = when (minutes) {
