@@ -58,112 +58,121 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/app.css">
-  <script src="/assets/app.js" defer></script>
+  <link rel="stylesheet" href="/assets/app.css?v=%CSS_HASH%">
+  <script src="/assets/app.js?v=%JS_HASH%" defer></script>
 </head>
 <body>
-  <a href="#unduh" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2" data-i18n="skip">Langsung ke unduhan</a>
+  <a href="#unduh" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-ink" data-i18n="skip">Langsung ke unduhan</a>
 
-  <!-- Hero: the app's own sky, following the visitor's local time of day. -->
-  <header id="top" class="sky relative isolate overflow-hidden text-white" data-period="malam">
-    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
-      <svg class="sky-stars absolute inset-0 h-full w-full" preserveAspectRatio="none"></svg>
-      <div class="sky-body absolute" style="left:70%;top:22%">
-        <div class="glow absolute -inset-16 rounded-full"></div>
-        <div class="disc relative size-14 rounded-full"></div>
+  <!-- Hero: the same layered landscape as the app, in the colours of the visitor's time of day. -->
+  <header id="top" class="sky relative isolate overflow-x-clip text-white" data-period="malam">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <svg class="sky-stars absolute inset-0 h-full w-full"></svg>
+      <div class="sky-body absolute" style="left:84%;top:14%">
+        <div class="halo absolute -inset-14 rounded-full"></div>
+        <div class="disc relative size-12 rounded-full lg:size-14"></div>
       </div>
-      <svg class="sky-cloud absolute top-[18%] left-0 w-40 opacity-30" style="--speed:110s;--delay:-40s" viewBox="0 0 90 32"><g fill="#fff"><circle cx="24" cy="21" r="10"/><circle cx="42" cy="14" r="14"/><circle cx="62" cy="19" r="11"/><rect x="12" y="19" width="66" height="12" rx="6"/></g></svg>
-      <svg class="sky-cloud absolute top-[34%] left-0 w-28 opacity-20" style="--speed:150s;--delay:-95s" viewBox="0 0 90 32"><g fill="#fff"><circle cx="24" cy="21" r="10"/><circle cx="42" cy="14" r="14"/><circle cx="62" cy="19" r="11"/><rect x="12" y="19" width="66" height="12" rx="6"/></g></svg>
-      <!-- Skyline: low rooftops and a mosque, the same silhouette as in the app. -->
-      <svg class="skyline absolute bottom-0 left-0 w-full" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice">
-        <path fill="rgb(0 0 0 / 0.28)" d="M0 220V176h60v-14h54v22h40v-30h70v18h38v-26h52v34h44v-20h60v12h48v-28h66v20h58v-16h40v26h52v-18h64v24h46v-32h58v20h52v-12h64v26h44v-22h60v18h58v-26h48v20h62v-14h40v40Z"/>
-        <g fill="rgb(0 0 0 / 0.45)" transform="translate(-540 0)">
-          <rect x="880" y="148" width="232" height="72"/>
-          <rect x="804" y="176" width="384" height="44"/>
-          <rect x="924" y="136" width="144" height="16"/>
-          <path d="M924 136c-8-60 44-80 72-100 28 20 80 40 72 100Z"/>
-          <rect x="994" y="16" width="4" height="24"/>
-          <path d="M996 0a9 9 0 1 0 8 13 7 7 0 1 1-8-13Z"/>
-          <path d="M816 176c0-28 20-36 28-44 8 8 28 16 28 44Z"/>
-          <path d="M1120 176c0-28 20-36 28-44 8 8 28 16 28 44Z"/>
-          <rect x="763" y="12" width="18" height="208"/>
-          <rect x="757" y="60" width="30" height="8"/>
-          <path d="M760 12l12-32 12 32Z"/>
-          <rect x="1211" y="12" width="18" height="208"/>
-          <rect x="1205" y="60" width="30" height="8"/>
-          <path d="M1208 12l12-32 12 32Z"/>
+      <div class="streak" style="--y:63%;--w:9rem;--speed:120s;--delay:-30s"></div>
+      <div class="streak" style="--y:70%;--w:13rem;--speed:160s;--delay:-110s"></div>
+      <svg class="landscape absolute bottom-0 left-0 w-full h-[240px]" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice">
+        <defs><linearGradient id="far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--hill-far-a)"/><stop offset="1" stop-color="var(--hill-far-b)"/></linearGradient></defs>
+        <path class="hill-far" fill="url(#far)" d="M0 241L0.0 89.1L15.0 88.0L30.0 87.0L45.0 86.0L60.0 85.2L75.0 84.5L90.0 84.0L105.0 83.6L120.0 83.3L135.0 83.1L150.0 83.1L165.0 83.3L180.0 83.6L195.0 84.0L210.0 84.6L225.0 85.3L240.0 86.1L255.0 87.1L270.0 88.2L285.0 89.5L300.0 90.8L315.0 92.3L330.0 93.8L345.0 95.5L360.0 97.2L375.0 99.0L390.0 100.8L405.0 102.7L420.0 104.7L435.0 106.7L450.0 108.6L465.0 110.6L480.0 112.6L495.0 114.5L510.0 116.5L525.0 118.3L540.0 120.2L555.0 121.9L570.0 123.6L585.0 125.2L600.0 126.7L615.0 128.1L630.0 129.4L645.0 130.6L660.0 131.6L675.0 132.6L690.0 133.4L705.0 134.0L720.0 134.6L735.0 135.0L750.0 135.2L765.0 135.3L780.0 135.3L795.0 135.1L810.0 134.8L825.0 134.4L840.0 133.8L855.0 133.2L870.0 132.4L885.0 131.5L900.0 130.5L915.0 129.4L930.0 128.3L945.0 127.0L960.0 125.7L975.0 124.4L990.0 123.0L1005.0 121.6L1020.0 120.1L1035.0 118.7L1050.0 117.2L1065.0 115.8L1080.0 114.4L1095.0 113.0L1110.0 111.6L1125.0 110.3L1140.0 109.1L1155.0 107.9L1170.0 106.8L1185.0 105.8L1200.0 104.9L1215.0 104.0L1230.0 103.3L1245.0 102.6L1260.0 102.1L1275.0 101.6L1290.0 101.3L1305.0 101.1L1320.0 101.0L1335.0 101.0L1350.0 101.1L1365.0 101.3L1380.0 101.6L1395.0 102.0L1410.0 102.4L1425.0 103.0L1440.0 103.7L1440 241Z"/>
+        <g class="hill-mid">
+          <path d="M0 241L0.0 151.0L15.0 151.8L30.0 152.6L45.0 153.5L60.0 154.4L75.0 155.3L90.0 156.3L105.0 157.2L120.0 158.2L135.0 159.2L150.0 160.2L165.0 161.3L180.0 162.3L195.0 163.3L210.0 164.3L225.0 165.4L240.0 166.4L255.0 167.4L270.0 168.4L285.0 169.4L300.0 170.4L315.0 171.3L330.0 172.2L345.0 173.1L360.0 174.0L375.0 174.9L390.0 175.7L405.0 176.5L420.0 177.2L435.0 177.9L450.0 178.6L465.0 179.2L480.0 179.8L495.0 180.3L510.0 180.8L525.0 181.3L540.0 181.7L555.0 182.0L570.0 182.3L585.0 182.6L600.0 182.8L615.0 182.9L630.0 183.0L645.0 183.1L660.0 183.1L675.0 183.0L690.0 182.9L705.0 182.8L720.0 182.6L735.0 182.4L750.0 182.1L765.0 181.8L780.0 181.4L795.0 181.0L810.0 180.5L825.0 180.1L840.0 179.5L855.0 179.0L870.0 178.4L885.0 177.8L900.0 177.2L915.0 176.5L930.0 175.8L945.0 175.1L960.0 174.4L975.0 173.7L990.0 173.0L1005.0 172.2L1020.0 171.5L1035.0 170.7L1050.0 169.9L1065.0 169.2L1080.0 168.4L1095.0 167.7L1110.0 167.0L1125.0 166.3L1140.0 165.6L1155.0 164.9L1170.0 164.2L1185.0 163.6L1200.0 162.9L1215.0 162.3L1230.0 161.8L1245.0 161.2L1260.0 160.7L1275.0 160.2L1290.0 159.8L1305.0 159.4L1320.0 159.0L1335.0 158.7L1350.0 158.4L1365.0 158.1L1380.0 157.9L1395.0 157.7L1410.0 157.5L1425.0 157.4L1440.0 157.4L1440 241Z"/>
+          <rect x="611.4" y="153.1" width="102.0" height="43.0"/><rect x="629.4" y="145.6" width="66.0" height="9.0"/><path d="M629.4 145.6C624.9 115.6 648.9 105.1 662.4 94.6C675.9 105.1 699.9 115.6 695.4 145.6Z"/><rect x="661.4" y="84.1" width="2.1" height="12.0"/><path fill-rule="evenodd" d="M657.6 79.6a4.8 4.8 0 1 0 9.6 0a4.8 4.8 0 1 0 -9.6 0ZM660.5 78.4a4.1 4.1 0 1 1 8.1 0a4.1 4.1 0 1 1 -8.1 0Z"/><rect x="589.5" y="87.1" width="7.8" height="109.0"/><rect x="586.8" y="111.1" width="13.2" height="3.8"/><path d="M588.3 87.1L593.4 72.1L598.5 87.1Z"/><rect x="727.5" y="87.1" width="7.8" height="109.0"/><rect x="724.8" y="111.1" width="13.2" height="3.8"/><path d="M726.3 87.1L731.4 72.1L736.5 87.1Z"/>
         </g>
-        <g class="window" transform="translate(-540 0)">
-          <rect x="920" y="168" width="14" height="28" rx="7"/><rect x="956" y="168" width="14" height="28" rx="7"/><rect x="990" y="168" width="14" height="28" rx="7"/><rect x="1024" y="168" width="14" height="28" rx="7"/><rect x="1058" y="168" width="14" height="28" rx="7"/>
-          <rect x="769" y="36" width="6" height="16" rx="3"/><rect x="1217" y="36" width="6" height="16" rx="3"/>
-        </g>
+        <g class="window"><rect x="636.9" y="162.1" width="9.0" height="15.0" rx="4.5"/><rect x="657.9" y="162.1" width="9.0" height="15.0" rx="4.5"/><rect x="678.9" y="162.1" width="9.0" height="15.0" rx="4.5"/><rect x="591.6" y="96.1" width="3.6" height="9.0" rx="1.8"/><rect x="729.6" y="96.1" width="3.6" height="9.0" rx="1.8"/></g>
+        <path class="hill-near" d="M0 241L0.0 227.3L15.0 228.1L30.0 228.8L45.0 229.4L60.0 229.9L75.0 230.3L90.0 230.6L105.0 230.8L120.0 230.9L135.0 230.8L150.0 230.7L165.0 230.5L180.0 230.1L195.0 229.7L210.0 229.2L225.0 228.7L240.0 228.0L255.0 227.3L270.0 226.5L285.0 225.7L300.0 224.9L315.0 224.0L330.0 223.1L345.0 222.2L360.0 221.3L375.0 220.5L390.0 219.6L405.0 218.8L420.0 218.0L435.0 217.3L450.0 216.6L465.0 216.0L480.0 215.4L495.0 214.9L510.0 214.5L525.0 214.2L540.0 213.9L555.0 213.8L570.0 213.7L585.0 213.7L600.0 213.8L615.0 213.9L630.0 214.1L645.0 214.4L660.0 214.8L675.0 215.2L690.0 215.7L705.0 216.2L720.0 216.7L735.0 217.3L750.0 217.8L765.0 218.4L780.0 219.0L795.0 219.6L810.0 220.1L825.0 220.7L840.0 221.1L855.0 221.6L870.0 222.0L885.0 222.3L900.0 222.6L915.0 222.8L930.0 223.0L945.0 223.0L960.0 223.0L975.0 222.9L990.0 222.7L1005.0 222.4L1020.0 222.1L1035.0 221.7L1050.0 221.2L1065.0 220.6L1080.0 220.0L1095.0 219.3L1110.0 218.5L1125.0 217.7L1140.0 216.9L1155.0 216.1L1170.0 215.2L1185.0 214.3L1200.0 213.4L1215.0 212.5L1230.0 211.7L1245.0 210.9L1260.0 210.1L1275.0 209.3L1290.0 208.6L1305.0 208.0L1320.0 207.5L1335.0 207.0L1350.0 206.6L1365.0 206.3L1380.0 206.1L1395.0 206.0L1410.0 206.1L1425.0 206.2L1440.0 206.4L1440 241Z"/>
       </svg>
     </div>
 
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
       <a href="#top" class="flex items-center gap-2.5 font-semibold">
-        <img src="/assets/icon.svg" alt="" class="size-8">
+        <img src="/assets/icon.svg" alt="" width="32" height="32" class="size-8">
         <span>Waktu Sholat</span>
       </a>
-      <div class="flex items-center gap-2 text-sm">
-        <a href="https://github.com/rinci-labs/waktu-sholat" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white sm:inline-block">GitHub</a>
-        <button type="button" id="lang" class="rounded-full border border-white/25 px-3 py-1.5 font-medium text-white/90 hover:bg-white/10" aria-label="Switch to English">EN</button>
+      <div class="flex items-center gap-1 text-sm">
+        <a href="#fitur" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block" data-i18n="nav_features">Fitur</a>
+        <a href="#unduh" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block" data-i18n="nav_download">Unduh</a>
+        <a href="https://github.com/rinci-labs/waktu-sholat" class="hidden rounded-full px-3 py-2 text-white/80 hover:text-white md:inline-block">GitHub</a>
+        <button type="button" id="lang" class="ml-1 rounded-full border border-white/25 px-3 py-1.5 font-medium text-white/90 hover:bg-white/10" aria-label="Switch to English">EN</button>
       </div>
     </nav>
 
-    <div class="mx-auto grid max-w-6xl items-end gap-10 px-5 pt-8 pb-0 sm:px-8 lg:grid-cols-[1.1fr_1fr] lg:pt-14">
-      <div class="pb-16 lg:pb-40">
-        <p class="text-sm font-medium text-white/75"><span id="period-label" data-i18n="now">Sekarang malam di tempatmu</span></p>
-        <h1 class="mt-4 text-[2.6rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance sm:text-6xl" data-i18n="headline">Jadwal sholat yang tepat, tanpa internet.</h1>
-        <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85" data-i18n="lede">Waktu Sholat menghitung jadwal langsung di HP dengan metode Kemenag. Tanpa iklan, tanpa akun, dan ukurannya hanya sekitar 200 KB.</p>
-        <div class="mt-9 flex flex-wrap items-center gap-3">
-          <a href="https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk" data-download class="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-brand-deep shadow-lg shadow-black/20 hover:bg-brand-soft">
+    <div class="mx-auto grid max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-6">
+      <div class="pt-8 lg:pt-20 lg:pb-72">
+        <p class="text-sm font-medium text-white/75" id="period-label">Sekarang malam di tempatmu</p>
+        <h1 class="mt-4 max-w-xl text-[2.5rem] leading-[1.06] font-extrabold tracking-[-0.03em] text-balance sm:text-6xl" data-i18n="headline">Jadwal sholat yang tepat, tanpa internet.</h1>
+        <p class="mt-6 max-w-lg text-lg leading-relaxed text-pretty text-white/85" data-i18n="lede">Waktu Sholat menghitung jadwal langsung di HP dengan metode Kemenag. Tanpa iklan, tanpa akun, dan ukurannya hanya sekitar 200 KB.</p>
+        <div class="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <a href="https://github.com/rinci-labs/waktu-sholat/releases/latest/download/waktu-sholat.apk" data-download class="inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 font-semibold text-brand-deep shadow-lg shadow-black/15 transition hover:bg-brand-soft">
             <svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 19h14"/></svg>
             <span data-i18n="download">Unduh untuk Android</span>
           </a>
           <span class="text-sm text-white/75" data-release-line>Android 7.0 atau lebih baru</span>
         </div>
       </div>
-      <div class="relative mx-auto w-[min(78vw,320px)] translate-y-10 lg:mr-6 lg:w-[340px]">
-        <div class="phone">
-          <img src="/assets/screens/today.webp" width="540" height="1205" alt="Layar utama Waktu Sholat: langit siang dengan siluet masjid, sholat berikutnya Ashar pukul 14:54, dan jadwal hari ini." data-i18n-alt="alt_today">
+      <div class="relative mx-auto w-[min(76vw,300px)] self-end lg:mr-4 lg:w-[330px]">
+        <div class="phone translate-y-16">
+          <img src="/assets/screens/today.webp" width="540" height="1205" alt="Layar utama Waktu Sholat: langit siang, sholat berikutnya Ashar pukul 14:54, dan jadwal hari ini." data-i18n-alt="alt_today">
         </div>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- What it does, each claim next to the screen that shows it. -->
-    <section class="mx-auto max-w-6xl px-5 pt-28 pb-8 sm:px-8" aria-labelledby="features-title">
+    <!-- Three things to know before scrolling further. -->
+    <section class="mx-auto max-w-6xl px-5 pt-32 sm:px-8" aria-labelledby="summary-title">
+      <h2 id="summary-title" class="sr-only" data-i18n="summary_title">Ringkasan</h2>
+      <ul class="grid gap-8 sm:grid-cols-3">
+        <li>
+          <span class="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand"><svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <h3 class="mt-4 font-semibold" data-i18n="h1_t">Tepat sampai menitnya</h3>
+          <p class="mt-1.5 leading-relaxed text-ink-soft" data-i18n="h1_b">Metode Kemenag dengan pembulatan resmi, dihitung di HP tanpa internet.</p>
+        </li>
+        <li>
+          <span class="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand"><svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></svg></span>
+          <h3 class="mt-4 font-semibold" data-i18n="h2_t">Kiblat terkalibrasi</h3>
+          <p class="mt-1.5 leading-relaxed text-ink-soft" data-i18n="h2_b">Kompas dikalibrasi dulu dan dikoreksi ke utara sebenarnya.</p>
+        </li>
+        <li>
+          <span class="grid size-11 place-items-center rounded-2xl bg-brand-soft text-brand"><svg aria-hidden="true" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+          <h3 class="mt-4 font-semibold" data-i18n="h3_t">Di mana pun di dunia</h3>
+          <p class="mt-1.5 leading-relaxed text-ink-soft" data-i18n="h3_b">Pilih kota, pakai GPS, atau cari tempat mana pun, dan zona waktunya ikut benar.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Each claim next to the screen that shows it; one screenshot per section on phones. -->
+    <section id="fitur" class="mx-auto max-w-6xl scroll-mt-8 px-5 py-24 sm:px-8" aria-labelledby="features-title">
       <h2 id="features-title" class="max-w-2xl text-3xl font-bold tracking-[-0.02em] text-balance sm:text-4xl" data-i18n="features_title">Dibuat untuk dipakai lima kali sehari, bertahun-tahun.</h2>
-      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft" data-i18n="features_lede">Semua yang penting ada, tanpa hal yang mengganggu. Waktunya dihitung dari posisi matahari di lokasimu, jadi tetap jalan saat tidak ada sinyal.</p>
 
       <div class="mt-16 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
           <h3 class="text-2xl font-bold tracking-[-0.01em]" data-i18n="f1_title">Sekali lihat, langsung tahu</h3>
           <p class="mt-3 text-lg leading-relaxed text-ink-soft" data-i18n="f1_body">Sholat berikutnya dan sisa waktunya tertulis jelas, misalnya "1 jam 15 menit lagi". Latar langitnya ikut berubah dari subuh sampai malam, dan jadwal hari itu ada tepat di bawahnya.</p>
-          <ul class="mt-6 space-y-2.5 text-ink-soft">
-            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f1_a">Metode Kemenag dengan pembulatan resmi, sama dengan jadwal yang diterbitkan</span></li>
-            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f1_b">Tanggal Hijriah, jadwal bulanan, dan tema gelap</span></li>
-            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f1_c">Notifikasi adzan tepat waktu, dengan pengingat opsional</span></li>
+          <ul class="mt-6 space-y-3 text-ink-soft">
+            <li class="flex gap-3"><svg aria-hidden="true" class="mt-1 size-4 shrink-0 text-brand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8.5 3.2 3L13 5"/></svg><span data-i18n="f1_a">Sama dengan jadwal Kemenag yang diterbitkan</span></li>
+            <li class="flex gap-3"><svg aria-hidden="true" class="mt-1 size-4 shrink-0 text-brand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8.5 3.2 3L13 5"/></svg><span data-i18n="f1_b">Tanggal Hijriah, jadwal bulanan, dan tema gelap</span></li>
+            <li class="flex gap-3"><svg aria-hidden="true" class="mt-1 size-4 shrink-0 text-brand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8.5 3.2 3L13 5"/></svg><span data-i18n="f1_c">Notifikasi adzan tepat waktu, dengan pengingat opsional</span></li>
           </ul>
         </div>
-        <div class="flex justify-center gap-5">
-          <div class="phone w-[46%] max-w-[250px]"><img src="/assets/screens/today.webp" width="540" height="1205" loading="lazy" alt="Tema terang" data-i18n-alt="alt_light"></div>
-          <div class="phone mt-12 w-[46%] max-w-[250px]"><img src="/assets/screens/today-dark.webp" width="540" height="1205" loading="lazy" alt="Tema gelap" data-i18n-alt="alt_dark"></div>
+        <div class="relative mx-auto w-full max-w-[420px]">
+          <div class="phone relative z-10 mx-auto w-[64%] max-w-[270px] sm:mx-0"><img src="/assets/screens/today.webp" width="540" height="1205" loading="lazy" alt="Tema terang" data-i18n-alt="alt_light"></div>
+          <div class="phone absolute top-14 right-0 hidden w-[56%] max-w-[236px] sm:block"><img src="/assets/screens/today-dark.webp" width="540" height="1205" loading="lazy" alt="Tema gelap" data-i18n-alt="alt_dark"></div>
         </div>
       </div>
 
       <div class="mt-28 grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <div class="order-2 flex justify-center lg:order-1">
-          <div class="phone w-[62%] max-w-[300px]"><img src="/assets/screens/qibla.webp" width="540" height="1205" loading="lazy" alt="Kompas arah kiblat 295 derajat dari Jakarta, dengan koreksi deklinasi magnetik." data-i18n-alt="alt_qibla"></div>
+          <div class="phone w-[64%] max-w-[280px]"><img src="/assets/screens/qibla.webp" width="540" height="1205" loading="lazy" alt="Kompas arah kiblat 295 derajat dari Jakarta, dengan koreksi deklinasi magnetik." data-i18n-alt="alt_qibla"></div>
         </div>
         <div class="order-1 lg:order-2">
           <h3 class="text-2xl font-bold tracking-[-0.01em]" data-i18n="f2_title">Arah kiblat yang bisa dipercaya</h3>
           <p class="mt-3 text-lg leading-relaxed text-ink-soft" data-i18n="f2_body">Kompas meminta kalibrasi dulu sebelum menunjukkan arah. Sensor HP menunjuk ke utara magnetis, jadi selisihnya dengan utara sebenarnya dikoreksi otomatis sesuai lokasimu.</p>
-          <ul class="mt-6 space-y-2.5 text-ink-soft">
-            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f2_a">Peringatan saat ada gangguan magnet atau HP dipegang miring</span></li>
-            <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-brand"></span><span data-i18n="f2_b">Getar sekali saat HP pas menghadap kiblat</span></li>
+          <ul class="mt-6 space-y-3 text-ink-soft">
+            <li class="flex gap-3"><svg aria-hidden="true" class="mt-1 size-4 shrink-0 text-brand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8.5 3.2 3L13 5"/></svg><span data-i18n="f2_a">Peringatan saat ada gangguan magnet atau HP dipegang miring</span></li>
+            <li class="flex gap-3"><svg aria-hidden="true" class="mt-1 size-4 shrink-0 text-brand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8.5 3.2 3L13 5"/></svg><span data-i18n="f2_b">Getar sekali saat HP pas menghadap kiblat</span></li>
           </ul>
         </div>
       </div>
@@ -175,19 +184,19 @@
           <p class="mt-4 text-lg leading-relaxed text-ink-soft" data-i18n="f3_body2">Widget diperbarui tiap menit tanpa membangunkan HP, jadi tidak menguras baterai.</p>
         </div>
         <div class="flex justify-center">
-          <div class="phone w-full max-w-[420px] !rounded-[2rem]"><img src="/assets/screens/widgets.webp" width="720" height="560" loading="lazy" class="!rounded-[1.6rem]" alt="Layar utama dengan widget Jadwal hari ini dan widget Minimalis." data-i18n-alt="alt_widgets"></div>
+          <div class="phone w-full max-w-[440px] !rounded-[2rem]"><img src="/assets/screens/widgets.webp" width="720" height="562" loading="lazy" class="!rounded-[1.6rem]" alt="Layar utama dengan widget Jadwal hari ini dan widget Minimalis." data-i18n-alt="alt_widgets"></div>
         </div>
       </div>
     </section>
 
     <!-- The small facts people check before installing. -->
-    <section class="mx-auto max-w-6xl px-5 py-24 sm:px-8" aria-labelledby="facts-title">
-      <h2 id="facts-title" class="sr-only" data-i18n="facts_title">Ringkasan</h2>
+    <section class="mx-auto max-w-6xl px-5 pb-24 sm:px-8" aria-labelledby="facts-title">
+      <h2 id="facts-title" class="sr-only" data-i18n="facts_title">Detail</h2>
       <dl class="grid gap-x-10 gap-y-10 border-y border-line py-12 sm:grid-cols-2 lg:grid-cols-4">
-        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_where">Di mana saja</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_where">±490 kota dan kabupaten tersimpan di HP. Di luar negeri, pakai GPS atau cari nama tempat mana pun di dunia.</dd></div>
-        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_lang">Dua bahasa</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_lang">Bahasa Indonesia dan English, bisa diganti di Pengaturan.</dd></div>
-        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_privacy">Privasi</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_privacy">Tanpa iklan, akun, atau pelacakan. Internet hanya untuk nama tempat dan cek pembaruan.</dd></div>
-        <div><dt class="text-sm font-semibold text-brand" data-i18n="k_small">Ringan</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_small">Sekitar 200 KB, tanpa proses latar yang berjalan terus. Android 7.0 atau lebih baru.</dd></div>
+        <div><dt class="font-semibold" data-i18n="k_where">Di mana saja</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_where">±490 kota dan kabupaten tersimpan di HP. Di luar negeri, pakai GPS atau cari nama tempat mana pun di dunia.</dd></div>
+        <div><dt class="font-semibold" data-i18n="k_lang">Dua bahasa</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_lang">Bahasa Indonesia dan English, bisa diganti di Pengaturan.</dd></div>
+        <div><dt class="font-semibold" data-i18n="k_privacy">Privasi</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_privacy">Tanpa iklan, akun, atau pelacakan. Internet hanya untuk nama tempat dan cek pembaruan.</dd></div>
+        <div><dt class="font-semibold" data-i18n="k_small">Ringan</dt><dd class="mt-2 leading-relaxed text-ink-soft" data-i18n="v_small">Sekitar 200 KB, tanpa proses latar yang berjalan terus. Android 7.0 atau lebih baru.</dd></div>
       </dl>
     </section>
 
@@ -253,11 +262,10 @@
       </div>
     </section>
   </main>
-
   <footer class="border-t border-line">
     <div class="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-10 text-sm text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-8">
       <div class="flex items-center gap-2.5">
-        <img src="/assets/icon.svg" alt="" class="size-6">
+        <img src="/assets/icon.svg" alt="" width="24" height="24" class="size-6">
         <span>Waktu Sholat</span>
       </div>
       <div class="flex gap-6">

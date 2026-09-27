@@ -7,6 +7,15 @@
 
   const en = {
     skip: "Skip to download",
+    nav_features: "Features",
+    nav_download: "Download",
+    summary_title: "Summary",
+    h1_t: "Right to the minute",
+    h1_b: "Kemenag method with the official rounding, calculated on the phone without internet.",
+    h2_t: "A calibrated Qibla",
+    h2_b: "The compass is calibrated first and corrected to true north.",
+    h3_t: "Anywhere in the world",
+    h3_b: "Pick a city, use GPS, or search any place, and the time zone follows.",
     headline: "Accurate prayer times, no internet needed.",
     lede: "Waktu Sholat calculates the schedule on your phone using the Kemenag method. No ads, no account, and it is only about 200 KB.",
     download: "Download for Android",
@@ -14,7 +23,7 @@
     features_lede: "Everything that matters, nothing that gets in the way. Times come from the sun's position at your location, so it keeps working without signal.",
     f1_title: "One glance is enough",
     f1_body: "The next prayer and how long until it are written plainly, like \"in 1 h 15 min\". The sky behind it changes from dawn to night, with the whole day's schedule right below.",
-    f1_a: "Kemenag method with the official rounding, matching published schedules",
+    f1_a: "Matches the schedule Kemenag publishes",
     f1_b: "Hijri date, monthly timetable and a dark theme",
     f1_c: "Adhan notifications on the minute, with an optional reminder",
     f2_title: "A Qibla direction you can trust",
@@ -24,7 +33,7 @@
     f3_title: "Five home-screen widgets",
     f3_body: "Pick what fits: next prayer, the day in one row, the full schedule, a countdown, or minimal text right on your wallpaper. Colours follow your wallpaper on Android 12 and later.",
     f3_body2: "Widgets refresh every minute without waking the phone, so they don't drain the battery.",
-    facts_title: "At a glance",
+    facts_title: "Details",
     k_where: "Anywhere",
     v_where: "About 490 Indonesian cities are stored on the phone. Abroad, use GPS or search any place in the world.",
     k_lang: "Two languages",
@@ -113,7 +122,7 @@
   const sky = document.querySelector(".sky");
   const body = sky.querySelector(".sky-body");
   const disc = body.querySelector(".disc");
-  const glow = body.querySelector(".glow");
+  const glow = body.querySelector(".halo");
 
   // Approximate period boundaries by local clock; the app itself uses the real prayer times.
   function periodAt(date) {
@@ -136,12 +145,12 @@
     const h = now.getHours() + now.getMinutes() / 60;
     const isMoon = h < 5.66 || h >= 17.9;
     const p = isMoon ? ((h >= 17.9 ? h - 17.9 : h + 24 - 17.9) / 10.4) : (h - 5.66) / 12.24;
-    // Wide screens: the phone mockup fills the right, so the arc stays in the open left part.
+    // Wide screens: an arc across the open middle of the hero, between the text and the phone.
     // Phones: a small arc in the top-right corner, clear of the headline.
     const q = Math.min(Math.max(p, 0), 1);
     const wide = window.matchMedia("(min-width: 1024px)").matches;
-    const x = wide ? 6 + 50 * q : 58 + 30 * q;
-    const y = wide ? 70 - 52 * Math.sin(Math.PI * q) : 16 - 9 * Math.sin(Math.PI * q);
+    const x = wide ? 30 + 30 * q : 62 + 26 * q;
+    const y = wide ? 58 - 44 * Math.sin(Math.PI * q) : 15 - 7 * Math.sin(Math.PI * q);
     body.style.left = `${x}%`;
     body.style.top = `${y}%`;
 
@@ -165,7 +174,7 @@
   for (let i = 0; i < 70; i++) {
     const c = document.createElementNS(ns, "circle");
     c.setAttribute("cx", `${rand() * 100}%`);
-    c.setAttribute("cy", `${rand() * 62}%`);
+    c.setAttribute("cy", `${rand() * 55}%`);
     c.setAttribute("r", (0.6 + rand() * rand() * 1.6).toFixed(2));
     c.setAttribute("fill", "#fff");
     c.style.setProperty("--d", `${2 + rand() * 4}s`);
@@ -174,6 +183,7 @@
   }
 
   setInterval(updateSky, 60_000);
+  window.matchMedia("(min-width: 1024px)").addEventListener("change", updateSky);
 
   // ---- Latest release -----------------------------------------------------------------------------
 

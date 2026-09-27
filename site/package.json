@@ -3,8 +3,9 @@
   "private": true,
   "description": "Landing page for Waktu Sholat. Static; public/ is the deploy root.",
   "scripts": {
-    "build": "node scripts/build.mjs && tailwindcss -i ./src/app.css -o ./public/assets/app.css --minify",
-    "dev": "node scripts/build.mjs && tailwindcss -i ./src/app.css -o ./public/assets/app.css --watch"
+    "build": "tailwindcss -i ./src/app.css -o ./public/assets/app.css --minify && node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && tailwindcss -i ./src/app.css -o ./public/assets/app.css --watch",
+    "preview": "npm run build && node scripts/serve.mjs"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.0",

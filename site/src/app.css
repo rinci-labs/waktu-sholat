@@ -44,87 +44,75 @@
   }
 }
 
-/* ---- Hero sky ------------------------------------------------------------------------------ */
+/* ---- Hero sky: the app's layered landscape ------------------------------------------------- */
+
+/* Colours per period, computed with the same formulas as the Android SkyView. */
+.sky[data-period="subuh"] { --sky-top: #1b2350; --sky-mid: #603a60; --sky-bottom: #8e4a6b; --hill-far-a: #714064; --hill-far-b: #6e3953; --hill-mid: #582d42; --hill-near: #3f2130; }
+.sky[data-period="pagi"] { --sky-top: #1f5faf; --sky-mid: #3881c8; --sky-bottom: #4a98da; --hill-far-a: #3f89cf; --hill-far-b: #3976aa; --hill-mid: #2d5e87; --hill-near: #214462; }
+.sky[data-period="siang"] { --sky-top: #155e9c; --sky-mid: #2b7bba; --sky-bottom: #3b8fcf; --hill-far-a: #3182c2; --hill-far-b: #2e6fa1; --hill-mid: #245880; --hill-near: #1a405d; }
+.sky[data-period="sore"] { --sky-top: #9a4a1e; --sky-mid: #ba6b2c; --sky-bottom: #d08236; --hill-far-a: #c27430; --hill-far-b: #a2652a; --hill-mid: #805021; --hill-near: #5d3a18; }
+.sky[data-period="senja"] { --sky-top: #2b1650; --sky-mid: #763259; --sky-bottom: #a8465f; --hill-far-a: #883a5b; --hill-far-b: #83364a; --hill-mid: #682b3a; --hill-near: #4b1f2a; }
+.sky[data-period="malam"] { --sky-top: #070b1c; --sky-mid: #131b3c; --sky-bottom: #1b2752; --hill-far-a: #162044; --hill-far-b: #151e3f; --hill-mid: #101832; --hill-near: #0c1124; }
 
 .sky {
-  --sky-top: #070b1c;
-  --sky-bottom: #1b2752;
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
-  transition: background 1.2s ease;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 50%, var(--sky-bottom) calc(100% - 180px));
 }
 
-.sky[data-period="subuh"] { --sky-top: #1b2350; --sky-bottom: #8e4a6b; }
-.sky[data-period="pagi"] { --sky-top: #1f5faf; --sky-bottom: #4a98da; }
-.sky[data-period="siang"] { --sky-top: #155e9c; --sky-bottom: #3b8fcf; }
-.sky[data-period="sore"] { --sky-top: #9a4a1e; --sky-bottom: #d08236; }
-.sky[data-period="senja"] { --sky-top: #2b1650; --sky-bottom: #a8465f; }
-.sky[data-period="malam"] { --sky-top: #070b1c; --sky-bottom: #1b2752; }
+.landscape .hill-mid { fill: var(--hill-mid); }
+.landscape .hill-near { fill: var(--hill-near); }
 
-.sky-stars circle {
-  animation: twinkle var(--d, 3s) ease-in-out var(--delay, 0s) infinite alternate;
-}
-
-.sky[data-period="pagi"] .sky-stars,
-.sky[data-period="siang"] .sky-stars,
-.sky[data-period="sore"] .sky-stars {
-  opacity: 0;
-}
-
-.sky-stars {
-  transition: opacity 1.2s ease;
-}
-
-.sky-body {
-  transition: left 1.2s ease, top 1.2s ease;
-}
-
-.sky-body .glow {
-  animation: breathe 5s ease-in-out infinite;
-}
-
-.sky-cloud {
-  animation: drift var(--speed, 90s) linear var(--delay, 0s) infinite;
-}
-
-.sky[data-period="malam"] .sky-cloud { opacity: 0.08; }
-.sky[data-period="subuh"] .sky-cloud,
-.sky[data-period="senja"] .sky-cloud { opacity: 0.22; }
-
-.skyline .window {
+.landscape .window {
   fill: #ffce78;
   opacity: 0;
   transition: opacity 1.2s ease;
 }
+.sky[data-period="malam"] .landscape .window { opacity: 0.9; }
+.sky[data-period="senja"] .landscape .window,
+.sky[data-period="subuh"] .landscape .window { opacity: 0.65; }
 
-.sky[data-period="malam"] .skyline .window { opacity: 0.9; }
-.sky[data-period="senja"] .skyline .window,
-.sky[data-period="subuh"] .skyline .window { opacity: 0.6; }
+.sky-stars { transition: opacity 1.2s ease; }
+.sky[data-period="pagi"] .sky-stars,
+.sky[data-period="siang"] .sky-stars,
+.sky[data-period="sore"] .sky-stars { opacity: 0; }
+.sky[data-period="subuh"] .sky-stars,
+.sky[data-period="senja"] .sky-stars { opacity: 0.5; }
+.sky-stars circle { animation: twinkle var(--d, 3s) ease-in-out var(--delay, 0s) infinite alternate; }
 
-@keyframes twinkle {
-  from { opacity: 0.25; }
-  to { opacity: 1; }
+.sky-body { transition: left 1.2s ease, top 1.2s ease; }
+.sky-body .halo { animation: breathe 6s ease-in-out infinite; }
+
+/* Long streak clouds instead of puffy ones: a bar and a shorter wisp beneath it. */
+.streak {
+  position: absolute;
+  top: var(--y);
+  left: 0;
+  width: var(--w);
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.3);
+  animation: drift var(--speed, 120s) linear var(--delay, 0s) infinite;
 }
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+.streak::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 25%;
+  width: 55%;
+  height: 5px;
+  border-radius: 999px;
+  background: inherit;
 }
+.sky[data-period="malam"] .streak { opacity: 0.12; }
+.sky[data-period="subuh"] .streak,
+.sky[data-period="senja"] .streak { opacity: 0.45; }
 
-@keyframes drift {
-  from { transform: translateX(-20vw); }
-  to { transform: translateX(120vw); }
-}
+@keyframes twinkle { from { opacity: 0.25; } to { opacity: 1; } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@keyframes drift { from { transform: translateX(-30vw); } to { transform: translateX(130vw); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .sky-stars circle,
-  .sky-body .glow,
-  .sky-cloud {
-    animation: none;
-  }
-  .sky,
-  .sky-body {
-    transition: none;
-  }
+  .sky-stars circle, .sky-body .halo, .streak { animation: none; }
+  .sky-body, .landscape .window { transition: none; }
 }
 
 /* ---- Phone frame --------------------------------------------------------------------------- */

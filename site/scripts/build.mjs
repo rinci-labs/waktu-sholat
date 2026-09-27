@@ -1,5 +1,6 @@
 // Renders the page for deployment: fills in the site URL and app version, and writes the
 // sitemap and robots.txt. Set SITE_URL (e.g. in Cloudflare Pages) when using a custom domain.
+import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,9 +17,15 @@ try {
   // Building the site outside the monorepo: leave the version out.
 }
 
+// Content hashes as query strings, so a changed stylesheet or script is never served stale.
+const hash = (file) =>
+  createHash("sha256").update(readFileSync(join(root, "public", "assets", file))).digest("hex").slice(0, 10);
+
 const html = readFileSync(join(root, "src", "index.html"), "utf8")
   .replaceAll("%SITE_URL%", siteUrl)
-  .replaceAll("%VERSION%", version);
+  .replaceAll("%VERSION%", version)
+  .replaceAll("%CSS_HASH%", hash("app.css"))
+  .replaceAll("%JS_HASH%", hash("app.js"));
 writeFileSync(join(root, "public", "index.html"), html);
 
 const today = new Date().toISOString().slice(0, 10);

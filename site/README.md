@@ -7,6 +7,7 @@ deploy root; the built files are committed, so it deploys with or without a buil
 npm install
 npm run build   # renders src/index.html into public/ and builds public/assets/app.css
 npm run dev     # same, then rebuilds the CSS on change
+npm run preview # build, then serve public/ at http://localhost:4173
 ```
 
 `npm run build` fills in the site URL (set `SITE_URL` to override the default,
